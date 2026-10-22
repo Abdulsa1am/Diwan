@@ -27,7 +27,7 @@ export const sections: Record<SectionKey, NavItem> = {
   search: { key: 'search', label: 'ابحث', icon: 'i-search', href: '/search/' },
   lexicon: { key: 'lexicon', label: 'معجم الألفاظ', icon: 'i-search' },
   atlas: { key: 'atlas', label: 'أطلس المواضع', icon: 'i-map' },
-  about: { key: 'about', label: 'عن الشريف الرضي', icon: 'i-user' },
+  about: { key: 'about', label: 'عن الشريف الرضي', icon: 'i-user', href: '/about/' },
 };
 
 export const mainMenu = [sections.home, sections.library, sections.indexes, sections.themes, sections.saved];
@@ -49,4 +49,5 @@ export const indexablePages = [
   '/explore/themes/',
   '/explore/entities/',
   '/explore/stats/',
+  '/about/',
 ];

@@ -1,0 +1,335 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import { SITE_NAME, POET, ar, poems, poemById } from '../lib/diwan';
+import people from '../../data/edition/person-identification.json';
+import { arCount } from '../scripts/shared';
+
+type Person = {
+  id: string;
+  name: string;
+  role: string;
+  relation_to_poet: string;
+  poem_intro_references: { poem_id: string }[];
+};
+const catalog = (Object.values(people.catalog) as Person[])
+  .map((p) => ({
+    ...p,
+    poems: [...new Set(p.poem_intro_references.map((r) => r.poem_id))]
+      .map((id) => poemById.get(id))
+      .filter((x) => x !== undefined),
+  }))
+  .sort((a, b) => b.poems.length - a.poems.length);
+
+const verseTotal = poems.reduce((s, p) => s + p.verses.length, 0);
+const linkedNotes = poems.reduce((s, p) => s + p.linkedNoteCount, 0);
+const title = `الشريف الرضي: حياته وشعره | ${SITE_NAME}`;
+const description =
+  'ترجمة الشريف الرضي (٣٥٩–٤٠٦ هـ): نسبه ونشأته في بغداد، ونقابة الطالبيين، ومؤلفاته ومنها نهج البلاغة، وأقوال النقاد فيه، وعن نسخة الديوان.';
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  mainEntity: {
+    '@type': 'Person',
+    name: POET,
+    alternateName: ['أبو الحسن محمد بن الحسين الموسوي', 'الرضي'],
+    birthDate: '970',
+    deathDate: '1015',
+    sameAs: 'https://ar.wikipedia.org/wiki/الشريف_الرضي',
+  },
+};
+---
+
+<Base title={title} description={description} section="about" jsonLd={jsonLd}>
+  <PageHead title="الشريف الرضي" lede="الشاعر والنقيب: أبو الحسن محمد بن الحسين الموسوي (٣٥٩–٤٠٦ هـ)." />
+
+  <div class="layout">
+    <article class="bio glass">
+      <p class="lead">
+        محمد بن الحسين الموسوي؛ أبدع أبناء زمانه، وأشعر الطالبيين من مضى منهم ومن غبر، بل قيل: أشعر قريش. جمع شعره إلى
+        السلاسة متانةً، وإلى السهولة رصانةً، وكان من أعيان بغداد علمًا وأدبًا ونسبًا.
+      </p>
+
+      <nav class="toc" aria-label="أقسام الترجمة">
+        <a href="#life">النسب والنشأة</a>
+        <a href="#office">النقابة والعلم</a>
+        <a href="#works">المؤلفات</a>
+        <a href="#critics">أقوال النقاد</a>
+        <a href="#people">أعلام في حياته</a>
+        <a href="#edition">عن هذه النسخة</a>
+      </nav>
+
+      <h2 id="life">النسب والنشأة</h2>
+      <p>
+        هو أبو الحسن محمد بن الحسين بن موسى الموسوي، المعروف بالشريف الرضي، من نسل الإمام موسى بن جعفر عليه السلام، وأخو
+        الشريف المرتضى أبي القاسم علي بن الحسين. عاش في بغداد في القرن الرابع الهجري ومطلع الخامس، وتذكر كتب التراجم
+        مولده سنة 359هـ ووفاته سنة 406هـ. يثبت النجاشي نسبه ومكانته ونقابته ويذكر وفاته في السادس من المحرّم سنة 406هـ.<sup
+          ><a href="#src1">١</a></sup
+        >
+      </p>
+      <p>
+        كان والده أبو أحمد الحسين بن موسى من وجوه الأسرة العلوية ونقبائها في بغداد. ونشأ الرضي في وسط جمع بين العلم
+        والأدب وشؤون النقابة وصلات البلاط البويهي؛ وتشهد لذلك أخبار التراجم والرسائل التي تبادلها مع أهل زمانه.<sup
+          ><a href="#src2">٢</a></sup
+        >
+      </p>
+
+      <h2 id="office">النقابة والعلم والحياة العامة</h2>
+      <p>
+        تولى الرضي نقابة الطالبيين، وارتبط اسمه أيضًا بأمور المظالم وإمارة الحج في مصادر الترجمة. وقد كان لتلك المناصب
+        أثر في حضوره الاجتماعي وصلاته بالشعراء والوزراء.<sup><a href="#src3">٣</a>، <a href="#src4">٤</a></sup>
+      </p>
+      <p>
+        لم يقتصر نشاطه على نظم الشعر؛ فقد اشتغل بعلوم القرآن واللغة والاختيار الأدبي، وجمع كتاب نهج البلاغة من كلام أمير
+        المؤمنين علي عليه السلام. وتثبت قائمة النجاشي عددًا من كتبه بأسمائها.<sup><a href="#src5">٥</a></sup>
+      </p>
+
+      <h2 id="works">آثار ثابتة الذكر في المصادر</h2>
+      <p>
+        من المؤلفات التي عدّها النجاشي في ترجمته: حقائق التنزيل، ومجاز القرآن، وخصائص الأئمة، ونهج البلاغة، ومجازات
+        الآثار النبوية، ومختار شعر أبي إسحاق الصابي، وما دار بين الرضي والصابي من الرسائل والشعر، إلى جانب مصنفات
+        واختيارات أدبية أخرى.<sup><a href="#src6">٦</a></sup>
+      </p>
+
+      <h2 id="critics">أقوال النقاد والأدباء</h2>
+      <blockquote>«ولو قلت إنّه أشعر قريش لم أبعد عن الصدق»<sup><a href="#src7">٧</a></sup></blockquote>
+      <blockquote>«له صدر الوسادة، من بين الأئمة والسادة»<sup><a href="#src8">٨</a></sup></blockquote>
+      <blockquote>«نقيب العلويين ببغداد، أخو المرتضى، كان شاعرًا مبرّزًا»<sup><a href="#src9">٩</a></sup></blockquote>
+
+      <h2 id="people">أعلام في حياة الشاعر</h2>
+      <p class="muted">
+        من ذُكروا في أخبار القصائد: من مدحهم أو رثاهم أو راسلهم. تعيين الأشخاص أولي من مقدمات القصائد في النسخة الرقمية.
+      </p>
+      <ul class="people">
+        {
+          catalog.map((person) => (
+            <li>
+              <details>
+                <summary>
+                  <span>
+                    <b>{person.name}</b>
+                    <small>
+                      {person.role}، {person.relation_to_poet}
+                    </small>
+                  </span>
+                  <span class="num">{arCount(person.poems.length, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة'])}</span>
+                </summary>
+                <ul class="person-poems">
+                  {person.poems.map((p) => (
+                    <li>
+                      <a href={`/poem/${p.id}/`}>{p.title}</a>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </li>
+          ))
+        }
+      </ul>
+
+      <h2 id="edition">عن هذه النسخة من الديوان</h2>
+      <p>
+        يعرض الموقع نص النسخة المعتمدة كما ورد في مادته المصدرية، مع إبقاء الفهارس والتصنيفات التحريرية منفصلة عن نص
+        الديوان. بيانات الجزء والصفحة تظهر في كل قصيدة لتيسير الرجوع إلى الأصل.
+      </p>
+      <p>
+        تطابق نصّ موضعين من الجزءين، في المقابلة الأولية، مع ديوان الشريف الرضي، تحقيق يوسف شكري فرحات، دار الجيل — بيروت.
+        هذه قرينة قوية على طبعة المصدر، وليست مقابلةً كاملةً لجميع الأبيات أو توثيقًا نهائيًا لسنة النشر. واسم «فريق
+        مساحة حرة» المدوّن في البيانات يخصّ النسخة الرقمية ولا يدل على ناشر الطبعة المطبوعة.
+      </p>
+      <p>
+        كُتبت واو العطف في هذه النسخة متصلة بما بعدها («وإنّما» لا «و إنّما») كما في الطبعات المحققة، وكان انفصالها أثرًا
+        من النسخة الرقمية. ورُبطت {ar(linkedNotes)} حاشية بأبياتها بعد مقابلتها بأرقام الصفحات في الطبعة الرقمية.
+      </p>
+
+      <h2 id="sources">المصادر</h2>
+      <ol class="sources">
+        <li id="src1">رجال النجاشي، ص ٣٩٨.</li>
+        <li id="src2">الفوائد الرجالية، ج ٣، ص ١٢٩.</li>
+        <li id="src3">فهرس التراث، ص ٤٥٨.</li>
+        <li id="src4">الفوائد الرجالية، ج ٣، ص ١٢٩.</li>
+        <li id="src5">رجال النجاشي، ترجمة الشريف الرضي، ص ٣٩٨.</li>
+        <li id="src6">رجال النجاشي، ص ٣٩٨.</li>
+        <li id="src7">أبو منصور الثعالبي، يتيمة الدهر؛ النصّ منقول بواسطة مرآة الجنان، ج ٣، ص ١٥.</li>
+        <li id="src8">أبو الحسن الباخرزي، دمية القصر؛ النصّ منقول في حاشية الفوائد الرجالية، ج ٣، ص ١٢٩.</li>
+        <li id="src9">أبو العباس النجاشي، رجال النجاشي، ص ٣٩٨.</li>
+      </ol>
+    </article>
+
+    <aside class="facts glass" aria-label="الديوان في أرقام">
+      <dl>
+        <div><dt>القصائد</dt><dd>{ar(poems.length)}</dd></div>
+        <div><dt>الأبيات</dt><dd>{ar(verseTotal)}</dd></div>
+        <div><dt>الأجزاء</dt><dd>{ar(2)}</dd></div>
+        <div><dt>القوافي</dt><dd>{ar(28)}</dd></div>
+      </dl>
+      <a class="btn btn-primary" href="/diwan/">افتح الديوان</a>
+      <a class="btn" href="/explore/stats/">إحصاءات الديوان</a>
+    </aside>
+  </div>
+</Base>
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: 18px;
+    align-items: start;
+  }
+  .bio {
+    padding: 24px clamp(18px, 4vw, 36px);
+  }
+  .bio p {
+    font-family: var(--poem-font);
+    font-size: 19px;
+    line-height: 2;
+    margin: 0 0 12px;
+  }
+  .bio .lead {
+    font-size: 22px;
+  }
+  .bio .muted {
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .bio h2 {
+    font-size: 30px;
+    margin: 26px 0 8px;
+    scroll-margin-top: 90px;
+  }
+  sup a {
+    font-family: var(--ui-font);
+    font-size: 12px;
+    text-decoration: none;
+    padding: 0 2px;
+  }
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 14px 0 4px;
+  }
+  .toc a {
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 10px;
+    background: var(--chip-bg);
+    text-decoration: none;
+  }
+  blockquote {
+    margin: 10px 0;
+    padding: 6px 18px;
+    border-inline-start: 3px solid var(--accent);
+    font-family: var(--poem-font);
+    font-size: 21px;
+    line-height: 1.9;
+  }
+  .people {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .people summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--paper);
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    list-style: none;
+  }
+  .people summary::-webkit-details-marker {
+    display: none;
+  }
+  .people summary > span:first-child {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.5;
+  }
+  .people b {
+    font-size: 16px;
+  }
+  .people small {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .people .num {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .person-poems {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 14px 4px;
+    margin: 0;
+  }
+  .person-poems a {
+    font-family: var(--display-font);
+    font-size: 18px;
+    padding: 2px 10px;
+    border-radius: 8px;
+    background: var(--chip-bg);
+    text-decoration: none;
+  }
+  .sources {
+    font-size: 14px;
+    color: var(--muted);
+    padding-inline-start: 1.6em;
+    margin: 0;
+  }
+  .sources li {
+    scroll-margin-top: 90px;
+  }
+  .sources li:target {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  .facts {
+    position: sticky;
+    top: 80px;
+    padding: 18px;
+    display: grid;
+    gap: 10px;
+  }
+  .facts dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .facts dt {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .facts dd {
+    margin: 0;
+    font-family: var(--display-font);
+    font-size: 30px;
+  }
+  .facts .btn {
+    justify-content: center;
+  }
+  @media (max-width: 900px) {
+    .layout {
+      grid-template-columns: 1fr;
+    }
+    .facts {
+      position: static;
+    }
+    .facts dl {
+      grid-template-columns: repeat(4, 1fr);
+      text-align: center;
+    }
+    .facts dd {
+      font-size: 26px;
+    }
+  }
+</style>
