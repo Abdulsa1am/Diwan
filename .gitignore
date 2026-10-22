@@ -1,13 +1,5 @@
-# Old site: reference only, large, and holds the owner's personal email (report-config.js)
 _original/
 *.zip
-
-# Build output and dependencies
 node_modules/
 dist/
 .astro/
-
-# OS / editor
-.DS_Store
-Thumbs.db
-.vscode/
