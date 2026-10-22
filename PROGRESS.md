@@ -4,14 +4,14 @@ Where the rebuild stands. Short and current: what's done, what's next, what's op
 Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 
 ## Now
-- M3: search.
+- M4: indexes.
 
 ## Plan (working through it without stopping; commit + update this file after each milestone)
 UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 
 - [x] **M1 Poem page reading.** Notes under their verses (verified links), cleaned intros, slim reading bar with progress, verse menu (copy verse, copy link), copy poem, save poem, reading settings (font size, side-by-side or stacked). Poem visible on the first phone screen.
 - [x] **M2 Saved and home.** `/saved` (محفوظاتي), "continue reading", verse of the day, home entry points.
-- [ ] **M3 Search.** `/search` with Arabic-aware matching (diacritics, alef/ya forms, joined waw), filters, highlighted results linking to the verse. Filters on `/diwan/`.
+- [x] **M3 Search.** `/search` with Arabic-aware matching (diacritics, alef/ya forms, joined waw), filters, highlighted results linking to the verse. Filters on `/diwan/`.
 - [ ] **M4 Indexes.** `/explore` hub, meters, rhymes (qafiya), first lines (matali), themes (أغراض الشعر), people (entities).
 - [ ] **M5 About.** `/about` (the poet and the edition), from the old site's text and the people catalog.
 - [ ] **M6 Lexicon.** `/explore/lexicon` from the glossary (344 entries).
@@ -26,6 +26,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - Intros: 121 poems are cleaned using the friend's reviewed boundaries (M1). Other intros may still hold stray glosses. Part of the text review.
 
 ## Done
+- 2026-10-22: **M3** `/search`: Arabic-aware matching (diacritics, hamza forms, ta marbuta, finds words inside joined waw), any-words or exact phrase, fields (verses, titles, notes, intros), meter/rhyme/volume filters, highlighted results linking to the verse, shareable URL. Index loads only on the search page (543KB gzipped for verses, 171KB for notes). `/diwan/` filter bar (title/opening, meter, rhyme, volume) kept in the URL. Home search box. `npm test` for the matching rules.
 - 2026-10-22: **M2** `/saved` (محفوظاتي, kept on the device, with an empty state), home: continue-reading card, verse of the day (60 openings, changes daily), entry points to built sections only.
 - 2026-10-22: **M1** Poem page: 1,764 verified notes under their verses (all 6,324 notes accounted for), cleaned intros for 121 poems, verse menu (copy, cite, link, share), save, copy/share poem, reading settings (size, layout), reading bar with progress, bars hide while reading on phones. First verse now on the first phone screen (457px; old site 933px). Added `npm run verify` (verse integrity, broken links, page basics, privacy) and `npm run check`.
 - 2026-10-22: Old site reviewed; chose Astro, kept the URL structure, decisions recorded in `AGENTS.md`.

@@ -2,6 +2,8 @@
 import Base from '../layouts/Base.astro';
 import { poems, ar, versesLabel, SITE_NAME } from '../lib/diwan';
 
+const meters = [...new Set(poems.map((p) => p.meter))].sort((a, b) => a.localeCompare(b, 'ar'));
+const rhymes = [...new Set(poems.map((p) => p.rhyme))];
 const title = `الديوان | ${SITE_NAME}`;
 const description = `فهرس قصائد ديوان الشريف الرضي (${ar(poems.length)} قصيدة) مرتبة على القوافي في جزأين.`;
 ---
@@ -12,12 +14,43 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     <p>قصائد الديوان كلها مرتبة على حروف القافية في جزأين.</p>
   </header>
 
-  <p class="count">في الديوان {ar(poems.length)} قصيدة</p>
+  <form class="filter-bar glass" id="filters" role="search" aria-label="تصفية القصائد">
+    <label class="title-filter">
+      <svg class="ui-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+      <span class="visually-hidden">عنوان القصيدة أو مطلعها</span>
+      <input name="t" type="search" placeholder="عنوان أو مطلع…" autocomplete="off" />
+    </label>
+    <select name="meter" aria-label="البحر">
+      <option value="">البحور كلها</option>
+      {meters.map((m) => <option value={m}>{m}</option>)}
+    </select>
+    <select name="rhyme" aria-label="القافية">
+      <option value="">القوافي كلها</option>
+      {rhymes.map((r) => <option value={r}>{r}</option>)}
+    </select>
+    <select name="vol" aria-label="الجزء">
+      <option value="">الجزآن</option>
+      <option value="1">الجزء الأول</option>
+      <option value="2">الجزء الثاني</option>
+    </select>
+  </form>
+
+  <p class="count" id="count" aria-live="polite">في الديوان {ar(poems.length)} قصيدة</p>
+  <p class="no-match glass" id="noMatch" hidden>
+    لا قصائد بهذه القيود. <button type="button" class="link-btn" id="clearFilters">أزل القيود</button> أو
+    <a href="/search/">ابحث في الأبيات</a>.
+  </p>
 
   <div class="cards">
     {
       poems.map((p) => (
-        <a class="poem-card glass" href={`/poem/${p.id}/`}>
+        <a
+          class="poem-card glass"
+          href={`/poem/${p.id}/`}
+          data-meter={p.meter}
+          data-rhyme={p.rhyme}
+          data-vol={p.volume}
+        >
           <h2>{p.title}</h2>
           <div class="meta">
             <span class="chip">{p.meter}</span>
@@ -35,7 +68,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
           <div class="card-foot">
             <span>{versesLabel(p.verses.length)}</span>
             <span>
-              ج {ar(p.volume)} · ص {ar(p.startPage)}
+              ج {ar(p.volume)}، ص {ar(p.startPage)}
             </span>
           </div>
         </a>
@@ -44,7 +77,131 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   </div>
 </Base>
 
+<script>
+  import { fold } from '../scripts/arabic-search';
+  import { arCount } from '../scripts/shared';
+
+  const form = document.getElementById('filters') as HTMLFormElement;
+  const cards = [...document.querySelectorAll<HTMLAnchorElement>('.poem-card')];
+  const count = document.getElementById('count')!;
+  const noMatch = document.getElementById('noMatch')!;
+  const folded = new Map<HTMLElement, string>();
+  const textOf = (card: HTMLElement) => {
+    if (!folded.has(card)) folded.set(card, fold(card.querySelector('h2')!.textContent! + ' ' + card.querySelector('.preview-verse')!.textContent!).text);
+    return folded.get(card)!;
+  };
+
+  function apply() {
+    const fd = new FormData(form);
+    const t = fold(String(fd.get('t') ?? '')).text;
+    const meter = String(fd.get('meter') ?? '');
+    const rhyme = String(fd.get('rhyme') ?? '');
+    const vol = String(fd.get('vol') ?? '');
+    let shown = 0;
+    for (const card of cards) {
+      const ok =
+        (!meter || card.dataset.meter === meter) &&
+        (!rhyme || card.dataset.rhyme === rhyme) &&
+        (!vol || card.dataset.vol === vol) &&
+        (!t || textOf(card).includes(t));
+      card.hidden = !ok;
+      if (ok) shown++;
+    }
+    const filtered = t || meter || rhyme || vol;
+    count.textContent = filtered
+      ? `${arCount(shown, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة'])} من ${cards.length.toLocaleString('ar-EG')}`
+      : `في الديوان ${cards.length.toLocaleString('ar-EG')} قصيدة`;
+    noMatch.hidden = shown > 0;
+    const params = new URLSearchParams();
+    for (const [k, v] of fd) if (v) params.set(k, String(v));
+    history.replaceState(null, '', params.size ? `?${params}` : location.pathname);
+  }
+
+  form.addEventListener('input', apply);
+  form.addEventListener('submit', (e) => e.preventDefault());
+  document.getElementById('clearFilters')!.addEventListener('click', () => {
+    form.reset();
+    apply();
+  });
+
+  // Restore filters from the URL (e.g. links from the indexes).
+  const params = new URLSearchParams(location.search);
+  if (params.size) {
+    for (const [k, v] of params) {
+      const el = form.elements.namedItem(k);
+      if (el instanceof HTMLInputElement || el instanceof HTMLSelectElement) el.value = v;
+    }
+    apply();
+  }
+</script>
+
 <style>
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px;
+    margin-top: 16px;
+  }
+  .title-filter {
+    flex: 1 1 220px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--paper-strong);
+    border: 1px solid var(--line-dark);
+    border-radius: 12px;
+    padding: 0 12px;
+    min-height: 42px;
+  }
+  .title-filter:focus-within {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .title-filter .ui-icon {
+    color: var(--muted);
+    width: 18px;
+    height: 18px;
+  }
+  .title-filter input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    background: none;
+    font: 400 15px/1.6 var(--ui-font);
+    color: var(--ink);
+  }
+  .title-filter input:focus {
+    outline: none;
+  }
+  .filter-bar select {
+    flex: 1 1 120px;
+    font: 400 14px/1.6 var(--ui-font);
+    color: var(--ink);
+    background: var(--paper-strong);
+    border: 1px solid var(--line-dark);
+    border-radius: 12px;
+    padding: 6px 10px;
+    min-height: 42px;
+  }
+  .no-match {
+    padding: 16px 20px;
+    text-align: center;
+  }
+  .no-match[hidden],
+  .poem-card[hidden] {
+    display: none;
+  }
+  .link-btn {
+    border: 0;
+    background: none;
+    color: var(--accent);
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0;
+  }
   .page-head {
     padding: 8px 0 4px;
   }

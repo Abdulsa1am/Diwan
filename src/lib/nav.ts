@@ -24,7 +24,7 @@ export const sections: Record<SectionKey, NavItem> = {
   indexes: { key: 'indexes', label: 'الفهارس', icon: 'i-orbit' },
   themes: { key: 'themes', label: 'أغراض الشعر', icon: 'i-network' },
   saved: { key: 'saved', label: 'محفوظاتي', icon: 'i-bookmark', href: '/saved/' },
-  search: { key: 'search', label: 'ابحث', icon: 'i-search' },
+  search: { key: 'search', label: 'ابحث', icon: 'i-search', href: '/search/' },
   lexicon: { key: 'lexicon', label: 'معجم الألفاظ', icon: 'i-search' },
   atlas: { key: 'atlas', label: 'أطلس المواضع', icon: 'i-map' },
   about: { key: 'about', label: 'عن الشريف الرضي', icon: 'i-user' },

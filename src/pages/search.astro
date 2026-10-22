@@ -1,0 +1,456 @@
+---
+import Base from '../layouts/Base.astro';
+import { poems, ar, SITE_NAME } from '../lib/diwan';
+
+const meters = [...new Set(poems.map((p) => p.meter))].sort((a, b) => a.localeCompare(b, 'ar'));
+const rhymes = [...new Set(poems.map((p) => p.rhyme))];
+---
+
+<Base
+  title={`البحث في الديوان | ${SITE_NAME}`}
+  description="ابحث في أبيات ديوان الشريف الرضي وعناوين قصائده وحواشيه، بلفظة أو شطر، مع تقييد البحر والقافية."
+  section="search"
+>
+  <header class="page-head">
+    <h1>البحث في الديوان</h1>
+    <p>ابحث بلفظة أو شطر من بيت. لا يضر اختلاف التشكيل أو صور الهمزة.</p>
+  </header>
+
+  <form class="search-box glass" id="searchForm" role="search" action="/search/" method="get">
+    <div class="query-row">
+      <svg class="ui-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+      <label class="visually-hidden" for="q">لفظة أو شطر من بيت</label>
+      <input id="q" name="q" type="search" placeholder="أدخل لفظًا، أو شطرًا من بيت…" autocomplete="off" enterkeyhint="search" />
+      <button class="btn btn-primary" type="submit">ابحث</button>
+    </div>
+    <div class="filters">
+      <div class="segmented" role="radiogroup" aria-label="طريقة المطابقة">
+        <label><input type="radio" name="mode" value="any" checked /> <span>كل الألفاظ</span></label>
+        <label><input type="radio" name="mode" value="exact" /> <span>العبارة كما هي</span></label>
+      </div>
+      <label class="field">
+        <span>مجال البحث</span>
+        <select name="in">
+          <option value="verses">الأبيات</option>
+          <option value="titles">عناوين القصائد</option>
+          <option value="notes">الحواشي والشروح</option>
+          <option value="intros">أخبار القصائد</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>البحر</span>
+        <select name="meter">
+          <option value="">البحور كلها</option>
+          {meters.map((m) => <option value={m}>{m}</option>)}
+        </select>
+      </label>
+      <label class="field">
+        <span>القافية</span>
+        <select name="rhyme">
+          <option value="">القوافي كلها</option>
+          {rhymes.map((r) => <option value={r}>{r}</option>)}
+        </select>
+      </label>
+      <label class="field">
+        <span>الجزء</span>
+        <select name="vol">
+          <option value="">الجزآن</option>
+          <option value="1">الأول</option>
+          <option value="2">الثاني</option>
+        </select>
+      </label>
+    </div>
+  </form>
+
+  <div class="status" id="searchStatus" role="status" aria-live="polite">
+    اكتب لفظة للبحث في {ar(poems.length)} قصيدة.
+  </div>
+  <ol class="results" id="results"></ol>
+  <button class="btn more" id="more" type="button" hidden>عرض المزيد</button>
+
+  <section class="tips glass" id="tips">
+    <h2>أمثلة</h2>
+    <ul>
+      <li><a href="/search/?q=الزمان">الزمان</a></li>
+      <li><a href="/search/?q=الشيب">الشيب</a></li>
+      <li><a href="/search/?q=بغداد">بغداد</a></li>
+      <li><a href="/search/?q=الحسين">الحسين</a></li>
+      <li><a href="/search/?q=ليهنك+اليوم&mode=exact">ليهنك اليوم</a></li>
+    </ul>
+  </section>
+
+  <noscript><p class="status">البحث يحتاج إلى تفعيل JavaScript. يمكنك تصفح <a href="/diwan/">فهرس القصائد</a>.</p></noscript>
+</Base>
+
+<script>
+  import { fold, queryTerms, findAll, highlight } from '../scripts/arabic-search';
+  import { arCount } from '../scripts/shared';
+  import type { Folded } from '../scripts/arabic-search';
+
+  type PoemRow = [id: string, title: string, meter: string, rhyme: string, volume: number];
+  type Entry = [poem: number, n: number, text: string];
+  interface Indexed {
+    entry: Entry;
+    folded?: Folded;
+  }
+
+  const form = document.getElementById('searchForm') as HTMLFormElement;
+  const input = document.getElementById('q') as HTMLInputElement;
+  const statusEl = document.getElementById('searchStatus')!;
+  const results = document.getElementById('results')!;
+  const more = document.getElementById('more') as HTMLButtonElement;
+  const tips = document.getElementById('tips')!;
+  const digits = new Intl.NumberFormat('ar-EG');
+  const PAGE = 40;
+
+  let poems: PoemRow[] = [];
+  const fields: Record<string, Indexed[]> = {};
+  let mainLoad: Promise<void> | null = null;
+  let notesLoad: Promise<void> | null = null;
+
+  function loadMain() {
+    mainLoad ??= fetch('/search-index.json')
+      .then((r) => r.json())
+      .then((data: { poems: PoemRow[]; verses: Entry[] }) => {
+        poems = data.poems;
+        fields.verses = data.verses.map((entry) => ({ entry }));
+        fields.titles = data.poems.map((p, i) => ({ entry: [i, 0, p[1]] as Entry }));
+      });
+    return mainLoad;
+  }
+  function loadNotes() {
+    notesLoad ??= fetch('/search-notes.json')
+      .then((r) => r.json())
+      .then((data: { notes: Entry[]; intros: Entry[] }) => {
+        fields.notes = data.notes.map((entry) => ({ entry }));
+        fields.intros = data.intros.map((entry) => ({ entry }));
+      });
+    return notesLoad;
+  }
+
+  // Start downloading as soon as the visitor shows intent.
+  input.addEventListener('focus', () => loadMain(), { once: true });
+
+  let matches: { item: Indexed; ranges: [number, number][] }[] = [];
+  let shown = 0;
+
+  function read() {
+    const fd = new FormData(form);
+    return {
+      q: String(fd.get('q') ?? '').trim(),
+      mode: String(fd.get('mode') ?? 'any'),
+      field: String(fd.get('in') ?? 'verses'),
+      meter: String(fd.get('meter') ?? ''),
+      rhyme: String(fd.get('rhyme') ?? ''),
+      vol: String(fd.get('vol') ?? ''),
+    };
+  }
+
+  function writeUrl(s: ReturnType<typeof read>) {
+    const params = new URLSearchParams();
+    if (s.q) params.set('q', s.q);
+    if (s.mode !== 'any') params.set('mode', s.mode);
+    if (s.field !== 'verses') params.set('in', s.field);
+    if (s.meter) params.set('meter', s.meter);
+    if (s.rhyme) params.set('rhyme', s.rhyme);
+    if (s.vol) params.set('vol', s.vol);
+    const qs = params.toString();
+    history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
+  }
+
+  let runId = 0;
+  async function run() {
+    const s = read();
+    writeUrl(s);
+    const terms = queryTerms(s.q, s.mode === 'exact');
+    if (!terms.length) {
+      results.replaceChildren();
+      more.hidden = true;
+      tips.hidden = false;
+      statusEl.textContent = 'اكتب لفظة للبحث في الديوان.';
+      return;
+    }
+    tips.hidden = true;
+    const id = ++runId;
+    statusEl.textContent = 'جارٍ البحث…';
+    await loadMain();
+    if (s.field === 'notes' || s.field === 'intros') await loadNotes();
+    if (id !== runId) return;
+
+    matches = [];
+    for (const item of fields[s.field] ?? []) {
+      const p = poems[item.entry[0]];
+      if (s.meter && p[2] !== s.meter) continue;
+      if (s.rhyme && p[3] !== s.rhyme) continue;
+      if (s.vol && String(p[4]) !== s.vol) continue;
+      item.folded ??= fold(item.entry[2]);
+      const ranges = findAll(item.folded, terms);
+      if (ranges) matches.push({ item, ranges });
+    }
+    results.replaceChildren();
+    shown = 0;
+    renderMore();
+    const poemsHit = new Set(matches.map((m) => m.item.entry[0])).size;
+    statusEl.textContent = matches.length
+      ? `${arCount(matches.length, ['نتيجة واحدة', 'نتيجتان', 'نتائج', 'نتيجة'])} في ${arCount(poemsHit, ['قصيدة واحدة', 'قصيدتين', 'قصائد', 'قصيدة'])}`
+      : 'لا نتائج. جرّب لفظة أقصر، أو «كل الألفاظ»، أو أزل قيود البحر والقافية.';
+  }
+
+  function renderMore() {
+    const field = read().field;
+    const frag = document.createDocumentFragment();
+    for (const { item, ranges } of matches.slice(shown, shown + PAGE)) {
+      const [pi, n, text] = item.entry;
+      const p = poems[pi];
+      const li = document.createElement('li');
+      li.className = 'result glass';
+      const a = document.createElement('a');
+      a.href = `/poem/${p[0]}/${n ? `#v${n}` : ''}`;
+      const body = document.createElement('div');
+      body.className = field === 'verses' ? 'result-verse' : field === 'titles' ? 'result-title' : 'result-note';
+      if (field === 'verses') {
+        // Highlight each half separately so the two halves can be laid out on their own lines.
+        const split = text.indexOf(' # ');
+        const halves = split < 0 ? [text] : [text.slice(0, split), text.slice(split + 3)];
+        let offset = 0;
+        body.innerHTML = halves
+          .map((half) => {
+            const local = ranges
+              .map(([s, e]) => [s - offset, e - offset] as [number, number])
+              .filter(([s, e]) => e > 0 && s < half.length)
+              .map(([s, e]) => [Math.max(0, s), Math.min(half.length, e)] as [number, number]);
+            offset += half.length + 3;
+            return `<span>${highlight(half, local)}</span>`;
+          })
+          .join('');
+      } else {
+        body.innerHTML = highlight(text, ranges);
+      }
+      const meta = document.createElement('div');
+      meta.className = 'result-meta';
+      meta.textContent = `${p[1]}، ${p[2]}${n ? `، البيت ${digits.format(n)}` : ''}`;
+      a.append(body, meta);
+      li.append(a);
+      frag.append(li);
+    }
+    results.append(frag);
+    shown = Math.min(matches.length, shown + PAGE);
+    more.hidden = shown >= matches.length;
+    if (!more.hidden) more.textContent = `عرض المزيد (${digits.format(matches.length - shown)} متبقية)`;
+  }
+
+  let typingTimer: number | undefined;
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    input.blur();
+    run();
+  });
+  input.addEventListener('input', () => {
+    window.clearTimeout(typingTimer);
+    typingTimer = window.setTimeout(run, 250);
+  });
+  form.addEventListener('change', (e) => {
+    if ((e.target as HTMLElement) !== input) run();
+  });
+  more.addEventListener('click', renderMore);
+
+  // Restore a search from the URL (shared links, back button).
+  const params = new URLSearchParams(location.search);
+  if (params.size) {
+    input.value = params.get('q') ?? '';
+    for (const name of ['mode', 'in', 'meter', 'rhyme', 'vol']) {
+      const value = params.get(name);
+      if (!value) continue;
+      const el = form.elements.namedItem(name);
+      if (el instanceof RadioNodeList) el.value = value;
+      else if (el instanceof HTMLSelectElement) el.value = value;
+    }
+    run();
+  }
+</script>
+
+<style>
+  .page-head h1 {
+    font-size: clamp(36px, 6vw, 48px);
+    color: var(--accent-deep);
+    margin: 0;
+  }
+  :global([data-theme='dark']) .page-head h1 {
+    color: var(--ink);
+  }
+  .page-head p {
+    color: var(--muted);
+    margin: 0 0 18px;
+    font-size: 14px;
+  }
+  .search-box {
+    padding: 14px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .query-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--paper-strong);
+    border: 1px solid var(--line-dark);
+    border-radius: 16px;
+    padding: 6px 6px 6px 8px;
+    padding-inline-start: 14px;
+  }
+  .query-row .ui-icon {
+    color: var(--muted);
+  }
+  .query-row input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    background: none;
+    font: 400 20px/1.6 var(--poem-font);
+    color: var(--ink);
+    padding: 6px 0;
+  }
+  .query-row input:focus {
+    outline: none;
+  }
+  .query-row:focus-within {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 10px;
+  }
+  .segmented {
+    display: flex;
+    background: var(--chip-bg);
+    border-radius: 12px;
+    padding: 3px;
+  }
+  .segmented label {
+    position: relative;
+  }
+  .segmented input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+  }
+  .segmented span {
+    display: block;
+    padding: 7px 12px;
+    border-radius: 9px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .segmented input:checked + span {
+    background: var(--paper-strong);
+    color: var(--ink);
+    box-shadow: var(--glass-shadow-soft);
+  }
+  .segmented input:focus-visible + span {
+    outline: 2px solid var(--accent);
+  }
+  .field {
+    display: grid;
+    gap: 2px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .field select {
+    font: 400 14px/1.6 var(--ui-font);
+    color: var(--ink);
+    background: var(--paper-strong);
+    border: 1px solid var(--line-dark);
+    border-radius: 10px;
+    padding: 6px 10px;
+    min-height: 40px;
+  }
+  .status {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 6px 4px 12px;
+  }
+  .results {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .results :global(.result a) {
+    display: block;
+    padding: 14px 18px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .results :global(.result:hover) {
+    background: var(--paper-strong);
+  }
+  .results :global(.result-verse) {
+    font-family: var(--poem-font);
+    font-size: 22px;
+    line-height: 1.9;
+    text-align: center;
+    display: grid;
+  }
+  .results :global(.result-title) {
+    font-family: var(--display-font);
+    font-size: 26px;
+  }
+  .results :global(.result-note) {
+    font-family: var(--poem-font);
+    font-size: 18px;
+    line-height: 1.9;
+  }
+  .results :global(mark) {
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    color: inherit;
+    border-radius: 4px;
+    padding: 0 2px;
+  }
+  .results :global(.result-meta) {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .more {
+    display: flex;
+    margin: 14px auto 0;
+  }
+  .more[hidden] {
+    display: none;
+  }
+  .tips {
+    padding: 16px 20px;
+  }
+  .tips[hidden] {
+    display: none;
+  }
+  .tips h2 {
+    font-size: 22px;
+    margin: 0 0 6px;
+  }
+  .tips ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+  }
+  .tips a {
+    display: inline-block;
+    font-family: var(--poem-font);
+    font-size: 18px;
+    padding: 4px 14px;
+    border-radius: 10px;
+    background: var(--chip-bg);
+    text-decoration: none;
+  }
+</style>

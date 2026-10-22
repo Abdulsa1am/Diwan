@@ -72,3 +72,15 @@ export interface PoemRef {
 export const SAVED_KEY = 'radi-saved';
 export const LAST_KEY = 'radi-last';
 export const READING_KEY = 'radi-reading';
+
+const arDigits = new Intl.NumberFormat('ar-EG');
+/**
+ * Arabic count with the right noun form.
+ * forms: [one, two, 3–10, 11+], e.g. ['نتيجة واحدة', 'نتيجتان', 'نتائج', 'نتيجة'].
+ */
+export function arCount(n: number, [one, two, few, many]: [string, string, string, string]) {
+  if (n === 1) return one;
+  if (n === 2) return two;
+  const tail = n % 100;
+  return `${arDigits.format(n)} ${tail >= 3 && tail <= 10 ? few : many}`;
+}
