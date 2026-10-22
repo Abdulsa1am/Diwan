@@ -1,0 +1,118 @@
+---
+import Base from '../layouts/Base.astro';
+import { poems, ar, versesLabel, SITE_NAME } from '../lib/diwan';
+
+const title = `الديوان | ${SITE_NAME}`;
+const description = `فهرس قصائد ديوان الشريف الرضي (${ar(poems.length)} قصيدة) مرتبة على القوافي في جزأين.`;
+---
+
+<Base title={title} description={description} section="library">
+  <header class="page-head">
+    <h1>الديوان</h1>
+    <p>قصائد الديوان كلها مرتبة على حروف القافية في جزأين.</p>
+  </header>
+
+  <p class="count">في الديوان {ar(poems.length)} قصيدة</p>
+
+  <div class="cards">
+    {
+      poems.map((p) => (
+        <a class="poem-card glass" href={`/poem/${p.id}/`}>
+          <h2>{p.title}</h2>
+          <div class="meta">
+            <span class="chip">{p.meter}</span>
+            <span class="chip">{p.qafiya}</span>
+          </div>
+          <div class="preview-verse">
+            {p.verses[0].sadr}
+            {p.verses[0].ajuz && (
+              <>
+                <br />
+                <span>{p.verses[0].ajuz}</span>
+              </>
+            )}
+          </div>
+          <div class="card-foot">
+            <span>{versesLabel(p.verses.length)}</span>
+            <span>
+              ج {ar(p.volume)} · ص {ar(p.startPage)}
+            </span>
+          </div>
+        </a>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .page-head {
+    padding: 8px 0 4px;
+  }
+  .page-head h1 {
+    font-size: clamp(36px, 6vw, 48px);
+    color: var(--accent-deep);
+    margin: 0;
+  }
+  :global([data-theme='dark']) .page-head h1 {
+    color: var(--ink);
+  }
+  .page-head p {
+    color: var(--muted);
+    margin: 0;
+    font-size: 14px;
+  }
+  .count {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 24px 0 14px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 16px;
+  }
+  .poem-card {
+    display: flex;
+    flex-direction: column;
+    padding: 21px;
+    color: var(--ink);
+    text-decoration: none;
+    /* Render off-screen cards lazily: the list has 685 of them. */
+    content-visibility: auto;
+    contain-intrinsic-size: auto 260px;
+  }
+  .poem-card:hover {
+    background: var(--paper-strong);
+  }
+  .poem-card h2 {
+    font-size: 26px;
+    margin: 0 0 6px;
+    line-height: 1.5;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .meta .chip {
+    border: 1px solid var(--line-dark);
+  }
+  .preview-verse {
+    font-family: var(--poem-font);
+    font-size: 21px;
+    line-height: 1.9;
+    margin: 18px 0 14px;
+    flex: 1;
+  }
+  .preview-verse span {
+    color: var(--muted);
+  }
+  .card-foot {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--line-dark);
+    padding-top: 10px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+</style>

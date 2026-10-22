@@ -1,0 +1,17 @@
+{
+  "name": "diwan-alradi",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "data": "node tools/extract-legacy-data.mjs && node tools/fix-detached-waw.mjs"
+  },
+  "dependencies": {
+    "@fontsource/amiri": "^5.3.0",
+    "@fontsource/katibeh": "^5.3.0",
+    "@fontsource/tajawal": "^5.3.0",
+    "astro": "^7.4.2"
+  }
+}

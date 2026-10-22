@@ -18,8 +18,15 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 
 ## Decisions
 - **Stack**: Astro, building static pages. JavaScript only where a page needs interaction.
-- **URLs stay as they are**: `/poem/r1-227/` (r1 = volume 1, poem 227). Never rename a poem URL.
-  Planned additions: `/poem/<id>/#<verse>` for one verse, `/meters/<slug>/`, `/rhymes/<slug>/`, `/themes/<slug>/`, `/about/`, `/tools/<name>/`.
+- **Keep the old site's identity** (owner's decision). Don't redesign; rebuild the old look, lighter. Reference: the live old site (`diwan-alradi.pages.dev`) and `_original/assets/styles/`.
+  - Colours: the "glass" layer (v24.2) — light `#eaf0f7` background, ink `#1c3043`, accent `#486c88`; dark navy `#111d2b`. All tokens are in `src/styles/global.css`.
+  - Fonts (self-hosted via @fontsource, Arabic subset only): Katibeh for headings and the sidebar brand, Tajawal (400/500/700) for the interface and the top-bar logo, Amiri 400 for the poetry. Don't add font families.
+  - Shell: sidebar on screens over 1000px, top bar with action buttons, bottom nav on smaller screens. Nav items for sections not built yet are shown dimmed and not linked.
+- **URLs stay as the old site had them** (owner's decision). Never rename one. From the old `cleanPathForRoute`:
+  - Poem: `/poem/r1-227/` (r1 = volume 1, poem 227). One verse: `/poem/r1-227/verse/3` (send to the poem page at anchor `#v3`).
+  - `/diwan` (poem list), `/search`, `/about`, `/saved`, `/explore` (indexes).
+  - Tools under `/explore/…`: `atlas`, `rhymes`, `relations`, `openings`, `matali`, `themes`, `words`, `hijaz`, `stats`, `lexicon`, `phrases`, `qafiya`, `meters`, `entities`; and `/research/compare`, `/research/observatory`.
+  - Profiles: `/word/<term>`, `/place/<name>`, `/relation/<term>`.
 - **Keep all the old site's tools** (atlas, rhyme wheel, phrase tree, compare, etc.). Each one gets its own page and loads its code and data only when someone opens it.
 - **SEO**: every verse is visible text in the page HTML (not in `<noscript>`, not built by JS). One `<h1>` per page. Unknown URLs return a real 404.
 - **Detached waw joined** (approved by the owner): the source EPUB writes the conjunction apart (`و إنّما`). The edition joins it (`وإنّما`), as the reference editions do.
@@ -35,7 +42,10 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 - Punctuation glued to the next word: `للّه!أيّ` (94 verses).
 
 ## Commands
-<!-- TBD once the Astro project exists: install / dev / build / test -->
+- Install: `npm install`
+- Dev server: `npm run dev`
+- Build: `npm run build` (output in `dist/`), then preview with `npm run preview`
+- Rebuild the data from the old site: `npm run data`
 
 ## Project structure
 - `_original/` — the friend's old site (v24.8.23), unzipped and cleaned. Reference only; don't edit it.

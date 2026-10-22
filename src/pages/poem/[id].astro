@@ -1,0 +1,348 @@
+---
+import Base from '../../layouts/Base.astro';
+import { poems, ar, versesLabel, verseText, POET, SITE_NAME } from '../../lib/diwan';
+import type { Poem } from '../../lib/diwan';
+
+export function getStaticPaths() {
+  return poems.map((poem, i) => ({
+    params: { id: poem.id },
+    props: { poem, prev: poems[i - 1], next: poems[i + 1] },
+  }));
+}
+
+interface Props {
+  poem: Poem;
+  prev?: Poem;
+  next?: Poem;
+}
+
+const { poem, prev, next } = Astro.props;
+const count = poem.verses.length;
+const opening = poem.verses[0];
+
+const title = `${poem.title} | ${SITE_NAME}`;
+const description = `قصيدة للشريف الرضي من بحر ${poem.meter}، قافية ${poem.rhyme}، ${versesLabel(count)}. مطلعها: ${verseText(opening)}`;
+const url = new URL(Astro.url.pathname, Astro.site).href;
+const home = new URL('/', Astro.site).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'CreativeWork',
+      '@id': url,
+      url,
+      name: poem.title,
+      genre: 'شعر',
+      inLanguage: 'ar',
+      author: { '@type': 'Person', name: POET, sameAs: 'https://ar.wikipedia.org/wiki/الشريف_الرضي' },
+      isPartOf: { '@type': 'Book', name: SITE_NAME, url: home },
+      abstract: verseText(opening),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: SITE_NAME, item: home },
+        { '@type': 'ListItem', position: 2, name: 'الديوان', item: new URL('/diwan/', Astro.site).href },
+        { '@type': 'ListItem', position: 3, name: poem.title, item: url },
+      ],
+    },
+  ],
+};
+---
+
+<Base title={title} description={description} jsonLd={jsonLd} type="article" section="poem">
+  <article class="reader">
+    <a class="back" href="/diwan/">
+      <svg class="ui-icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+      العودة إلى الديوان
+    </a>
+
+    <header class="reader-head">
+      <div class="reader-kicker">{poem.meter} · روي {poem.rhyme} · {versesLabel(count)}</div>
+      <h1>{poem.title}</h1>
+      <div class="meta">
+        <span class="chip">الجزء {ar(poem.volume)}</span>
+        <span class="chip">ص {ar(poem.startPage)}{poem.endPage !== poem.startPage && `–${ar(poem.endPage)}`}</span>
+      </div>
+    </header>
+
+    {
+      poem.intro && (
+        <details class="intro glass">
+          <summary>خبر القصيدة</summary>
+          <p>{poem.intro}</p>
+        </details>
+      )
+    }
+
+    {
+      poem.quotation && (
+        <figure class="quotation glass">
+          <blockquote>
+            {poem.quotation.lines.map((line) => (
+              <p>{line}</p>
+            ))}
+          </blockquote>
+          <figcaption>القائل: {poem.quotation.attribution}. وليس هذا من شعر الرضي.</figcaption>
+        </figure>
+      )
+    }
+
+    <ol class="poem-sheet">
+      {
+        poem.verses.map((v) => (
+          <li class:list={['verse', { single: !v.ajuz }]} id={`v${v.n}`}>
+            <a class="verse-no" href={`#v${v.n}`} aria-label={`البيت ${ar(v.n)}`}>
+              {ar(v.n)}
+            </a>
+            <div class="verse-body">
+              <span class="hemistich sadr">{v.sadr}</span>
+              {v.ajuz && <span class="hemistich ajuz">{v.ajuz}</span>}
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    {
+      poem.notes.length > 0 && (
+        <section class="notes glass" aria-labelledby="notes-title">
+          <h2 id="notes-title">الحواشي</h2>
+          <ul>
+            {poem.notes.map((note) => (
+              <li>{note}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <nav class="poem-nav" aria-label="التنقل بين القصائد">
+      {
+        prev ? (
+          <a class="glass" href={`/poem/${prev.id}/`} rel="prev">
+            <svg class="ui-icon" aria-hidden="true"><use href="#i-chevron-right" /></svg>
+            <span>
+              <small>القصيدة السابقة</small>
+              {prev.title}
+            </span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        next && (
+          <a class="glass next" href={`/poem/${next.id}/`} rel="next">
+            <span>
+              <small>القصيدة التالية</small>
+              {next.title}
+            </span>
+            <svg class="ui-icon" aria-hidden="true"><use href="#i-chevron-left" /></svg>
+          </a>
+        )
+      }
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .reader {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .back:hover {
+    color: var(--accent);
+  }
+
+  .reader-head {
+    text-align: center;
+    padding: 28px 0 22px;
+  }
+  .reader-kicker {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  h1 {
+    font-size: clamp(38px, 6vw, 52px);
+    margin: 6px 0 10px;
+  }
+  .meta {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .intro {
+    margin-bottom: 18px;
+    padding: 6px 22px;
+    border-inline-start: 3px solid var(--accent);
+  }
+  .intro summary {
+    cursor: pointer;
+    font-family: var(--display-font);
+    font-size: 24px;
+    color: var(--accent);
+    padding: 10px 0;
+  }
+  .intro p {
+    font-family: var(--poem-font);
+    font-size: 19px;
+    line-height: 2;
+    margin: 0 0 14px;
+  }
+
+  .quotation {
+    margin: 0 0 18px;
+    padding: 18px 22px;
+    text-align: center;
+    color: var(--muted);
+  }
+  .quotation blockquote {
+    margin: 0;
+    font-family: var(--poem-font);
+    font-size: 22px;
+    line-height: 2;
+  }
+  .quotation p {
+    margin: 0;
+  }
+  .quotation figcaption {
+    font-size: 13px;
+    margin-top: 6px;
+  }
+
+  /* The poem sheet: big glass card, Amiri verses, small verse numbers at the start corner. */
+  .poem-sheet {
+    list-style: none;
+    margin: 0 0 18px;
+    padding: 25px clamp(8px, 3vw, 28px);
+    background: var(--paper-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: var(--glass-shadow-soft), var(--glass-inset);
+    -webkit-backdrop-filter: var(--glass-filter);
+    backdrop-filter: var(--glass-filter);
+  }
+  .verse {
+    position: relative;
+    padding: 14px 36px 14px;
+    scroll-margin-top: 110px;
+    border-radius: 14px;
+  }
+  .verse + .verse {
+    border-top: 1px solid var(--line-dark);
+  }
+  .verse:target {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+  .verse-no {
+    position: absolute;
+    top: 8px;
+    inset-inline-start: 4px;
+    min-width: 28px;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .verse-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    text-align: center;
+  }
+  .hemistich {
+    font-family: var(--poem-font);
+    font-size: clamp(22px, 5.6vw, 31px);
+    line-height: 1.95;
+    color: var(--ink);
+    font-feature-settings: 'kern', 'liga', 'calt', 'mark', 'mkmk';
+  }
+
+  /* Wide screens: the two halves side by side ("responsive" layout of the old site). */
+  @media (min-width: 1180px) {
+    .verse-body {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 32px;
+    }
+    .single .verse-body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .hemistich {
+      font-size: 28px;
+    }
+  }
+
+  .notes {
+    padding: 18px 24px;
+    margin-bottom: 18px;
+  }
+  .notes h2 {
+    font-size: 26px;
+    margin: 0 0 8px;
+  }
+  .notes ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--poem-font);
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--muted);
+  }
+  .notes li + li {
+    margin-top: 6px;
+  }
+
+  .poem-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .poem-nav a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--ink);
+    font-family: var(--display-font);
+    font-size: 22px;
+    line-height: 1.4;
+  }
+  .poem-nav a .ui-icon {
+    color: var(--accent);
+  }
+  .poem-nav .next {
+    justify-content: flex-end;
+    text-align: end;
+  }
+  .poem-nav small {
+    display: block;
+    font-family: var(--ui-font);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .poem-nav a:hover {
+    background: var(--paper-strong);
+  }
+
+  @media (max-width: 620px) {
+    .verse {
+      padding-inline: 26px 6px;
+    }
+    .poem-nav a {
+      font-size: 18px;
+    }
+  }
+</style>

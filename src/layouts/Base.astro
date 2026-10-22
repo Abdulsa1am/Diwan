@@ -1,0 +1,196 @@
+---
+import '@fontsource/amiri/arabic-400.css';
+import '@fontsource/katibeh/arabic-400.css';
+import '@fontsource/tajawal/arabic-400.css';
+import '@fontsource/tajawal/arabic-500.css';
+import '@fontsource/tajawal/arabic-700.css';
+import '../styles/global.css';
+import amiriRegular from '@fontsource/amiri/files/amiri-arabic-400-normal.woff2?url';
+import katibeh from '@fontsource/katibeh/files/katibeh-arabic-400-normal.woff2?url';
+import Icons from '../components/Icons.astro';
+import { SITE_NAME, volumeSizes } from '../lib/diwan';
+
+type Section = 'home' | 'library' | 'poem' | 'other';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Structured data (schema.org) for this page. */
+  jsonLd?: object;
+  type?: 'website' | 'article';
+  /** Which nav item to mark as current. */
+  section?: Section;
+}
+
+const { title, description, jsonLd, type = 'website', section = 'other' } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const shareImage = new URL('/share.png', Astro.site);
+
+// Sections of the old site. Ones without `href` are not built yet: shown dimmed, not linked.
+const mainMenu = [
+  { label: 'الرئيسية', icon: 'i-home', href: '/', current: section === 'home' },
+  { label: 'الديوان', icon: 'i-book', href: '/diwan/', current: section === 'library' || section === 'poem' },
+  { label: 'الفهارس', icon: 'i-orbit' },
+  { label: 'أغراض الشعر', icon: 'i-network' },
+  { label: 'محفوظاتي', icon: 'i-bookmark' },
+];
+const toolsMenu = [
+  { label: 'معجم الألفاظ', icon: 'i-search' },
+  { label: 'أطلس المواضع', icon: 'i-map' },
+  { label: 'عن الشريف الرضي', icon: 'i-user' },
+];
+const mobileMenu = [
+  mainMenu[0],
+  mainMenu[1],
+  mainMenu[2],
+  { label: 'ابحث', icon: 'i-search' },
+  mainMenu[4],
+] as { label: string; icon: string; href?: string; current?: boolean }[];
+---
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href={amiriRegular} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={katibeh} as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#eaf0f7" />
+    <meta property="og:type" content={type} />
+    <meta property="og:locale" content="ar_AR" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <script is:inline>
+      // Apply the saved theme before the page paints, so there is no flash.
+      (function () {
+        var t = null;
+        try { t = localStorage.getItem('radi-theme'); } catch (e) {}
+        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t;
+      })();
+    </script>
+  </head>
+  <body>
+    <Icons />
+    <a class="skip" href="#main">انتقل إلى المحتوى</a>
+    <div class="shell">
+      <aside class="sidebar" aria-label="القائمة الرئيسية">
+        <a class="brand" href="/" aria-label="الرَّضي، الرئيسية">
+          <span class="brand-name">الرَّضِي</span>
+          <span>ديوان الشريف الرضي</span>
+          <small>القصائد والفهارس</small>
+        </a>
+        <div class="sidebar-rule" aria-hidden="true">✦</div>
+        <div class="sidebar-label">الأقسام</div>
+        <nav class="menu" aria-label="أقسام الديوان">
+          {
+            mainMenu.map((item) =>
+              item.href ? (
+                <a href={item.href} aria-current={item.current ? 'page' : undefined}>
+                  <svg class="ui-icon" aria-hidden="true"><use href={`#${item.icon}`} /></svg>
+                  {item.label}
+                </a>
+              ) : (
+                <span aria-disabled="true" title="قريبًا">
+                  <svg class="ui-icon" aria-hidden="true"><use href={`#${item.icon}`} /></svg>
+                  {item.label}
+                </span>
+              ),
+            )
+          }
+        </nav>
+        <div class="sidebar-label">فهارس وأدوات</div>
+        <nav class="menu" aria-label="أدوات المعرفة">
+          {
+            toolsMenu.map((item) => (
+              <span aria-disabled="true" title="قريبًا">
+                <svg class="ui-icon" aria-hidden="true"><use href={`#${item.icon}`} /></svg>
+                {item.label}
+              </span>
+            ))
+          }
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="sidebar-verse">«ليهنك اليوم أنّ القلب مرعاك»</div>
+          <span>نصّ الديوان وفهارسه</span>
+        </div>
+      </aside>
+
+      <header class="topbar">
+        <div class="topbar-inner">
+          <a class="top-brand" href="/" aria-label="الرَّضي، الرئيسية">الرَّضِي</a>
+          <div class="breadcrumb"><span class="breadcrumb-dot"></span><span>{SITE_NAME}</span></div>
+          <div class="top-actions">
+            <button
+              class="iconbtn"
+              type="button"
+              id="randomPoem"
+              aria-label="قصيدة عشوائية"
+              title="قصيدة عشوائية"
+              data-volumes={JSON.stringify(volumeSizes)}
+            >
+              <svg class="ui-icon" aria-hidden="true"><use href="#i-shuffle"></use></svg>
+            </button>
+            <button class="iconbtn" type="button" id="themeToggle" aria-label="تبديل الوضع الليلي" title="الوضع الليلي">
+              <svg class="ui-icon theme-light-icon" aria-hidden="true"><use href="#i-moon"></use></svg>
+              <svg class="ui-icon theme-dark-icon" aria-hidden="true"><use href="#i-sun"></use></svg>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="main" id="main">
+        <slot />
+        <footer class="site-footer">نصّ الديوان وفهارسه · شعر الشريف محمد بن الحسين الرضي (٣٥٩–٤٠٦ هـ)</footer>
+      </main>
+
+      <nav class="mobile-nav" aria-label="التنقل على الهاتف">
+        {
+          mobileMenu.map((item) =>
+            item.href ? (
+              <a href={item.href} aria-current={item.current ? 'page' : undefined}>
+                <svg class="ui-icon" aria-hidden="true"><use href={`#${item.icon}`} /></svg>
+                {item.label}
+              </a>
+            ) : (
+              <span aria-disabled="true" title="قريبًا">
+                <svg class="ui-icon" aria-hidden="true"><use href={`#${item.icon}`} /></svg>
+                {item.label}
+              </span>
+            ),
+          )
+        }
+      </nav>
+    </div>
+
+    <script is:inline>
+      (function () {
+        var root = document.documentElement;
+        document.getElementById('themeToggle').addEventListener('click', function () {
+          var next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+          root.dataset.theme = next;
+          try { localStorage.setItem('radi-theme', next); } catch (e) {}
+        });
+        var random = document.getElementById('randomPoem');
+        random.addEventListener('click', function () {
+          // Poem ids are r<volume>-<three digits>; pick a volume weighted by its size.
+          var sizes = JSON.parse(random.dataset.volumes);
+          var total = sizes.reduce(function (a, b) { return a + b; }, 0);
+          var pick = Math.floor(Math.random() * total);
+          var v = 0;
+          while (pick >= sizes[v]) { pick -= sizes[v]; v++; }
+          location.href = '/poem/r' + (v + 1) + '-' + String(pick + 1).padStart(3, '0') + '/';
+        });
+      })();
+    </script>
+  </body>
+</html>

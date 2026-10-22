@@ -1,0 +1,2 @@
+# Cloudflare Pages redirects. Old verse links from the previous site go to the verse on the poem page.
+/poem/:id/verse/:n  /poem/:id/#v:n  301
