@@ -23,7 +23,7 @@ export const sections: Record<SectionKey, NavItem> = {
   library: { key: 'library', label: 'الديوان', icon: 'i-book', href: '/diwan/' },
   indexes: { key: 'indexes', label: 'الفهارس', icon: 'i-orbit' },
   themes: { key: 'themes', label: 'أغراض الشعر', icon: 'i-network' },
-  saved: { key: 'saved', label: 'محفوظاتي', icon: 'i-bookmark' },
+  saved: { key: 'saved', label: 'محفوظاتي', icon: 'i-bookmark', href: '/saved/' },
   search: { key: 'search', label: 'ابحث', icon: 'i-search' },
   lexicon: { key: 'lexicon', label: 'معجم الألفاظ', icon: 'i-search' },
   atlas: { key: 'atlas', label: 'أطلس المواضع', icon: 'i-map' },

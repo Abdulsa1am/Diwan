@@ -1,0 +1,145 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE_NAME } from '../lib/diwan';
+---
+
+<Base
+  title={`محفوظاتي | ${SITE_NAME}`}
+  description="القصائد التي حفظتها من ديوان الشريف الرضي على هذا الجهاز."
+  section="saved"
+  noindex
+>
+  <header class="page-head">
+    <h1>محفوظاتي</h1>
+    <p>القصائد التي حفظتها. تبقى على هذا الجهاز وهذا المتصفح فقط.</p>
+  </header>
+
+  <div class="saved-list" id="savedList" aria-live="polite"></div>
+
+  <section class="empty glass" id="savedEmpty" hidden>
+    <svg class="ui-icon" aria-hidden="true"><use href="#i-bookmark"></use></svg>
+    <h2>لم تحفظ قصيدة بعد</h2>
+    <p>افتح أي قصيدة واضغط «احفظ» لتجدها هنا.</p>
+    <a class="btn btn-primary" href="/diwan/">افتح الديوان</a>
+  </section>
+
+  <noscript>
+    <p class="empty glass">تحتاج هذه الصفحة إلى تفعيل JavaScript لعرض محفوظاتك.</p>
+  </noscript>
+
+  <template id="savedItem">
+    <article class="saved-card glass">
+      <a class="saved-link">
+        <h2 class="saved-title"></h2>
+        <p class="saved-first"></p>
+      </a>
+      <button class="btn saved-remove" type="button">
+        <svg class="ui-icon" aria-hidden="true"><use href="#i-x"></use></svg>
+        إزالة
+      </button>
+    </article>
+  </template>
+</Base>
+
+<script>
+  import { load, save, toast, SAVED_KEY } from '../scripts/shared';
+  import type { PoemRef } from '../scripts/shared';
+
+  const list = document.getElementById('savedList')!;
+  const empty = document.getElementById('savedEmpty')!;
+  const template = document.getElementById('savedItem') as HTMLTemplateElement;
+
+  function render() {
+    const saved = load<PoemRef[]>(SAVED_KEY, []);
+    list.replaceChildren();
+    empty.hidden = saved.length > 0;
+    for (const poem of saved) {
+      const card = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
+      const link = card.querySelector<HTMLAnchorElement>('.saved-link')!;
+      link.href = `/poem/${poem.id}/`;
+      card.querySelector('.saved-title')!.textContent = poem.title;
+      card.querySelector('.saved-first')!.textContent = poem.first;
+      const remove = card.querySelector<HTMLButtonElement>('.saved-remove')!;
+      remove.setAttribute('aria-label', `إزالة «${poem.title}» من محفوظاتي`);
+      remove.addEventListener('click', () => {
+        save(
+          SAVED_KEY,
+          load<PoemRef[]>(SAVED_KEY, []).filter((p) => p.id !== poem.id),
+        );
+        toast(`أُزيلت «${poem.title}»`);
+        render();
+      });
+      list.append(card);
+    }
+  }
+  render();
+</script>
+
+<style>
+  .page-head h1 {
+    font-size: clamp(36px, 6vw, 48px);
+    color: var(--accent-deep);
+    margin: 0;
+  }
+  :global([data-theme='dark']) .page-head h1 {
+    color: var(--ink);
+  }
+  .page-head p {
+    color: var(--muted);
+    margin: 0 0 20px;
+    font-size: 14px;
+  }
+  .saved-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 14px;
+  }
+  .saved-list :global(.saved-card) {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px 20px;
+  }
+  .saved-list :global(.saved-link) {
+    flex: 1;
+    min-width: 0;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .saved-list :global(.saved-title) {
+    font-size: 26px;
+    margin: 0;
+  }
+  .saved-list :global(.saved-first) {
+    font-family: var(--poem-font);
+    font-size: 19px;
+    color: var(--muted);
+    margin: 4px 0 0;
+  }
+  .saved-list :global(.saved-remove) {
+    padding: 6px 10px;
+    font-size: 13px;
+  }
+  .empty {
+    text-align: center;
+    padding: 40px 24px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+  .empty[hidden] {
+    display: none;
+  }
+  .empty .ui-icon {
+    width: 32px;
+    height: 32px;
+    color: var(--accent);
+  }
+  .empty h2 {
+    font-size: 30px;
+    margin: 6px 0 2px;
+  }
+  .empty p {
+    color: var(--muted);
+    margin: 0 0 18px;
+  }
+</style>

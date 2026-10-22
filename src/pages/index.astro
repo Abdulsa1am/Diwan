@@ -1,11 +1,35 @@
 ---
 import Base from '../layouts/Base.astro';
-import { poems, poemById, ar, POET, SITE_NAME } from '../lib/diwan';
+import { poems, ar, versesLabel, POET, SITE_NAME } from '../lib/diwan';
+import { sections } from '../lib/nav';
 
 const verseCount = poems.reduce((sum, p) => sum + p.verses.length, 0);
-const first = poemById.get('r1-001')!;
+const first = poems[0];
 
-const description = `ديوان الشريف الرضي كاملًا: ${ar(poems.length)} قصيدة و${ar(verseCount)} بيتًا، مع البحر والقافية والحواشي لكل قصيدة.`;
+// Verse of the day: openings of the longer poems, spread evenly over the diwan.
+// The page shows the first one; a small script picks today's.
+const candidates = poems.filter((p) => p.verses.length >= 25 && p.verses[0].ajuz);
+const step = candidates.length / 60;
+const daily = Array.from({ length: 60 }, (_, i) => candidates[Math.floor(i * step)]).map((p) => ({
+  id: p.id,
+  title: p.title,
+  sadr: p.verses[0].sadr,
+  ajuz: p.verses[0].ajuz!,
+  meter: p.meter,
+}));
+const today = daily[0];
+
+// Entry points: only sections that exist are linked.
+const entries = [
+  { item: sections.library, text: `${ar(poems.length)} قصيدة مرتبة على القوافي` },
+  { item: sections.search, text: 'ابحث بلفظة أو شطر من بيت' },
+  { item: sections.indexes, text: 'البحور والقوافي والمطالع' },
+  { item: sections.themes, text: 'المدح والرثاء والفخر والحنين…' },
+  { item: sections.about, text: 'سيرة الشاعر وعن هذه النسخة' },
+  { item: sections.saved, text: 'القصائد التي حفظتها' },
+].filter((e) => e.item.href);
+
+const description = `ديوان الشريف الرضي كاملًا: ${ar(poems.length)} قصيدة و${ar(verseCount)} بيتًا، مع البحر والقافية وشروح الأبيات.`;
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -29,7 +53,7 @@ const jsonLd = {
     <div class="hero-copy">
       <div class="tag"><span></span> نصّ الديوان · فهارس · أدوات قراءة</div>
       <h1 id="heroTitle">ديوان الشريف<br />الرضي</h1>
-      <p>قصائد الشريف الرضي، مع البحر والقافية والحواشي لكل قصيدة.</p>
+      <p>قصائد الشريف الرضي، مع البحر والقافية وشروح الأبيات.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="/diwan/">
           <svg class="ui-icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
@@ -41,7 +65,84 @@ const jsonLd = {
     </div>
     <div class="hero-art" aria-hidden="true"></div>
   </section>
+
+  <a class="resume glass" id="resume" hidden>
+    <svg class="ui-icon" aria-hidden="true"><use href="#i-book"></use></svg>
+    <span>
+      <small>تابع القراءة</small>
+      <b data-resume-title></b>
+      <span data-resume-pos></span>
+    </span>
+    <svg class="ui-icon chevron" aria-hidden="true"><use href="#i-chevron-left"></use></svg>
+  </a>
+
+  <div class="home-duo">
+    <section class="daily glass" aria-labelledby="dailyTitle">
+      <h2 id="dailyTitle">بيت اليوم</h2>
+      <blockquote>
+        <p data-daily-sadr>{today.sadr}</p>
+        <p data-daily-ajuz>{today.ajuz}</p>
+      </blockquote>
+      <a class="daily-source" href={`/poem/${today.id}/`} data-daily-link>
+        مطلع «<span data-daily-title>{today.title}</span>»، <span data-daily-meter>{today.meter}</span>
+      </a>
+    </section>
+
+    <section class="entries" aria-label="أقسام الديوان">
+      {
+        entries.map(({ item, text }) => (
+          <a class="entry glass" href={item.href}>
+            <svg class="ui-icon" aria-hidden="true">
+              <use href={`#${item.icon}`} />
+            </svg>
+            <span>
+              <b>{item.label}</b>
+              <small>{text}</small>
+            </span>
+          </a>
+        ))
+      }
+    </section>
+  </div>
+
+  <script type="application/json" id="dailyVerses" set:html={JSON.stringify(daily)} />
 </Base>
+
+<script>
+  import { load, LAST_KEY } from '../scripts/shared';
+  import type { PoemRef } from '../scripts/shared';
+
+  const digits = new Intl.NumberFormat('ar-EG', { useGrouping: false });
+
+  // Continue reading: the last poem opened on this device.
+  const last = load<PoemRef | null>(LAST_KEY, null);
+  const resume = document.getElementById('resume') as HTMLAnchorElement;
+  if (last?.id) {
+    resume.href = `/poem/${last.id}/${last.verse && last.verse > 1 ? `#v${last.verse}` : ''}`;
+    resume.querySelector('[data-resume-title]')!.textContent = last.title;
+    resume.querySelector('[data-resume-pos]')!.textContent =
+      last.verse && last.total ? `البيت ${digits.format(last.verse)} من ${digits.format(last.total)}` : '';
+    resume.hidden = false;
+  }
+
+  // Verse of the day: same verse for everyone on the same day.
+  const daily = JSON.parse(document.getElementById('dailyVerses')!.textContent!) as {
+    id: string;
+    title: string;
+    sadr: string;
+    ajuz: string;
+    meter: string;
+  }[];
+  const now = new Date();
+  const dayOfYear = Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - Date.UTC(now.getFullYear(), 0, 0)) / 864e5);
+  const pick = daily[dayOfYear % daily.length];
+  const set = (sel: string, text: string) => (document.querySelector(sel)!.textContent = text);
+  set('[data-daily-sadr]', pick.sadr);
+  set('[data-daily-ajuz]', pick.ajuz);
+  set('[data-daily-title]', pick.title);
+  set('[data-daily-meter]', pick.meter);
+  (document.querySelector('[data-daily-link]') as HTMLAnchorElement).href = `/poem/${pick.id}/`;
+</script>
 
 <style>
   .welcome {
@@ -77,7 +178,7 @@ const jsonLd = {
     box-shadow: var(--glass-shadow);
     -webkit-backdrop-filter: var(--glass-filter);
     backdrop-filter: var(--glass-filter);
-    margin-bottom: 28px;
+    margin-bottom: 18px;
   }
   :global([data-theme='dark']) .hero {
     background: linear-gradient(128deg, rgba(69, 88, 111, 0.52), rgba(29, 47, 68, 0.42));
@@ -124,7 +225,7 @@ const jsonLd = {
     padding: 12px 22px;
   }
   .hero-copy > .hero-count {
-    font-size: 12px;
+    font-size: 13px;
     margin: 22px 0 0;
   }
 
@@ -165,6 +266,109 @@ const jsonLd = {
     border-color: rgba(234, 247, 255, 0.26);
   }
 
+  .resume {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    margin-bottom: 18px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .resume[hidden] {
+    display: none;
+  }
+  .resume > span {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.5;
+  }
+  .resume small {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .resume b {
+    font-family: var(--display-font);
+    font-weight: 400;
+    font-size: 24px;
+  }
+  .resume span span {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .resume .ui-icon {
+    color: var(--accent);
+  }
+  .resume:hover {
+    background: var(--paper-strong);
+  }
+
+  .home-duo {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  .daily {
+    padding: 24px 26px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .daily h2 {
+    font-size: 26px;
+    color: var(--accent);
+    margin: 0 0 6px;
+  }
+  .daily blockquote {
+    margin: 0 0 12px;
+    font-family: var(--poem-font);
+    font-size: clamp(22px, 3.2vw, 28px);
+    line-height: 2;
+  }
+  .daily blockquote p {
+    margin: 0;
+  }
+  .daily-source {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .entries {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .entry {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .entry .ui-icon {
+    color: var(--accent);
+    width: 22px;
+    height: 22px;
+  }
+  .entry span {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.5;
+  }
+  .entry b {
+    font-size: 16px;
+  }
+  .entry small {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .entry:hover {
+    background: var(--paper-strong);
+  }
+
   @media (max-width: 1000px) {
     .hero-copy {
       padding: 34px 30px;
@@ -178,11 +382,12 @@ const jsonLd = {
     .hero {
       grid-template-columns: 1fr;
     }
-    .hero-art {
-      display: none;
-    }
+    .hero-art,
     .welcome {
       display: none;
+    }
+    .home-duo {
+      grid-template-columns: 1fr;
     }
   }
   @media (max-width: 620px) {
