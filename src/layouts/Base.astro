@@ -30,6 +30,8 @@ interface Props {
 }
 
 const { title, description, jsonLd, type = 'website', section, reading, noindex } = Astro.props;
+// Test deployments are built with NOINDEX=1 so search engines skip them; the final site leaves it unset.
+const hideFromSearch = noindex || process.env.NOINDEX === '1';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const shareImage = new URL('/share.png', Astro.site);
 ---
@@ -43,7 +45,7 @@ const shareImage = new URL('/share.png', Astro.site);
     <FontLab head />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex" />}
+    {hideFromSearch && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href={amiriRegular} as="font" type="font/woff2" crossorigin />
