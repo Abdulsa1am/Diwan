@@ -78,6 +78,16 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 - Internal review files (`REPORT-*.md`, `content-review/`) are shipped with the public site.
 - Lexicon shards (`lexicon-data/*.json`) and vocalization batches (`batch-*.json`) are referenced but missing from the deploy.
 
+## Working with sub-agents (owner's decision)
+- Implementation work is delegated to **Codex CLI workers**: model `gpt-6.1-sol`, reasoning effort **medium**. The lead agent plans, writes the briefs, reviews, tests and commits; workers only implement.
+- Command (Codex is not on PATH here; the app ships it at `%LOCALAPPDATA%\OpenAI\Codex\bin\<hash>\codex.exe`):
+  `codex exec -m gpt-6.1-sol -c model_reasoning_effort="medium" -s workspace-write -C <project> -o <result.md> - < <brief.md>`
+- Every brief says: the goal, the exact files the worker may change (and which are off limits), the checks to pass (`npm run build`, `npm run verify`, `npm run check`, `npm test`), and to end with a short summary.
+- Workers running at the same time never share files. Warn them that parallel builds can collide in `dist/` and to retry.
+- Before committing a worker's change: read the whole diff, rerun all checks, and test in the browser at ~375px and desktop, light and dark (workers can't open the browser). Fix what they missed; say in the commit message that a worker did it and what was changed in review.
+- Text and data: workers only propose (report + dry-run script). Nothing in `data/` changes without the owner's approval.
+- **If you are a worker:** stay inside the files your brief allows, don't commit, don't touch `data/` or `_original/`, and report anything you could not verify.
+
 ## Keeping track of progress
 - Read `PROGRESS.md` at the start of a session to see where things stand.
 - Update it at the end of every task: move finished items to **Done** (with the date), refresh **Now** and **Next**, and add any question waiting on the owner under **Open questions**.
