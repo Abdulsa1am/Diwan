@@ -106,6 +106,8 @@ document.fonts.ready.then(() => {
   fitPoem();
 });
 document.fonts.addEventListener('loadingdone', fontsChanged);
+// TEMPORARY font lab: invalidate measured widths and refit after a font choice changes.
+window.addEventListener('radi:fontchange', fontsChanged);
 
 /* ---------- Reading progress and "continue reading" ---------- */
 const head = document.getElementById('readerHead')!;

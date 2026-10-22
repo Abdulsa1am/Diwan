@@ -1,0 +1,157 @@
+---
+// TEMPORARY font lab: remove this component and its two Base.astro mounts after choosing fonts.
+import { fontGroups } from '../scripts/font-lab';
+import { poems } from '../lib/diwan';
+interface Props { head?: boolean }
+const { head = false } = Astro.props;
+const preview = poems[0].verses[0];
+const allowed = Object.fromEntries(Object.entries(fontGroups).map(([role, group]) => [role, {
+  variable: group.variable, fallback: group.fallback,
+  fonts: Object.fromEntries(group.fonts.map((f) => [f.name, f.weights])),
+}]));
+---
+
+{head ? (
+  <script is:inline define:vars={{ allowed }}>
+    // TEMPORARY font lab: restore validated choices before paint; no remote requests without a choice.
+    try {
+      const saved = JSON.parse(localStorage.getItem('radi-fontlab') || 'null');
+      const roles = Object.keys(allowed);
+      if (saved && roles.every(role => Object.hasOwn(allowed[role].fonts, saved[role]))) {
+        const root = document.documentElement;
+        const weight = allowed.display.fonts[saved.display].includes(saved.weight) ? saved.weight : 400;
+        roles.forEach(role => {
+          const group = allowed[role], name = saved[role];
+          root.style.setProperty(group.variable, '"' + name + '", ' + group.fallback);
+          const weights = role === 'display' ? [weight] : role === 'ui' ? group.fonts[name] : [400];
+          const remote = weights.filter(w => !((name === 'Amiri' || name === 'Katibeh') && w === 400 || name === 'Tajawal'));
+          if (remote.length) {
+            const family = name + ':wght@' + remote.join(';');
+            if (!Array.from(document.querySelectorAll('link[data-fontlab-family]')).some(link => link.dataset.fontlabFamily === family)) {
+              const link = document.createElement('link');
+              link.rel = 'stylesheet';
+              link.dataset.fontlabFamily = family;
+              link.href = 'https://fonts.googleapis.com/css2?' + new URLSearchParams({ family, display: 'swap' });
+              document.head.append(link);
+            }
+          }
+        });
+        root.style.setProperty('--fontlab-heading-weight', String(weight));
+        root.dataset.fontlabActive = '';
+      }
+    } catch (e) {}
+  </script>
+) : (
+  <section id="fontLab" class="glass" role="dialog" aria-labelledby="fontlab-title" dir="rtl" hidden>
+    <div class="fontlab-header">
+      <h2 id="fontlab-title">مختبر الخطوط (تجريبي)</h2>
+      <button class="iconbtn" type="button" data-fontlab-close aria-label="إغلاق مختبر الخطوط">×</button>
+    </div>
+    <p class="fontlab-hint">مرّر على اسم الخط أو انتقل إليه بالأسهم لمعاينته، ثم اختره لتجربته في الصفحة.</p>
+    {Object.entries(fontGroups).map(([role, group]) => (
+      <div class="fontlab-field" data-fontlab-picker>
+        <span id={`fontlab-${role}-label`}>{group.label}</span>
+        <button type="button" class="fontlab-select" data-fontlab-select={role} aria-haspopup="listbox"
+          aria-expanded="false" aria-controls={`fontlab-${role}-options`}
+          aria-labelledby={`fontlab-${role}-label fontlab-${role}-value`}>
+          <bdi id={`fontlab-${role}-value`} data-fontlab-value={role}>{group.fonts[0].arabic} — {group.fonts[0].name}</bdi>
+          <span aria-hidden="true">⌄</span>
+        </button>
+        <div class="fontlab-options" id={`fontlab-${role}-options`} role="listbox" aria-labelledby={`fontlab-${role}-label`} hidden>
+          {group.fonts.map((f, i) => (
+            <button type="button" role="option" aria-selected={i === 0 ? 'true' : 'false'} tabindex="-1"
+              data-fontlab-role={role} data-fontlab-font={f.name}>
+              <bdi>{f.arabic} — {f.name}</bdi>{i === 0 && <small>الأصلي</small>}
+            </button>
+          ))}
+        </div>
+      </div>
+    ))}
+    <label class="fontlab-weight">وزن العناوين
+      <select data-fontlab-weight disabled><option value="400">٤٠٠</option></select>
+    </label>
+    <div class="fontlab-preview">
+      <span>سطر للمعاينة</span>
+      <p><span>{preview.sadr}</span>{preview.ajuz && <span>{preview.ajuz}</span>}</p>
+    </div>
+    <div class="fontlab-actions">
+      <button class="btn" type="button" data-fontlab-copy>انسخ الاختيار</button>
+      <button class="btn" type="button" data-fontlab-reset>إعادة الخطوط الأصلية</button>
+    </div>
+    <p class="fontlab-status" role="status" aria-live="polite" data-fontlab-status>الاختيار محفوظ على هذا الجهاز فقط.</p>
+  </section>
+)}
+
+<script>
+  // TEMPORARY font lab: this tiny bootstrap is the only lab JS run for ordinary visitors.
+  let lab: Promise<ReturnType<typeof import('../scripts/font-lab')['initFontLab']>> | undefined;
+  let ready = false;
+  const start = () => lab ??= import('../scripts/font-lab').then(({ initFontLab }) => {
+    const controller = initFontLab();
+    ready = true;
+    return controller;
+  });
+  document.querySelectorAll<HTMLButtonElement>('[data-fontlab-open]').forEach((button) => {
+    button.addEventListener('click', async () => {
+      // Once initialized, the controller owns subsequent clicks.
+      if (ready) return;
+      button.setAttribute('aria-busy', 'true');
+      try { (await start()).open(button); }
+      catch { lab = undefined; button.title = 'تعذّر فتح المختبر؛ أعد المحاولة.'; }
+      finally { button.removeAttribute('aria-busy'); }
+    });
+  });
+  try { if (localStorage.getItem('radi-fontlab')) void start().catch(() => { lab = undefined; }); } catch {}
+</script>
+
+<style>
+  /* TEMPORARY font lab: all feature styles, including the temporary heading-weight override. */
+  :global(html[data-fontlab-active] :is(h1, h2, h3, h4, h5, h6, .brand-name, .reading-status b)) {
+    font-weight: var(--fontlab-heading-weight, 400);
+  }
+  :global(.menu button[data-fontlab-open]) {
+    display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 0;
+    border-radius: 12px; color: var(--ink); background: transparent; cursor: pointer;
+    font: inherit; font-size: 14px; text-align: start;
+  }
+  :global(.menu button[data-fontlab-open]:hover) { background: var(--paper-strong); }
+  #fontLab {
+    position: fixed; inset-inline-end: 16px; bottom: calc(88px + env(safe-area-inset-bottom));
+    width: min(400px, calc(100vw - 32px)); margin: 0; padding: 16px; z-index: 40;
+    max-height: calc(100dvh - 170px - env(safe-area-inset-bottom)); overflow-y: auto;
+    overscroll-behavior: contain; color: var(--ink); font: 400 15px/1.7 var(--ui-font);
+  }
+  #fontLab[hidden], [hidden] { display: none !important; }
+  .fontlab-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .fontlab-header h2 { font: 500 18px/1.8 var(--ui-font); margin: 0; }
+  .fontlab-header button { flex-shrink: 0; font-size: 24px; }
+  .fontlab-hint, .fontlab-status { font-size: 13px; color: var(--muted); margin: 8px 0; }
+  .fontlab-field { margin-block: 12px; }
+  .fontlab-select { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 8px; }
+  .fontlab-select, select {
+    min-height: 44px; padding: 8px 10px; border: 1px solid var(--line-dark); border-radius: 10px;
+    font: inherit; background: var(--menu-bg); color: var(--ink); cursor: pointer; text-align: start;
+  }
+  bdi { overflow-wrap: anywhere; }
+  .fontlab-options {
+    max-height: 200px; overflow-y: auto; padding: 4px; margin-top: 4px;
+    border: 1px solid var(--line-dark); border-radius: 10px; background: var(--menu-bg);
+  }
+  .fontlab-options button {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%;
+    min-height: 48px; padding: 10px 8px; border: 0; border-radius: 6px; font: 400 18px/2 var(--ui-font);
+    background: transparent; color: var(--ink); cursor: pointer; text-align: start;
+  }
+  .fontlab-options button:hover, .fontlab-options button[aria-selected='true'] { background: var(--chip-bg); }
+  .fontlab-options small { font: 400 12px/1.5 var(--ui-font); }
+  .fontlab-weight { display: flex; align-items: center; gap: 12px; }
+  .fontlab-weight select { width: 90px; }
+  .fontlab-preview { margin-block: 14px; }
+  .fontlab-preview > span { font-size: 13px; color: var(--muted); }
+  .fontlab-preview p { font: 400 25px/2.2 var(--poem-font); margin: 4px 0; overflow-wrap: anywhere; }
+  .fontlab-preview p span { display: block; }
+  .fontlab-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .fontlab-actions button { cursor: pointer; flex: 1 1 auto; justify-content: center; }
+  @media (min-width: 1001px) { #fontLab { bottom: 20px; max-height: calc(100dvh - 100px); } }
+  @media print { #fontLab, :global([data-fontlab-open]) { display: none !important; } }
+</style>

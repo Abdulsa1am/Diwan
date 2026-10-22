@@ -9,6 +9,8 @@ import amiriRegular from '@fontsource/amiri/files/amiri-arabic-400-normal.woff2?
 import katibeh from '@fontsource/katibeh/files/katibeh-arabic-400-normal.woff2?url';
 import Icons from '../components/Icons.astro';
 import NavLink from '../components/NavLink.astro';
+// TEMPORARY font lab
+import FontLab from '../components/FontLab.astro';
 import { SITE_NAME, volumeSizes } from '../lib/diwan';
 import { mainMenu, toolsMenu, mobileMenu, sections } from '../lib/nav';
 import type { SectionKey } from '../lib/nav';
@@ -37,6 +39,8 @@ const shareImage = new URL('/share.png', Astro.site);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- TEMPORARY font lab: early saved-choice restoration -->
+    <FontLab head />
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}
@@ -89,6 +93,11 @@ const shareImage = new URL('/share.png', Astro.site);
         <div class="sidebar-label">فهارس وأدوات</div>
         <nav class="menu" aria-label="أدوات المعرفة">
           {toolsMenu.map((item) => <NavLink item={item} current={section} />)}
+          <!-- TEMPORARY font lab -->
+          <button type="button" data-fontlab-open aria-controls="fontLab" aria-expanded="false" aria-haspopup="dialog">
+            <svg class="ui-icon" aria-hidden="true"><path d="M4 5h16M12 5v14M8 19h8" /></svg>
+            مختبر الخطوط
+          </button>
         </nav>
         <div class="sidebar-bottom">
           <div class="sidebar-verse">«ليهنك اليوم أنّ القلب مرعاك»</div>
@@ -109,6 +118,11 @@ const shareImage = new URL('/share.png', Astro.site);
             )
           }
           <div class="top-actions">
+            <!-- TEMPORARY font lab: also reachable on phones -->
+            <button class="iconbtn" type="button" data-fontlab-open aria-controls="fontLab" aria-expanded="false"
+              aria-haspopup="dialog" aria-label="مختبر الخطوط (تجريبي)" title="مختبر الخطوط (تجريبي)">
+              <svg class="ui-icon" aria-hidden="true"><path d="M4 5h16M12 5v14M8 19h8" /></svg>
+            </button>
             {
               sections.search.href && (
                 <a class="iconbtn" href={sections.search.href} aria-label="ابحث في الديوان" title="ابحث في الديوان">
@@ -145,6 +159,8 @@ const shareImage = new URL('/share.png', Astro.site);
       </nav>
     </div>
     <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+    <!-- TEMPORARY font lab -->
+    <FontLab />
 
     <script is:inline>
       (function () {
