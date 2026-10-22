@@ -3,6 +3,11 @@ import { load, save, toast, copyText, shareOrCopy, SAVED_KEY, LAST_KEY, READING_
 import type { PoemRef } from './shared';
 
 const reader = document.querySelector<HTMLElement>('.reader')!;
+type Reading = { scale?: number; layout?: string; notes?: boolean };
+let settings = load<Reading>(READING_KEY, {}) ?? {};
+// This module is deferred; restore annotations as its first DOM update. CSS hides
+// them before it runs, so the default reader never sees a flash of annotations.
+reader.classList.toggle('show-annotations', settings.notes === true);
 const { poem: id, title, first, citation } = reader.dataset as Record<string, string>;
 const verses = [...document.querySelectorAll<HTMLLIElement>('.verse')];
 const total = verses.length;
@@ -12,6 +17,95 @@ const digits = new Intl.NumberFormat('ar-EG', { useGrouping: false });
 const verseText = (li: HTMLElement) =>
   [...li.querySelectorAll('.hemistich')].map((h) => h.textContent!.trim()).join('    ');
 const pageUrl = () => location.origin + location.pathname;
+
+/* ---------- One fitted size for the whole poem ---------- */
+const sheet = document.getElementById('poemSheet')!;
+const hemistichs = [...sheet.querySelectorAll<HTMLElement>('.hemistich')];
+const firstBody = sheet.querySelector<HTMLElement>('.verse-body')!;
+const paired = hemistichs.map((h) => !h.closest('.verse.single'));
+const MEASURE_SIZE = 30;
+let naturalWidths: number[] | undefined;
+let fitFrame = 0;
+
+function measureHemistichs() {
+  // Keep the actual Amiri shaping/features and Astro-scoped styles. Insert all
+  // probes together, read their natural widths together, then remove them. There
+  // is one layout pass, not a write/read loop over hundreds of hemistichs.
+  const probes = hemistichs.map((h) => {
+    const probe = h.cloneNode(true) as HTMLElement;
+    probe.classList.remove('can-wrap');
+    probe.style.cssText = `display:block;width:max-content;max-width:none;font-size:${MEASURE_SIZE}px;white-space:nowrap;text-wrap:nowrap`;
+    return probe;
+  });
+  const measure = document.createElement('div');
+  measure.setAttribute('aria-hidden', 'true');
+  measure.style.cssText = 'position:fixed;inset:0 auto auto 0;width:0;height:0;visibility:hidden;pointer-events:none;contain:strict';
+  measure.append(...probes);
+  sheet.append(measure);
+  naturalWidths = probes.map((probe) => probe.getBoundingClientRect().width / MEASURE_SIZE);
+  measure.remove();
+}
+
+function fitPoem() {
+  if (!naturalWidths) measureHemistichs();
+  const widths = naturalWidths!;
+  const style = getComputedStyle(sheet);
+  const designSize = parseFloat(style.fontSize);
+  // Respect an explicitly smaller reading size: the floor must not exceed its cap.
+  const floor = Math.min(designSize, parseFloat(style.getPropertyValue('--verse-floor')));
+  const fullWidth = firstBody.getBoundingClientRect().width;
+  if (fullWidth <= 0) return;
+  const gap = parseFloat(style.getPropertyValue('--verse-gap'));
+  let side = style.getPropertyValue('--verse-columns').trim() === '2';
+  let pairWidth = side ? Math.max(0, (fullWidth - gap) / 2) : fullWidth;
+  // A small inset leaves room for subpixel rounding and glyph overhangs.
+  const fitSize = () => Math.min(designSize, ...widths.map((width, i) =>
+    width > 0 ? Math.max(0, (paired[i] ? pairWidth : fullWidth) - 2) / width : designSize,
+  ));
+  let size = fitSize();
+  if (side && size < floor) {
+    side = false;
+    pairWidth = fullWidth;
+    size = fitSize();
+  }
+  size = Math.max(floor, size);
+  // All geometry reads are above; these writes never trigger another width read.
+  sheet.dataset.fittedLayout = side ? 'side' : 'stacked';
+  sheet.style.setProperty('--poem-fitted-size', `${size}px`);
+  hemistichs.forEach((h, i) => {
+    h.classList.toggle('can-wrap', !side && widths[i] * size > fullWidth - 2);
+  });
+  sheet.classList.add('is-fitted');
+}
+
+function scheduleFit() {
+  if (fitFrame) return;
+  fitFrame = requestAnimationFrame(() => {
+    fitFrame = 0;
+    fitPoem();
+  });
+}
+
+// Annotation visibility and fitting change height. Only width changes require a
+// refit, so observing the sheet cannot feed back into a resize/fit loop.
+let observedWidth = -1;
+new ResizeObserver(([entry]) => {
+  if (entry.contentRect.width === observedWidth) return;
+  observedWidth = entry.contentRect.width;
+  scheduleFit();
+}).observe(sheet);
+window.addEventListener('resize', scheduleFit, { passive: true });
+function fontsChanged() {
+  naturalWidths = undefined;
+  scheduleFit();
+}
+// The first fit runs as soon as the fonts are ready, not on the next animation frame:
+// it settles the layout sooner and still works where frames are paused (hidden tabs).
+document.fonts.ready.then(() => {
+  naturalWidths = undefined;
+  fitPoem();
+});
+document.fonts.addEventListener('loadingdone', fontsChanged);
 
 /* ---------- Reading progress and "continue reading" ---------- */
 const head = document.getElementById('readerHead')!;
@@ -86,9 +180,8 @@ document.querySelector('[data-action="share"]')!.addEventListener('click', () =>
 const settingsBtn = document.querySelector<HTMLButtonElement>('[data-action="settings"]')!;
 const panel = document.getElementById('readerSettings')!;
 const sizeOut = panel.querySelector('[data-size-value]')!;
+const notesBtn = document.querySelector<HTMLButtonElement>('[data-action="notes"]');
 const SCALES = [0.85, 0.92, 1, 1.1, 1.2, 1.32];
-type Reading = { scale?: number; layout?: string };
-let settings = load<Reading>(READING_KEY, {});
 
 function applySettings() {
   const scale = settings.scale ?? 1;
@@ -100,9 +193,19 @@ function applySettings() {
   panel.querySelectorAll<HTMLButtonElement>('[data-layout]').forEach((b) =>
     b.setAttribute('aria-checked', String(b.dataset.layout === layout)),
   );
+  reader.classList.toggle('show-annotations', settings.notes === true);
+  notesBtn?.setAttribute('aria-pressed', String(settings.notes === true));
   save(READING_KEY, settings);
+  scheduleFit();
 }
 applySettings();
+
+notesBtn?.addEventListener('click', () => {
+  settings = { ...settings, notes: !settings.notes };
+  // Switching all annotations off also clears any individually revealed verses.
+  if (!settings.notes) verses.forEach((v) => v.classList.remove('annotations-revealed'));
+  applySettings();
+});
 
 settingsBtn.addEventListener('click', () => {
   panel.hidden = !panel.hidden;
@@ -124,6 +227,7 @@ panel.addEventListener('click', (e) => {
 /* ---------- Verse menu ---------- */
 const menu = document.getElementById('verseMenu')!;
 const menuTitle = menu.querySelector('[data-menu-title]')!;
+const verseNotesBtn = menu.querySelector<HTMLButtonElement>('[data-verse-action="notes"]')!;
 let menuVerse: HTMLLIElement | null = null;
 let menuOpener: HTMLElement | null = null;
 
@@ -141,6 +245,7 @@ function openMenu(opener: HTMLElement) {
   if (!menuVerse) return;
   menuVerse.classList.add('is-active');
   menuTitle.textContent = `البيت ${opener.textContent!.trim()}`;
+  verseNotesBtn.hidden = !menuVerse.hasAttribute('data-annotated');
   menu.hidden = false;
   // Place the menu just under the verse number, kept inside the screen.
   const r = opener.getBoundingClientRect();
@@ -148,7 +253,7 @@ function openMenu(opener: HTMLElement) {
   const right = Math.min(Math.max(8, window.innerWidth - r.right), window.innerWidth - width - 8);
   menu.style.top = `${r.bottom + window.scrollY + 6}px`;
   menu.style.right = `${right}px`;
-  menu.querySelector<HTMLButtonElement>('button')!.focus();
+  menu.querySelector<HTMLButtonElement>('button:not([hidden])')!.focus();
 }
 
 reader.addEventListener('click', (e) => {
@@ -168,6 +273,11 @@ menu.addEventListener('click', (e) => {
   const n = menuVerse.dataset.n!;
   const text = verseText(menuVerse);
   const link = `${pageUrl()}#v${n}`;
+  if (action === 'notes') {
+    menuVerse.classList.add('annotations-revealed');
+    const notes = menuVerse.querySelector<HTMLDetailsElement>('.verse-notes');
+    if (notes) notes.open = true;
+  }
   if (action === 'copy') copyText(text, 'نُسخ البيت');
   if (action === 'cite') copyText(`${text}\n${citation}، البيت ${digits.format(Number(n))}`, 'نُسخ البيت مع الإحالة');
   if (action === 'link') {
@@ -194,7 +304,7 @@ document.addEventListener('keydown', (e) => {
   // Arrow keys move between menu items.
   if (!menu.hidden && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
     e.preventDefault();
-    const items = [...menu.querySelectorAll<HTMLButtonElement>('button')];
+    const items = [...menu.querySelectorAll<HTMLButtonElement>('button:not([hidden])')];
     const i = items.indexOf(document.activeElement as HTMLButtonElement);
     items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus();
   }

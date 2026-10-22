@@ -20,6 +20,7 @@ interface Props {
 const { poem, prev, next } = Astro.props;
 const count = poem.verses.length;
 const opening = poem.verses[0];
+const annotatedCount = poem.verses.filter((v) => v.notes.length > 0 || wordsByVerse.has(`${poem.id}#${v.n}`)).length;
 
 // The opening half-line makes every title unique (seven headings repeat in the diwan) and matches line searches.
 const title = `${poem.title}: «${opening.sadr.replace(/[،,.:؛]+$/, '')}» | ${POET}`;
@@ -93,6 +94,11 @@ const jsonLd = {
           <svg class="ui-icon" aria-hidden="true"><use href="#i-sliders"></use></svg>
           صفة القراءة
         </button>
+        {annotatedCount > 0 && (
+          <button class="btn" type="button" data-action="notes" aria-pressed="false" aria-controls="poemSheet">
+            الشروح ({ar(annotatedCount)})
+          </button>
+        )}
       </div>
       <div class="reader-settings glass" id="readerSettings" hidden>
         <div class="setting">
@@ -144,7 +150,12 @@ const jsonLd = {
     <ol class="poem-sheet" id="poemSheet">
       {
         poem.verses.map((v) => (
-          <li class:list={['verse', { single: !v.ajuz }]} id={`v${v.n}`} data-n={v.n}>
+          <li
+            class:list={['verse', { single: !v.ajuz }]}
+            id={`v${v.n}`}
+            data-n={v.n}
+            data-annotated={v.notes.length > 0 || wordsByVerse.has(`${poem.id}#${v.n}`) ? '' : undefined}
+          >
             <a class="verse-no" href={`#v${v.n}`} aria-haspopup="menu" aria-label={`البيت ${ar(v.n)}: أدوات البيت`}>
               {ar(v.n)}
             </a>
@@ -178,14 +189,14 @@ const jsonLd = {
 
     {
       poem.notes.length > 0 && (
-        <section class="notes glass" aria-labelledby="notes-title">
-          <h2 id="notes-title">{poem.linkedNoteCount > 0 ? 'حواشٍ أخرى' : 'الحواشي'}</h2>
+        <details class="notes glass">
+          <summary>{poem.linkedNoteCount > 0 ? 'حواشٍ أخرى' : 'الحواشي'} ({ar(poem.notes.length)})</summary>
           <ul>
             {poem.notes.map((note) => (
               <li>{note}</li>
             ))}
           </ul>
-        </section>
+        </details>
       )
     }
 
@@ -219,6 +230,7 @@ const jsonLd = {
 
   <div class="verse-menu glass" id="verseMenu" role="menu" hidden>
     <b class="verse-menu-title" data-menu-title></b>
+    <button type="button" role="menuitem" data-verse-action="notes" hidden>شرح البيت</button>
     <button type="button" role="menuitem" data-verse-action="copy">نسخ البيت</button>
     <button type="button" role="menuitem" data-verse-action="cite">نسخ البيت مع الإحالة</button>
     <button type="button" role="menuitem" data-verse-action="link">نسخ رابط البيت</button>
@@ -392,6 +404,12 @@ const jsonLd = {
 
   /* The poem sheet: big glass card, Amiri verses, small verse numbers at the start corner. */
   .poem-sheet {
+    --poem-design-size: calc(clamp(21px, 5.6vw, 30px) * var(--poem-scale, 1));
+    --verse-floor: 20px;
+    --verse-columns: 1;
+    --verse-gap: 28px;
+    /* An unfitted reference size for JS, independent of the fitted hemistichs. */
+    font-size: var(--poem-design-size);
     list-style: none;
     margin: 0 0 16px;
     padding: 16px clamp(6px, 3vw, 28px);
@@ -440,28 +458,62 @@ const jsonLd = {
     text-align: center;
   }
   .hemistich {
+    min-width: 0;
     font-family: var(--poem-font);
-    font-size: calc(clamp(21px, 5.6vw, 30px) * var(--poem-scale, 1));
+    font-size: var(--poem-design-size);
+    white-space: normal;
+    text-wrap: balance;
+    overflow-wrap: normal;
     line-height: 1.95;
     color: var(--ink);
     font-feature-settings: 'kern', 'liga', 'calt', 'mark', 'mkmk';
   }
 
-  /* Side by side on wide screens (auto), or whenever the reader asks for it and there is room. */
+  /* Without JS these layouts can wrap. Fitting may switch just this poem to stacked. */
   @media (min-width: 1180px) {
-    :global(html:not([data-verse-layout='stacked'])) .verse-body {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 32px;
+    :global(html:not([data-verse-layout='stacked'])) .poem-sheet {
+      --verse-columns: 2;
+      --verse-gap: 32px;
     }
   }
+  :global(html[data-verse-layout='side']) .poem-sheet {
+    --verse-columns: 2;
+    --verse-gap: 28px;
+  }
   @media (min-width: 700px) {
-    :global(html[data-verse-layout='side']) .verse-body {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 28px;
+    .poem-sheet {
+      --verse-floor: 22px;
     }
+  }
+  /* Very small phones (320–360px): a slightly smaller floor keeps each half-verse on one line. */
+  @media (max-width: 360px) {
+    .poem-sheet {
+      --verse-floor: 18px;
+    }
+  }
+  .verse-body {
+    grid-template-columns: repeat(var(--verse-columns), minmax(0, 1fr));
+    column-gap: var(--verse-gap);
+  }
+  .poem-sheet[data-fitted-layout='stacked'] .verse-body {
+    grid-template-columns: minmax(0, 1fr);
   }
   .single .verse-body {
     grid-template-columns: minmax(0, 1fr) !important;
+  }
+  .poem-sheet.is-fitted .hemistich {
+    font-size: var(--poem-fitted-size);
+    white-space: nowrap;
+    text-wrap: nowrap;
+  }
+  .poem-sheet.is-fitted .hemistich.can-wrap {
+    white-space: normal;
+    text-wrap: balance;
+  }
+
+  .reader:not(.show-annotations) .verse:not(.annotations-revealed) .verse-words,
+  .reader:not(.show-annotations) .verse:not(.annotations-revealed) .verse-notes {
+    display: none;
   }
 
   .verse-words {
@@ -506,9 +558,13 @@ const jsonLd = {
     padding: 16px 22px;
     margin-bottom: 16px;
   }
-  .notes h2 {
+  .notes summary {
+    cursor: pointer;
+    font-family: var(--display-font);
     font-size: 24px;
-    margin: 0 0 6px;
+  }
+  .notes[open] summary {
+    margin-bottom: 6px;
   }
   .notes ul {
     list-style: none;
