@@ -30,16 +30,19 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 - **Keep all the old site's tools** (atlas, rhyme wheel, phrase tree, compare, etc.). Each one gets its own page and loads its code and data only when someone opens it.
 - **SEO**: every verse is visible text in the page HTML (not in `<noscript>`, not built by JS). One `<h1>` per page. Unknown URLs return a real 404.
 - **Detached waw joined** (approved by the owner): the source EPUB writes the conjunction apart (`و إنّما`). The edition joins it (`وإنّما`), as the reference editions do.
+- **Certain spacing fixes applied** (approved 2026-10-23): 361 edits from the text review; see Data.
 
 ## Data
 - `data/source/` — the old site's data blocks, extracted unchanged by `tools/extract-legacy-data.mjs`. Never edit by hand.
-- `data/edition/` — what the site uses. Built from `data/source/` by `tools/fix-detached-waw.mjs`, which only removes spaces and stops if any letter would change. Every change is listed in `reports/waw-changes.csv`.
-- To rebuild: `node tools/extract-legacy-data.mjs` then `node tools/fix-detached-waw.mjs`.
+- `data/edition/` — what the site uses. Built from `data/source/` in two approved steps that only touch spaces and stop if any letter would change:
+  1. `tools/fix-detached-waw.mjs` — joins the detached waw (log: `reports/waw-changes.csv`).
+  2. `tools/fix-text-issues.mjs --apply` — the 361 "certain" spacing fixes from the text review (log: `reports/text-issues.csv`, report: `reports/text-issues.md`), approved by the owner 2026-10-23: detached interrogative hamza joined («أ ما» → «أما»), a space after «!»/«؟», no space before punctuation.
+- To rebuild: `npm run data` (runs extraction and both steps).
 - Search must still find `الزمان` inside `والزمان` now that the waw is joined. The old precomputed word lists (`indices.json`) were built from the detached text, so rebuild them instead of reusing them.
 
-## Postponed text issues (fix later, not now)
-- Detached interrogative hamza: `أ ما لي` instead of `أما` (287 verses).
-- Punctuation glued to the next word: `للّه!أيّ` (94 verses).
+## Text issues still open (need the printed book)
+- The "likely" and "needs-review" rows in `reports/text-issues.csv` (878): vocative or ambiguous hamza, 552 possible split words, 243 notes ending in «:», r2-016 v16 «و؟؟؟الفا», r2-042 v19–20 (one verse split in two).
+- Commas stay as printed (owner kept the recommendation).
 
 ## Commands
 - Install: `npm install`

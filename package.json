@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "data": "node tools/extract-legacy-data.mjs && node tools/fix-detached-waw.mjs",
+    "data": "node tools/extract-legacy-data.mjs && node tools/fix-detached-waw.mjs && node tools/fix-text-issues.mjs --apply",
     "check": "astro check",
     "verify": "node tools/verify-build.mjs",
     "test": "tsx src/scripts/_arabic-search.test.mts"
