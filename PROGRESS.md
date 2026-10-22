@@ -6,11 +6,18 @@ Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 ## Now
 - Astro site built with the old site's identity: home, `/diwan/` (poem cards), 685 poem pages, 404, sitemap, robots. No JavaScript except the theme toggle and random poem buttons.
 
-## Next
-1. Poem page features from the old site: the "أنت تقرأ" bar, save (محفوظاتي), copy poem, reading settings.
-2. Search (`/search`), with the word lists rebuilt from the edition text so `الزمان` finds `والزمان`. Then the filters on `/diwan/` (meter, rhyme).
-3. The indexes (`/explore`) and the about page (`/about`), then the old tools one by one, each loading only on its own page.
-4. Before launch: check performance and SEO on real phones, and submit the sitemap to Google Search Console and Bing.
+## Plan (working through it without stopping; commit + update this file after each milestone)
+UX problems to fix are listed with evidence in `reports/ux-audit.md`.
+
+- [ ] **M1 Poem page reading.** Notes under their verses (verified links), cleaned intros, slim reading bar with progress, verse menu (copy verse, copy link), copy poem, save poem, reading settings (font size, side-by-side or stacked). Poem visible on the first phone screen.
+- [ ] **M2 Saved and home.** `/saved` (محفوظاتي), "continue reading", verse of the day, home entry points.
+- [ ] **M3 Search.** `/search` with Arabic-aware matching (diacritics, alef/ya forms, joined waw), filters, highlighted results linking to the verse. Filters on `/diwan/`.
+- [ ] **M4 Indexes.** `/explore` hub, meters, rhymes (qafiya), first lines (matali), themes (أغراض الشعر), people (entities).
+- [ ] **M5 About.** `/about` (the poet and the edition), from the old site's text and the people catalog.
+- [ ] **M6 Lexicon.** `/explore/lexicon` from the glossary (344 entries).
+- [ ] **M7 Atlas.** `/explore/atlas` map of places from the atlas data.
+- [ ] **M8 Other tools.** Rhyme wheel, relations, phrases, compare, stats: build what the data supports; list what can't be.
+- [ ] **M9 Final QA.** Broken-link check over the whole build, accessibility, performance, SEO, phone and desktop, light and dark.
 
 ## Open questions
 - Custom domain or keep `diwan-alradi.pages.dev`? Easier to switch now, before the site is indexed.
