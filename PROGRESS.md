@@ -4,10 +4,10 @@ Where the rebuild stands. Short and current: what's done, what's next, what's op
 Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 
 ## Now
-- All nine milestones done. The site is ready to deploy; nothing is published yet.
+- All nine milestones done. Friends' test deployment is live on Cloudflare Pages: https://diwan-alradi-ce6.pages.dev (project `diwan-alradi`, built with `NOINDEX=1`).
 
 ## Next (suggestions)
-1. Deploy to Cloudflare Pages (build `npm run build`, output `dist`) and submit `sitemap.xml` to Google Search Console and Bing.
+1. Gather friends' feedback on the test deployment and font lab. Keep `NOINDEX=1` until the owner approves public indexing; only then submit the sitemap to search engines.
 2. Text review: the postponed items below, then the friend's `_original/content-review/` lists.
 3. Error reporting ("نبّهنا إلى خطأ") from the old site: needs a recipient address and a form service; not rebuilt.
 4. Verse image maker (صناعة صورة الأبيات) from the old site: not rebuilt.
@@ -33,6 +33,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - Intros: 121 poems are cleaned using the friend's reviewed boundaries (M1). Other intros may still hold stray glosses. Part of the text review.
 
 ## Done
+- 2026-10-23: Deployed all 1,203 static assets (1,168 HTML pages) to the owner's Cloudflare Pages project `diwan-alradi`: https://diwan-alradi-ce6.pages.dev. Deployment: https://0e9e5ca7.diwan-alradi-ce6.pages.dev. Built with the assigned `SITE_URL` and `NOINDEX=1`; build, verify and type check passed. Arabic search tests passed with `node src/scripts/_arabic-search.test.mts` (tsx hit a sandbox user-info error). All requested live HTTP checks passed, including Arabic paths, own 404, verse 301, sitemap and JSON. No data changes or commits.
 - 2026-10-23: Applied the 361 certain spacing fixes (owner approved): 286 verses plus titles, notes and intros; letters verified identical, `npm run data` now includes the step. Owner decided: no custom domain; the font lab ships in the preview so friends can vote.
 - 2026-10-22: Mobile UX pass (audit in `reports/mobile-ux-audit.md`; fixes by two Codex agents, reviewed and finished): poem list 219,234px → 81,014px (compact rows, collapsed filters, rhyme-letter bar), poem toolbar on one row, search results start at 393px (options collapsed), home search inside the first screen, 44px top-bar buttons, no text under 13px, larger tap areas (map dots, chips, letters). 0 accessibility violations at phone size. Line endings fixed to LF (`.gitattributes`).
 - 2026-10-22: Poem display (Codex agent, reviewed): one fitted size per poem with no wrapped half-verses (stacks instead of shrinking below 20/22px; 18px under 360px), notes and glossary links hidden behind «الشروح» and «شرح البيت». Removed accent edge stripes; clearer map in both modes. Text review report and dry-run fixer (Codex, not applied). Temporary font lab (Codex): 8 verse, 9 heading and 8 interface fonts from Google Fonts, loaded only when picked.

@@ -81,6 +81,12 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 - Internal review files (`REPORT-*.md`, `content-review/`) are shipped with the public site.
 - Lexicon shards (`lexicon-data/*.json`) and vocalization batches (`batch-*.json`) are referenced but missing from the deploy.
 
+## Deployment
+- Cloudflare Pages project `diwan-alradi` in the owner's account: https://diwan-alradi-ce6.pages.dev (the old site keeps `diwan-alradi.pages.dev`, which belongs to the friend).
+- Current deployment is a **test for friends**: built with `NOINDEX=1` and the font lab on. Remove `NOINDEX` and the font lab only when the owner says the site is final.
+- Redeploy: `SITE_URL=https://diwan-alradi-ce6.pages.dev NOINDEX=1 npm run build`, `npm run verify`, then `npx wrangler pages deploy dist --project-name=diwan-alradi --branch=main` (or through the Codex Cloudflare plugin with `--approve-for-me`; without it MCP calls fail with "approval policy is never").
+- After every deploy, check the live site: pages 200, `/does-not-exist/` 404, `/poem/r1-227/verse/3` 301 to `#v3`, sitemap on the right address.
+
 ## Working with sub-agents (owner's decision)
 - Implementation work is delegated to **Codex CLI workers**: model `gpt-6.1-sol`, reasoning effort **medium**. The lead agent plans, writes the briefs, reviews, tests and commits; workers only implement.
 - Command (Codex is not on PATH here; the app ships it at `%LOCALAPPDATA%\OpenAI\Codex\bin\<hash>\codex.exe`):
