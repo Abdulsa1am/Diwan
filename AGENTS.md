@@ -38,10 +38,12 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 <!-- TBD once the Astro project exists: install / dev / build / test -->
 
 ## Project structure
-- `_original/` — the friend's old site, kept for reference only. Don't edit it.
-  - `_original/deploy/` — the full published site (v24.8.23). Its data lives as `const AL_RADI_*` objects at the top of `assets/scripts/core.js`.
-  - `_original/code/` — the same code with the data stripped out.
-- `_original/deploy/assets/scripts/report-config.js` holds the owner's personal email. Never copy it into the new site or publish it.
+- `_original/` — the friend's old site (v24.8.23), unzipped and cleaned. Reference only; don't edit it.
+  - Its data lives as `const AL_RADI_*` objects at the top of `assets/scripts/core.js`.
+  - `tools/build-seo.py` regenerates the 685 `poem/<id>/index.html` pages (removed as build output): `python -X utf8 tools/build-seo.py`.
+  - `content-review/` — the friend's editorial review lists (pending notes, theme reviews). Useful when reviewing the text later.
+  - Removed: the generated poem pages, the AI work logs (`REPORT-*.md`), the Google Search Console verification file (tied to the friend's account), and the owner's email in `report-config.js`.
+- The two `.zip` files are the untouched originals. They still hold the owner's email; never publish or commit them.
 - `tools/` — data scripts. `data/` — data (see above). `reports/` — change logs for review.
 
 ## Known problems in the old site (what this rebuild fixes)

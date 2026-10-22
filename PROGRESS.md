@@ -22,4 +22,5 @@ Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 - 2026-10-22: Old site reviewed; chose Astro, kept the URL structure, decisions recorded in `AGENTS.md`.
 - 2026-10-22: Old site data extracted unchanged into `data/source/` (`tools/extract-legacy-data.mjs`).
 - 2026-10-22: Detached waw joined into `data/edition/` (`tools/fix-detached-waw.mjs`), approved by the owner. Every change is listed in `reports/waw-changes.csv`.
+- 2026-10-22: Old site unzipped into one clean `_original/` folder (deploy zip only; the code zip was a stripped copy of it). Removed generated poem pages, AI work logs, the Google verification file and the owner's email.
 - 2026-10-22: Git set up. `_original/` and the zip files are left out of the repo (large, and they hold the owner's email).

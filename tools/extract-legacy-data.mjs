@@ -6,7 +6,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 
 const root = path.resolve(import.meta.dirname, '..');
-const corePath = process.argv[2] ?? path.join(root, '_original/deploy/assets/scripts/core.js');
+const corePath = process.argv[2] ?? path.join(root, '_original/assets/scripts/core.js');
 const outDir = path.join(root, 'data/source');
 
 const src = fs.readFileSync(corePath, 'utf8');
