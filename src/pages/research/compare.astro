@@ -176,7 +176,7 @@ import { SITE_NAME, poems } from '../../lib/diwan';
   .pickers label {
     display: grid;
     gap: 2px;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
     min-width: 0;
   }
@@ -189,6 +189,7 @@ import { SITE_NAME, poems } from '../../lib/diwan';
     border-radius: 12px;
     padding: 8px 10px;
     min-height: 44px;
+    height: 44px;
   }
   .swap {
     min-height: 44px;
@@ -216,6 +217,9 @@ import { SITE_NAME, poems } from '../../lib/diwan';
     margin: 0 0 8px;
   }
   .side :global(h2 a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     text-decoration: none;
     color: var(--ink);
   }
@@ -226,7 +230,7 @@ import { SITE_NAME, poems } from '../../lib/diwan';
     margin: 0 0 10px;
   }
   .side :global(dt) {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
   }
   .side :global(dd) {
@@ -249,7 +253,7 @@ import { SITE_NAME, poems } from '../../lib/diwan';
     margin: 0 0 10px;
   }
   .side :global(.top-label) {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
     margin: 0 0 4px;
   }
@@ -272,10 +276,13 @@ import { SITE_NAME, poems } from '../../lib/diwan';
   }
   .side :global(.top small) {
     font-family: var(--ui-font);
-    font-size: 11px;
+    font-size: 13px;
     color: var(--muted);
   }
   #sharedWords :global(a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
     text-decoration: none;
   }
   .shared {

@@ -198,10 +198,12 @@ const jsonLd = {
     scroll-margin-top: 90px;
   }
   sup a {
+    display: inline-block;
     font-family: var(--ui-font);
-    font-size: 12px;
+    font-size: 13px;
     text-decoration: none;
-    padding: 0 2px;
+    line-height: 1;
+    padding: 12px 10px;
   }
   .toc {
     display: flex;
@@ -210,6 +212,9 @@ const jsonLd = {
     margin: 14px 0 4px;
   }
   .toc a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
     font-size: 13px;
     padding: 4px 12px;
     border-radius: 10px;
@@ -260,7 +265,7 @@ const jsonLd = {
     color: var(--muted);
   }
   .people .num {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
     white-space: nowrap;
   }
@@ -273,6 +278,9 @@ const jsonLd = {
     margin: 0;
   }
   .person-poems a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
     font-family: var(--display-font);
     font-size: 18px;
     padding: 2px 10px;
@@ -307,7 +315,7 @@ const jsonLd = {
     gap: 10px;
   }
   .facts dt {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
   }
   .facts dd {

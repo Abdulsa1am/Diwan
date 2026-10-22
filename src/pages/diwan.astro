@@ -20,22 +20,30 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
       <span class="visually-hidden">عنوان القصيدة أو مطلعها</span>
       <input name="t" type="search" placeholder="عنوان أو مطلع…" autocomplete="off" />
     </label>
-    <select name="meter" aria-label="البحر">
-      <option value="">البحور كلها</option>
-      {meters.map((m) => <option value={m}>{m}</option>)}
-    </select>
-    <select name="rhyme" aria-label="القافية">
-      <option value="">القوافي كلها</option>
-      {rhymes.map((r) => <option value={r}>{r}</option>)}
-    </select>
-    <select name="vol" aria-label="الجزء">
-      <option value="">الجزآن</option>
-      <option value="1">الجزء الأول</option>
-      <option value="2">الجزء الثاني</option>
-    </select>
+    <details class="filter-options" id="filterOptions">
+      <summary id="filterSummary">تصفية</summary>
+      <div class="filter-fields">
+        <select name="meter" aria-label="البحر">
+          <option value="">البحور كلها</option>
+          {meters.map((m) => <option value={m}>{m}</option>)}
+        </select>
+        <select name="rhyme" aria-label="القافية">
+          <option value="">القوافي كلها</option>
+          {rhymes.map((r) => <option value={r}>{r}</option>)}
+        </select>
+        <select name="vol" aria-label="الجزء">
+          <option value="">الجزآن</option>
+          <option value="1">الجزء الأول</option>
+          <option value="2">الجزء الثاني</option>
+        </select>
+      </div>
+    </details>
   </form>
 
   <p class="count" id="count" aria-live="polite">في الديوان {ar(poems.length)} قصيدة</p>
+  <nav class="rhyme-jump" id="rhymeJump" aria-label="انتقل إلى حرف القافية" hidden>
+    {rhymes.map((r) => <button type="button" data-jump-rhyme={r} aria-label={`قافية ${r}`}>{r}</button>)}
+  </nav>
   <p class="no-match glass" id="noMatch" hidden>
     لا قصائد بهذه القيود. <button type="button" class="link-btn" id="clearFilters">أزل القيود</button> أو
     <a href="/search/">ابحث في الأبيات</a>.
@@ -57,14 +65,15 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
             <span class="chip">{p.qafiya}</span>
           </div>
           <div class="preview-verse">
-            {p.verses[0].sadr}
+            <span class="opening-half">{p.verses[0].sadr}</span>
             {p.verses[0].ajuz && (
               <>
-                <br />
-                <span>{p.verses[0].ajuz}</span>
+                <br class="opening-break" />
+                <span class="opening-end">{p.verses[0].ajuz}</span>
               </>
             )}
           </div>
+          <div class="compact-meta">{p.meter}، {versesLabel(p.verses.length)}</div>
           <div class="card-foot">
             <span>{versesLabel(p.verses.length)}</span>
             <span>
@@ -81,10 +90,31 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   import { fold } from '../scripts/arabic-search';
   import { arCount } from '../scripts/shared';
 
+  // Keep build-time corpus shaping out of the browser bundle.
+  const ar = (n: number) => n.toLocaleString('ar-EG', { useGrouping: false });
+
   const form = document.getElementById('filters') as HTMLFormElement;
   const cards = [...document.querySelectorAll<HTMLAnchorElement>('.poem-card')];
   const count = document.getElementById('count')!;
   const noMatch = document.getElementById('noMatch')!;
+  const filterOptions = document.getElementById('filterOptions') as HTMLDetailsElement;
+  const filterSummary = document.getElementById('filterSummary')!;
+  const jump = document.getElementById('rhymeJump')!;
+  const jumpButtons = [...jump.querySelectorAll<HTMLButtonElement>('button')];
+  const firstByRhyme = new Map<string, HTMLAnchorElement>();
+  const phone = matchMedia('(max-width: 620px)');
+  const syncDisclosure = () => { filterOptions.open = !phone.matches; };
+  syncDisclosure();
+  phone.addEventListener('change', syncDisclosure);
+  jump.hidden = false;
+  jump.addEventListener('click', (event) => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-jump-rhyme]');
+    if (!button || button.disabled) return;
+    const card = firstByRhyme.get(button.dataset.jumpRhyme!);
+    if (!card) return;
+    card.scrollIntoView({ block: 'start' });
+    card.focus({ preventScroll: true });
+  });
   const folded = new Map<HTMLElement, string>();
   const textOf = (card: HTMLElement) => {
     if (!folded.has(card)) folded.set(card, fold(card.querySelector('h2')!.textContent! + ' ' + card.querySelector('.preview-verse')!.textContent!).text);
@@ -98,6 +128,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     const rhyme = String(fd.get('rhyme') ?? '');
     const vol = String(fd.get('vol') ?? '');
     let shown = 0;
+    firstByRhyme.clear();
     for (const card of cards) {
       const ok =
         (!meter || card.dataset.meter === meter) &&
@@ -105,12 +136,18 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
         (!vol || card.dataset.vol === vol) &&
         (!t || textOf(card).includes(t));
       card.hidden = !ok;
-      if (ok) shown++;
+      if (ok) {
+        shown++;
+        if (!firstByRhyme.has(card.dataset.rhyme!)) firstByRhyme.set(card.dataset.rhyme!, card);
+      }
     }
+    const active = [t, meter, rhyme, vol].filter(Boolean).length;
+    filterSummary.textContent = active ? `تصفية (${ar(active)})` : 'تصفية';
+    for (const button of jumpButtons) button.disabled = !firstByRhyme.has(button.dataset.jumpRhyme!);
     const filtered = t || meter || rhyme || vol;
     count.textContent = filtered
-      ? `${arCount(shown, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة'])} من ${cards.length.toLocaleString('ar-EG')}`
-      : `في الديوان ${cards.length.toLocaleString('ar-EG')} قصيدة`;
+      ? `${arCount(shown, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة'])} من ${ar(cards.length)}`
+      : `في الديوان ${ar(cards.length)} قصيدة`;
     noMatch.hidden = shown > 0;
     const params = new URLSearchParams();
     for (const [k, v] of fd) if (v) params.set(k, String(v));
@@ -131,8 +168,8 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
       const el = form.elements.namedItem(k);
       if (el instanceof HTMLInputElement || el instanceof HTMLSelectElement) el.value = v;
     }
-    apply();
   }
+  apply();
 </script>
 
 <style>
@@ -143,6 +180,52 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     padding: 10px;
     margin-top: 16px;
   }
+  .filter-options {
+    flex: 3 1 380px;
+    min-width: 0;
+  }
+  .filter-options summary {
+    width: fit-content;
+    min-height: 44px;
+    align-content: center;
+    padding: 6px 12px;
+    border: 1px solid var(--line-dark);
+    border-radius: 12px;
+    background: var(--paper-strong);
+    color: var(--ink);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .filter-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 8px;
+  }
+  @media (min-width: 621px) {
+    .filter-options[open] summary { display: none; }
+    .filter-fields { padding-top: 0; }
+  }
+  .rhyme-jump {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 4px;
+    margin-bottom: 12px;
+  }
+  .rhyme-jump[hidden] { display: none; }
+  .rhyme-jump button {
+    flex: 0 0 44px;
+    min-height: 44px;
+    border: 1px solid var(--line-dark);
+    border-radius: 10px;
+    background: var(--paper);
+    color: var(--ink);
+    font: 500 18px/1.5 var(--ui-font);
+    cursor: pointer;
+  }
+  .rhyme-jump button:disabled { opacity: .35; cursor: default; }
+  .compact-meta { display: none; }
   .title-filter {
     flex: 1 1 220px;
     display: flex;
@@ -152,7 +235,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     border: 1px solid var(--line-dark);
     border-radius: 12px;
     padding: 0 12px;
-    min-height: 42px;
+    min-height: 44px;
   }
   .title-filter:focus-within {
     outline: 2px solid var(--accent);
@@ -183,7 +266,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     border: 1px solid var(--line-dark);
     border-radius: 12px;
     padding: 6px 10px;
-    min-height: 42px;
+    min-height: 44px;
   }
   .no-match {
     padding: 16px 20px;
@@ -237,6 +320,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     /* Render off-screen cards lazily: the list has 685 of them. */
     content-visibility: auto;
     contain-intrinsic-size: auto 260px;
+    scroll-margin-top: 100px;
   }
   .poem-card:hover {
     background: var(--paper-strong);
@@ -261,7 +345,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     margin: 18px 0 14px;
     flex: 1;
   }
-  .preview-verse span {
+  .preview-verse .opening-end {
     color: var(--muted);
   }
   .card-foot {
@@ -269,7 +353,45 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     justify-content: space-between;
     border-top: 1px solid var(--line-dark);
     padding-top: 10px;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
+  }
+  @media (max-width: 620px) {
+    .filter-bar { gap: 6px; }
+    .title-filter { flex-basis: 100%; }
+    .filter-options { flex-basis: 100%; }
+    .filter-fields select { min-width: 0; }
+    .count { margin: 12px 0 4px; }
+    .cards { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    .poem-card {
+      min-width: 0;
+      padding: 7px 14px;
+      contain-intrinsic-size: auto 96px;
+    }
+    .poem-card h2 {
+      font-family: var(--display-font);
+      font-size: 24px;
+      line-height: 1.5;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .poem-card .meta, .card-foot, .opening-break, .opening-end { display: none; }
+    .preview-verse {
+      flex: none;
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .compact-meta {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
   }
 </style>

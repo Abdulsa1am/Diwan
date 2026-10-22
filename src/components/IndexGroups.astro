@@ -69,6 +69,7 @@ const max = Astro.props.max ?? Math.max(...groups.map((g) => g.poems.length));
     padding: 0;
   }
   summary {
+    min-height: 44px;
     display: grid;
     grid-template-columns: minmax(7rem, 1.2fr) 2fr auto;
     align-items: center;
@@ -91,7 +92,7 @@ const max = Astro.props.max ?? Math.max(...groups.map((g) => g.poems.length));
     font-size: 24px;
   }
   .label small {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
   }
   .bar {
@@ -124,6 +125,7 @@ const max = Astro.props.max ?? Math.max(...groups.map((g) => g.poems.length));
     gap: 2px 12px;
   }
   .poems a {
+    min-height: 44px;
     display: flex;
     flex-direction: column;
     padding: 8px 10px;
@@ -149,7 +151,9 @@ const max = Astro.props.max ?? Math.max(...groups.map((g) => g.poems.length));
     text-overflow: ellipsis;
   }
   .filter-link {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     margin: 0 20px 14px;
     font-size: 14px;
   }

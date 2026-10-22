@@ -23,43 +23,46 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
       <input id="q" name="q" type="search" placeholder="أدخل لفظًا، أو شطرًا من بيت…" autocomplete="off" enterkeyhint="search" />
       <button class="btn btn-primary" type="submit">ابحث</button>
     </div>
-    <div class="filters">
-      <div class="segmented" role="radiogroup" aria-label="طريقة المطابقة">
-        <label><input type="radio" name="mode" value="any" checked /> <span>كل الألفاظ</span></label>
-        <label><input type="radio" name="mode" value="exact" /> <span>العبارة كما هي</span></label>
+    <details class="search-options" id="searchOptions">
+      <summary id="optionsSummary">خيارات البحث</summary>
+      <div class="filters">
+        <div class="segmented" role="radiogroup" aria-label="طريقة المطابقة">
+          <label><input type="radio" name="mode" value="any" checked /> <span>كل الألفاظ</span></label>
+          <label><input type="radio" name="mode" value="exact" /> <span>العبارة كما هي</span></label>
+        </div>
+        <label class="field">
+          <span>مجال البحث</span>
+          <select name="in">
+            <option value="verses">الأبيات</option>
+            <option value="titles">عناوين القصائد</option>
+            <option value="notes">الحواشي والشروح</option>
+            <option value="intros">أخبار القصائد</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>البحر</span>
+          <select name="meter">
+            <option value="">البحور كلها</option>
+            {meters.map((m) => <option value={m}>{m}</option>)}
+          </select>
+        </label>
+        <label class="field">
+          <span>القافية</span>
+          <select name="rhyme">
+            <option value="">القوافي كلها</option>
+            {rhymes.map((r) => <option value={r}>{r}</option>)}
+          </select>
+        </label>
+        <label class="field">
+          <span>الجزء</span>
+          <select name="vol">
+            <option value="">الجزآن</option>
+            <option value="1">الأول</option>
+            <option value="2">الثاني</option>
+          </select>
+        </label>
       </div>
-      <label class="field">
-        <span>مجال البحث</span>
-        <select name="in">
-          <option value="verses">الأبيات</option>
-          <option value="titles">عناوين القصائد</option>
-          <option value="notes">الحواشي والشروح</option>
-          <option value="intros">أخبار القصائد</option>
-        </select>
-      </label>
-      <label class="field">
-        <span>البحر</span>
-        <select name="meter">
-          <option value="">البحور كلها</option>
-          {meters.map((m) => <option value={m}>{m}</option>)}
-        </select>
-      </label>
-      <label class="field">
-        <span>القافية</span>
-        <select name="rhyme">
-          <option value="">القوافي كلها</option>
-          {rhymes.map((r) => <option value={r}>{r}</option>)}
-        </select>
-      </label>
-      <label class="field">
-        <span>الجزء</span>
-        <select name="vol">
-          <option value="">الجزآن</option>
-          <option value="1">الأول</option>
-          <option value="2">الثاني</option>
-        </select>
-      </label>
-    </div>
+    </details>
   </form>
 
   <div class="status" id="searchStatus" role="status" aria-live="polite">
@@ -100,7 +103,14 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   const results = document.getElementById('results')!;
   const more = document.getElementById('more') as HTMLButtonElement;
   const tips = document.getElementById('tips')!;
+  const options = document.getElementById('searchOptions') as HTMLDetailsElement;
+  const optionsSummary = document.getElementById('optionsSummary')!;
+  const phone = matchMedia('(max-width: 620px)');
+  const syncDisclosure = () => { options.open = !phone.matches; };
+  syncDisclosure();
+  phone.addEventListener('change', syncDisclosure);
   const digits = new Intl.NumberFormat('ar-EG');
+  const ar = (n: number) => digits.format(n);
   const PAGE = 40;
 
   let poems: PoemRow[] = [];
@@ -158,9 +168,16 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
   }
 
+  function updateOptions() {
+    const s = read();
+    const active = [s.mode !== 'any', s.field !== 'verses', !!s.meter, !!s.rhyme, !!s.vol].filter(Boolean).length;
+    optionsSummary.textContent = active ? `خيارات البحث (${ar(active)})` : 'خيارات البحث';
+  }
+
   let runId = 0;
   async function run() {
     const s = read();
+    updateOptions();
     writeUrl(s);
     const terms = queryTerms(s.q, s.mode === 'exact');
     if (!terms.length) {
@@ -267,6 +284,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     }
     run();
   }
+  updateOptions();
 </script>
 
 <style>
@@ -326,6 +344,24 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     align-items: end;
     gap: 10px;
   }
+  .search-options { min-width: 0; }
+  .search-options summary {
+    width: fit-content;
+    min-height: 44px;
+    align-content: center;
+    padding: 6px 12px;
+    border: 1px solid var(--line-dark);
+    border-radius: 12px;
+    background: var(--paper-strong);
+    color: var(--ink);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .search-options[open] .filters { padding-top: 10px; }
+  @media (min-width: 621px) {
+    .search-options[open] summary { display: none; }
+    .search-options[open] .filters { padding-top: 0; }
+  }
   .segmented {
     display: flex;
     background: var(--chip-bg);
@@ -359,7 +395,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   .field {
     display: grid;
     gap: 2px;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
   }
   .field select {
@@ -452,5 +488,14 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     border-radius: 10px;
     background: var(--chip-bg);
     text-decoration: none;
+  }
+  @media (max-width: 620px) {
+    .search-box { padding: 10px; gap: 6px; }
+    .query-row { gap: 6px; padding-inline-start: 8px; }
+    .query-row .btn { min-height: 44px; flex-shrink: 0; }
+    .filters { align-items: stretch; }
+    .field { flex: 1 1 110px; min-width: 0; font-size: 13px; }
+    .field select { min-width: 0; min-height: 44px; }
+    .segmented span { min-height: 44px; align-content: center; }
   }
 </style>

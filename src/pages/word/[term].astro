@@ -102,6 +102,7 @@ const description = `${word.headword}: ${first.meaning} وردت في قصيدة
   }
   .verse,
   .occ a {
+    min-height: 44px;
     display: grid;
     text-align: center;
     font-family: var(--poem-font);
@@ -123,6 +124,8 @@ const description = `${word.headword}: ${first.meaning} وردت في قصيدة
     margin-top: 10px;
   }
   .note summary {
+    min-height: 44px;
+    align-content: center;
     cursor: pointer;
     font-size: 14px;
     color: var(--accent);
@@ -137,6 +140,14 @@ const description = `${word.headword}: ${first.meaning} وردت في قصيدة
   .note .source {
     font-family: var(--ui-font);
     font-size: 13px;
+  }
+  .source a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .elsewhere > .btn {
+    min-height: 44px;
   }
   .elsewhere h2 {
     font-size: 28px;

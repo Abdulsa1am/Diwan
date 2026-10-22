@@ -57,12 +57,14 @@ const labels = dots.map((d, i) => {
         ))
       }
     </g>
+    <!-- Drawn least important first, so where tap areas overlap the more cited place is on top. -->
     <g class="places">
       {
-        labels.map(({ p, x, y, r, isFocus, label: l }) => (
+        [...labels].reverse().map(({ p, x, y, r, isFocus, label: l }) => (
           <a href={placeHref(p)} class:list={['place', { focus: isFocus, dim: focus && !isFocus }]}>
             <title>{`${p.name}: ${p.verses.length ? arCount(p.verses.length, ['شاهد واحد', 'شاهدان', 'شواهد', 'شاهدًا']) : 'في الحواشي'}`}</title>
-            <circle cx={x.toFixed(1)} cy={y.toFixed(1)} r={r.toFixed(1)} />
+            <circle class="place-hit" cx={x.toFixed(1)} cy={y.toFixed(1)} r="18" />
+            <circle class="place-dot" cx={x.toFixed(1)} cy={y.toFixed(1)} r={r.toFixed(1)} />
             {l && (
               <text x={l.x.toFixed(1)} y={l.y.toFixed(1)} text-anchor={l.anchor}>
                 {p.name}
@@ -115,7 +117,12 @@ const labels = dots.map((d, i) => {
     stroke-linecap: round;
     stroke-linejoin: round;
   }
-  .place circle {
+  .place-hit {
+    fill: transparent;
+    stroke: none;
+    pointer-events: all;
+  }
+  .place-dot {
     fill: var(--accent);
     fill-opacity: 0.75;
     stroke: var(--accent-deep);
@@ -130,13 +137,23 @@ const labels = dots.map((d, i) => {
     stroke-width: 4px;
     stroke-linejoin: round;
   }
-  .place:hover circle,
-  .place:focus-visible circle,
-  .place.focus circle {
+  .place:hover .place-dot,
+  .place:focus-visible .place-dot,
+  .place.focus .place-dot {
     fill-opacity: 0.9;
   }
   .place:focus-visible {
     outline: none;
+  }
+  .place:focus-visible .place-dot {
+    stroke-width: 3;
+    vector-effect: non-scaling-stroke;
+  }
+  @media (max-width: 620px) {
+    .place-hit {
+      /* The 900-unit map shrinks to about 300px on a phone: retain an 18px+ hit radius. */
+      r: 60;
+    }
   }
   .place:focus-visible text {
     font-weight: 700;
@@ -149,7 +166,7 @@ const labels = dots.map((d, i) => {
     font-size: 18px;
   }
   figcaption {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
     padding: 6px 8px 2px;
   }

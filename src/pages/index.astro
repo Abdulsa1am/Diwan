@@ -160,7 +160,7 @@ const jsonLd = {
     margin-bottom: 20px;
   }
   .overline {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
   }
   .welcome h2 {
@@ -319,7 +319,7 @@ const jsonLd = {
     line-height: 1.5;
   }
   .resume small {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
   }
   .resume b {
@@ -366,6 +366,10 @@ const jsonLd = {
     margin: 0;
   }
   .daily-source {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
     font-size: 13px;
     color: var(--muted);
   }
@@ -425,12 +429,30 @@ const jsonLd = {
     }
   }
   @media (max-width: 620px) {
+    .hero {
+      min-height: 0;
+      margin-bottom: 12px;
+    }
     h1 {
       font-size: clamp(52px, 14vw, 75px);
       line-height: 1.28;
+      margin: 10px 0;
     }
     .hero-copy {
-      padding: 30px 22px;
+      padding: 20px 22px;
+    }
+    .hero-copy > p {
+      margin-bottom: 14px;
+    }
+    .hero-actions {
+      gap: 8px;
+    }
+    .hero-actions .btn {
+      padding: 9px 14px;
+      min-height: 44px;
+    }
+    .hero-copy > .hero-count {
+      margin-top: 12px;
     }
   }
 </style>

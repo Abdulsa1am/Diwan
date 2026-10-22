@@ -53,13 +53,12 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
                   {t.related.slice(0, 12).map((r) => (
                     <li>
                       {r.type === 'موضع' && placeNames.has(r.name) ? (
-                        <a href={placeHref(r.name)}>{r.name}</a>
+                        <a href={placeHref(r.name)}>{r.name}<small>{ar(r.shared)}</small></a>
                       ) : termLabels.has(r.name) ? (
-                        <a href={`#${r.name}`}>{r.name}</a>
+                        <a href={`#${r.name}`}>{r.name}<small>{ar(r.shared)}</small></a>
                       ) : (
-                        <span>{r.name}</span>
+                        <span>{r.name}<small>{ar(r.shared)}</small></span>
                       )}
-                      <small>{ar(r.shared)}</small>
                     </li>
                   ))}
                 </ul>
@@ -138,7 +137,7 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
   }
   summary small,
   .related small {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
   }
   .with {
@@ -155,10 +154,6 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
     padding: 0 14px;
   }
   .related li {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 4px;
-    padding: 2px 10px;
     border-radius: 8px;
     background: var(--chip-bg);
     font-family: var(--poem-font);
@@ -167,8 +162,24 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
   .related a {
     text-decoration: none;
   }
+  .related a,
+  .related li > span {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 2px 10px;
+  }
+  @media (max-width: 620px) {
+    .related a,
+    .related li > span {
+      min-height: 40px;
+      align-items: center;
+    }
+  }
   .search {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-size: 13px;
     margin: 10px 14px 12px;
   }

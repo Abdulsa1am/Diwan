@@ -84,19 +84,19 @@ const jsonLd = {
         </button>
         <button class="btn" type="button" data-action="copy-poem" aria-label="نسخ القصيدة">
           <svg class="ui-icon" aria-hidden="true"><use href="#i-copy"></use></svg>
-          انسخ
+          <span class="action-label">انسخ</span>
         </button>
         <button class="btn" type="button" data-action="share" aria-label="مشاركة القصيدة">
           <svg class="ui-icon" aria-hidden="true"><use href="#i-share"></use></svg>
-          شارك
+          <span class="action-label">شارك</span>
         </button>
-        <button class="btn" type="button" data-action="settings" aria-expanded="false" aria-controls="readerSettings">
+        <button class="btn" type="button" data-action="settings" aria-label="صفة القراءة" aria-expanded="false" aria-controls="readerSettings">
           <svg class="ui-icon" aria-hidden="true"><use href="#i-sliders"></use></svg>
-          صفة القراءة
+          <span class="action-label">صفة القراءة</span>
         </button>
         {annotatedCount > 0 && (
-          <button class="btn" type="button" data-action="notes" aria-pressed="false" aria-controls="poemSheet">
-            الشروح ({ar(annotatedCount)})
+          <button class="btn" type="button" data-action="notes" aria-label={`الشروح (${ar(annotatedCount)})`} aria-pressed="false" aria-controls="poemSheet">
+            الشروح<span class="annotation-count"> ({ar(annotatedCount)})</span>
           </button>
         )}
       </div>
@@ -287,6 +287,7 @@ const jsonLd = {
   }
   .poem-actions .btn {
     padding: 7px 14px;
+    min-height: 44px;
   }
   .poem-actions .ui-icon {
     width: 18px;
@@ -436,8 +437,8 @@ const jsonLd = {
     position: absolute;
     top: 6px;
     inset-inline-start: 0;
-    min-width: 36px;
-    min-height: 36px;
+    min-width: 40px;
+    min-height: 40px;
     display: grid;
     place-items: center;
     border-radius: 10px;
@@ -529,7 +530,7 @@ const jsonLd = {
   .verse-notes summary {
     display: inline-flex;
     align-items: center;
-    min-height: 32px;
+    min-height: 40px;
     padding: 2px 12px;
     border-radius: 8px;
     border: 1px solid var(--line-dark);
@@ -604,7 +605,7 @@ const jsonLd = {
   .poem-nav small {
     display: block;
     font-family: var(--ui-font);
-    font-size: 12px;
+    font-size: 13px;
     color: var(--muted);
   }
   .poem-nav a:hover {
@@ -624,7 +625,7 @@ const jsonLd = {
     display: none;
   }
   .verse-menu-title {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     color: var(--muted);
     padding: 4px 10px 6px;
@@ -649,12 +650,23 @@ const jsonLd = {
       padding-inline: 34px 4px;
     }
     .poem-actions {
-      gap: 6px;
+      flex-wrap: nowrap;
+      gap: 4px;
     }
     .poem-actions .btn {
       font-size: 13px;
-      padding: 6px 10px;
+      padding: 6px 8px;
       gap: 5px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .poem-actions .action-label, .poem-actions .annotation-count { display: none; }
+    .poem-actions [data-action='copy-poem'],
+    .poem-actions [data-action='share'],
+    .poem-actions [data-action='settings'] {
+      width: 44px;
+      padding: 0;
+      justify-content: center;
     }
     .poem-nav a {
       font-size: 18px;

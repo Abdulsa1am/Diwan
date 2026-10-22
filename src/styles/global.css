@@ -145,7 +145,7 @@ h3 {
   color: var(--accent-deep);
   border-radius: 4px;
   padding: 2px 8px;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.8;
 }
 
@@ -207,7 +207,7 @@ h3 {
   letter-spacing: -2px;
 }
 .brand span:not(.brand-name) {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
 }
 .brand small {
@@ -217,11 +217,11 @@ h3 {
 .sidebar-rule {
   text-align: center;
   color: var(--gold);
-  font-size: 11px;
+  font-size: 13px;
   margin: 8px 0 14px;
 }
 .sidebar-label {
-  font-size: 11px;
+  font-size: 13px;
   color: var(--muted);
   padding-inline: 12px;
   margin: 10px 0 4px;
@@ -264,7 +264,7 @@ h3 {
   margin-top: auto;
   padding: 16px 12px 0;
   text-align: center;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
 }
 .sidebar-verse {
@@ -292,6 +292,9 @@ h3 {
   padding: 0 clamp(16px, 3vw, 40px);
 }
 .top-brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font: 700 26px/1 var(--ui-font);
   color: var(--accent-deep);
   text-decoration: none;
@@ -324,6 +327,13 @@ h3 {
   box-shadow: var(--glass-shadow-soft), var(--glass-inset);
   color: var(--ink);
   cursor: pointer;
+}
+@media (max-width: 1000px) {
+  .iconbtn {
+    width: 44px;
+    height: 44px;
+    flex: none;
+  }
 }
 .iconbtn:hover {
   color: var(--accent);
@@ -379,7 +389,7 @@ h3 {
 
 .site-footer {
   text-align: center;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
   padding: 8px 16px 0;
 }
@@ -464,7 +474,7 @@ a.iconbtn {
   white-space: nowrap;
 }
 .reading-status span {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
 }
 html.is-reading .reading-status {
