@@ -21,7 +21,8 @@ const { poem, prev, next } = Astro.props;
 const count = poem.verses.length;
 const opening = poem.verses[0];
 
-const title = `${poem.title} | ${SITE_NAME}`;
+// The opening half-line makes every title unique (seven headings repeat in the diwan) and matches line searches.
+const title = `${poem.title}: «${opening.sadr.replace(/[،,.:؛]+$/, '')}» | ${POET}`;
 const description = `قصيدة للشريف الرضي من بحر ${poem.meter}، قافية ${poem.rhyme}، ${versesLabel(count)}. مطلعها: ${verseText(opening)}`;
 const url = new URL(Astro.url.pathname, Astro.site).href;
 const home = new URL('/', Astro.site).href;

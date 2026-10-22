@@ -44,7 +44,7 @@ const labels = dots.map((d, i) => {
 ---
 
 <figure class="atlas-map glass">
-  <svg viewBox={mapViewBox} role="img" aria-label={label}>
+  <svg viewBox={mapViewBox} role="group" aria-label={label}>
     <g class="land">
       {countryPaths.map(([, d]) => <path d={d} />)}
     </g>

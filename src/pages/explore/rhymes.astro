@@ -38,7 +38,7 @@ const description = `توزيع قصائد الشريف الرضي على حرو
   />
 
   <div class="wheel-wrap glass">
-    <svg viewBox="0 0 400 400" role="img" aria-label="عجلة حروف الروي في الديوان">
+    <svg viewBox="0 0 400 400" role="group" aria-label="عجلة حروف الروي في الديوان">
       {
         arcs.map(({ g, d, label, showLabel, shade }) => (
           <a href={`/explore/qafiya/#${g.key}`} class:list={['arc', { alt: shade }]}>

@@ -4,7 +4,13 @@ Where the rebuild stands. Short and current: what's done, what's next, what's op
 Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 
 ## Now
-- M9: final QA.
+- All nine milestones done. The site is ready to deploy; nothing is published yet.
+
+## Next (suggestions)
+1. Deploy to Cloudflare Pages (build `npm run build`, output `dist`) and submit `sitemap.xml` to Google Search Console and Bing.
+2. Text review: the postponed items below, then the friend's `_original/content-review/` lists.
+3. Error reporting ("نبّهنا إلى خطأ") from the old site: needs a recipient address and a form service; not rebuilt.
+4. Verse image maker (صناعة صورة الأبيات) from the old site: not rebuilt.
 
 ## Plan (working through it without stopping; commit + update this file after each milestone)
 UX problems to fix are listed with evidence in `reports/ux-audit.md`.
@@ -17,7 +23,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - [x] **M6 Lexicon.** `/explore/lexicon` from the glossary (344 entries).
 - [x] **M7 Atlas.** `/explore/atlas` map of places from the atlas data.
 - [x] **M8 Other tools.** Rhyme wheel, relations, phrases, compare, stats: build what the data supports; list what can't be.
-- [ ] **M9 Final QA.** Broken-link check over the whole build, accessibility, performance, SEO, phone and desktop, light and dark.
+- [x] **M9 Final QA.** Broken-link check over the whole build, accessibility, performance, SEO, phone and desktop, light and dark.
 
 ## Open questions
 - Custom domain or keep `diwan-alradi.pages.dev`? Easier to switch now, before the site is indexed.
@@ -27,6 +33,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - Intros: 121 poems are cleaned using the friend's reviewed boundaries (M1). Other intros may still hold stray glosses. Part of the text review.
 
 ## Done
+- 2026-10-22: **M9** Final QA: accessibility audit (axe-core, 17 pages in light and dark: 0 violations after fixing the map and wheel roles), no sideways scroll on phones, keyboard skip link, unique titles and descriptions (poem titles now include the opening half-line), valid structured data, no broken links. First visit, gzipped: poem page 12–21KB, home 13KB, poem list 54KB (old site over 1MB per page); fonts 172KB once. Added `README.md` (Arabic) for the owner and the code map in `AGENTS.md`.
 - 2026-10-22: **M8** Tools: الحجازيات (`/explore/hijaz/`), عجلة القوافي (`/explore/rhymes/`, SVG), فهرس الألفاظ (`/explore/words/`), شبكة العلاقات (`/explore/relations/`, with the friend's caveat), شجرة العبارة (`/explore/phrases/`) and مقارنة قصيدتين (`/research/compare/`); the last two load the verse index only when used and show words in their real spelling. Old `/explore/openings` and `/research/observatory` redirect to first lines and stats; `/relation/<term>` to the relations page. Regexes now use escape codes instead of invisible characters.
 - 2026-10-22: **M7** `/explore/atlas/`: static SVG map (the old base map, Tigris and Euphrates, 32 mapped places sized by citations, labels placed without overlaps) and all 133 places by kind. A page per place at `/place/<name>/` (old URL format): kind, modern name, certainty, note, verified verses (349 links, all checked), indirect mentions, notes, sources, and the place highlighted on the map. No map library; no JavaScript.
 - 2026-10-22: **M6** `/explore/lexicon/` (329 words, letter navigation, filter) and a page per word at `/word/<word>/` (old URL format): meaning, the verse it explains, the note and its source page, and other verses where the word occurs. All 344 glosses checked against their verses. Poem pages link glossed words ("في المعجم").

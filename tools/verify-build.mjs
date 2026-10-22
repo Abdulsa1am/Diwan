@@ -53,6 +53,13 @@ for (const f of htmlFiles) {
   if (!/<meta name="description" content="[^"]+"/.test(html)) problems.push(`${f} has no description`);
   if (!/<link rel="canonical"/.test(html)) problems.push(`${f} has no canonical link`);
   if (/@gmail\.com|dimaa\.thalatha/.test(html)) problems.push(`${f} contains an email address`);
+  for (const [, json] of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+    try {
+      JSON.parse(json);
+    } catch {
+      problems.push(`${f} has invalid structured data (ld+json)`);
+    }
+  }
   const gz = zlib.gzipSync(html).length;
   if (gz > largest.gzip) largest = { file: f, gzip: gz };
 }
@@ -60,7 +67,21 @@ for (const f of files.filter((f) => /\.(js|css|json|xml|txt)$/.test(f))) {
   if (/dimaa\.thalatha/.test(fs.readFileSync(path.join(dist, f), 'utf8'))) problems.push(`${f} contains the owner's email`);
 }
 
-// 5. Every sitemap URL is a real page
+// 5. Titles and descriptions are unique (search engines treat duplicates as the same page)
+const seen = { title: new Map(), description: new Map() };
+for (const f of htmlFiles) {
+  if (f === '404.html') continue;
+  const html = fs.readFileSync(path.join(dist, f), 'utf8');
+  const title = html.match(/<title>([^<]+)<\/title>/)?.[1];
+  const desc = html.match(/<meta name="description" content="([^"]+)"/)?.[1];
+  for (const [kind, value] of [['title', title], ['description', desc]]) {
+    if (!value) continue;
+    if (seen[kind].has(value)) problems.push(`duplicate ${kind} in ${f} and ${seen[kind].get(value)}`);
+    else seen[kind].set(value, f);
+  }
+}
+
+// 6. Every sitemap URL is a real page
 const sitemap = fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8');
 const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname);
 for (const loc of locs) if (!resolves(loc)) problems.push(`sitemap lists a missing page: ${loc}`);
