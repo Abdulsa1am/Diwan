@@ -26,7 +26,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - [x] **M9 Final QA.** Broken-link check over the whole build, accessibility, performance, SEO, phone and desktop, light and dark.
 
 ## Open questions
-- Fonts: the owner is trying fonts in the TEMPORARY font lab («مختبر الخطوط» in the sidebar, or the T button in the top bar). When chosen: self-host the picked fonts with @fontsource, then delete `src/components/FontLab.astro`, `src/scripts/font-lab.ts` and every block marked `TEMPORARY font lab` (Base.astro, reader.ts). Must not ship to the public site.
+- Fonts: the TEMPORARY font lab («مختبر الخطوط», or the T button on phones) ships in the preview deployment on purpose: the owner's friends try fonts and vote. When the fonts are chosen: self-host them with @fontsource, delete `src/components/FontLab.astro`, `src/scripts/font-lab.ts` and every block marked `TEMPORARY font lab` (Base.astro, reader.ts), and redeploy.
 - Text: the 878 "likely"/"needs-review" rows in `reports/text-issues.csv` need the printed book (see `AGENTS.md`).
 - The old share image (`public/share.png`) shows empty boxes where the dots between words should be. Redraw it?
 - The old base map has no Iran outline, so al-Ahwaz sits on empty ground. Add Iran to `basemap.json`?
