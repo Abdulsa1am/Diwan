@@ -1,0 +1,143 @@
+---
+// Static SVG map: countries, the two rivers, and a linked dot per place with coordinates.
+import { places, project, mapViewBox, countryPaths, rivers, placeHref } from '../lib/atlas';
+import type { Place } from '../lib/atlas';
+import { arCount } from '../scripts/shared';
+
+interface Props {
+  /** Highlight one place (on its own page). */
+  focus?: Place;
+  label: string;
+}
+const { focus, label } = Astro.props;
+const mapped = places.filter((p) => p.lat !== undefined && p.lon !== undefined);
+const max = Math.max(...mapped.map((p) => p.verses.length), 1);
+
+// Place labels without overlaps: most-cited places first; each tries left, right, above, below its dot.
+type Box = { x1: number; y1: number; x2: number; y2: number };
+const hit = (a: Box, b: Box) => a.x1 < b.x2 && a.x2 > b.x1 && a.y1 < b.y2 && a.y2 > b.y1;
+const dots = mapped
+  .map((p) => {
+    const { x, y } = project(p.lat!, p.lon!);
+    const isFocus = focus?.name === p.name;
+    const r = 4 + Math.sqrt(p.verses.length / max) * 9 + (isFocus ? 4 : 0);
+    return { p, x, y, r, isFocus, box: { x1: x - r, y1: y - r, x2: x + r, y2: y + r } };
+  })
+  .sort((a, b) => Number(b.isFocus) - Number(a.isFocus) || b.p.verses.length - a.p.verses.length);
+// Labels go in order of importance. A label avoids earlier labels and the dots of places at least as
+// important; smaller places' dots may sit under it (their names show on hover and in the list).
+const placedLabels: Box[] = [];
+const labels = dots.map((d, i) => {
+  const w = d.p.name.length * 8 + 6;
+  const h = 18;
+  const options = [
+    { x: d.x - d.r - 3, y: d.y + 5, anchor: 'end', box: { x1: d.x - d.r - 3 - w, y1: d.y - h / 2, x2: d.x - d.r - 3, y2: d.y + h / 2 } },
+    { x: d.x + d.r + 3, y: d.y + 5, anchor: 'start', box: { x1: d.x + d.r + 3, y1: d.y - h / 2, x2: d.x + d.r + 3 + w, y2: d.y + h / 2 } },
+    { x: d.x, y: d.y - d.r - 4, anchor: 'middle', box: { x1: d.x - w / 2, y1: d.y - d.r - 4 - h, x2: d.x + w / 2, y2: d.y - d.r - 4 } },
+    { x: d.x, y: d.y + d.r + 15, anchor: 'middle', box: { x1: d.x - w / 2, y1: d.y + d.r + 1, x2: d.x + w / 2, y2: d.y + d.r + 1 + h } },
+  ];
+  const blockers = [...placedLabels, ...dots.slice(0, i + 1).map((o) => o.box)];
+  const fit = options.find((o) => !blockers.some((b) => hit(o.box, b)));
+  if (fit) placedLabels.push(fit.box);
+  return { ...d, label: fit };
+});
+---
+
+<figure class="atlas-map glass">
+  <svg viewBox={mapViewBox} role="img" aria-label={label}>
+    <g class="land">
+      {countryPaths.map(([, d]) => <path d={d} />)}
+    </g>
+    <g class="rivers">
+      {
+        rivers.map((r) => (
+          <polyline points={r.points}>
+            <title>{r.name}</title>
+          </polyline>
+        ))
+      }
+    </g>
+    <g class="places">
+      {
+        labels.map(({ p, x, y, r, isFocus, label: l }) => (
+          <a href={placeHref(p)} class:list={['place', { focus: isFocus, dim: focus && !isFocus }]}>
+            <title>{`${p.name}: ${p.verses.length ? arCount(p.verses.length, ['شاهد واحد', 'شاهدان', 'شواهد', 'شاهدًا']) : 'في الحواشي'}`}</title>
+            <circle cx={x.toFixed(1)} cy={y.toFixed(1)} r={r.toFixed(1)} />
+            {l && (
+              <text x={l.x.toFixed(1)} y={l.y.toFixed(1)} text-anchor={l.anchor}>
+                {p.name}
+              </text>
+            )}
+          </a>
+        ))
+      }
+    </g>
+  </svg>
+  <figcaption>حجم النقطة على قدر شواهد الموضع في الأبيات. المواضع بلا إحداثيات مذكورة في القائمة.</figcaption>
+</figure>
+
+<style>
+  .atlas-map {
+    margin: 0 0 18px;
+    padding: 8px;
+    overflow: hidden;
+  }
+  svg {
+    /* Label positions are computed left-to-right; Arabic names still render right-to-left inside. */
+    direction: ltr;
+    display: block;
+    width: 100%;
+    height: auto;
+    touch-action: pan-x pan-y pinch-zoom;
+  }
+  .land path {
+    fill: color-mix(in srgb, var(--accent) 9%, var(--paper-strong));
+    stroke: color-mix(in srgb, var(--accent) 35%, transparent);
+    stroke-width: 0.8;
+  }
+  .rivers polyline {
+    fill: none;
+    stroke: color-mix(in srgb, var(--accent) 55%, transparent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .place circle {
+    fill: var(--accent);
+    fill-opacity: 0.55;
+    stroke: var(--accent-deep);
+    stroke-width: 1.2;
+  }
+  .place text {
+    font-family: var(--ui-font);
+    font-size: 15px;
+    fill: var(--ink);
+    paint-order: stroke;
+    stroke: var(--bg);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+  }
+  .place:hover circle,
+  .place:focus-visible circle,
+  .place.focus circle {
+    fill-opacity: 0.9;
+  }
+  .place:focus-visible {
+    outline: none;
+  }
+  .place:focus-visible text {
+    font-weight: 700;
+  }
+  .place.dim {
+    opacity: 0.45;
+  }
+  .place.focus text {
+    font-weight: 700;
+    font-size: 18px;
+  }
+  figcaption {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 6px 8px 2px;
+  }
+</style>

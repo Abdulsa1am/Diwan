@@ -26,7 +26,7 @@ export const sections: Record<SectionKey, NavItem> = {
   saved: { key: 'saved', label: 'محفوظاتي', icon: 'i-bookmark', href: '/saved/' },
   search: { key: 'search', label: 'ابحث', icon: 'i-search', href: '/search/' },
   lexicon: { key: 'lexicon', label: 'معجم الألفاظ', icon: 'i-search', href: '/explore/lexicon/' },
-  atlas: { key: 'atlas', label: 'أطلس المواضع', icon: 'i-map' },
+  atlas: { key: 'atlas', label: 'أطلس المواضع', icon: 'i-map', href: '/explore/atlas/' },
   about: { key: 'about', label: 'عن الشريف الرضي', icon: 'i-user', href: '/about/' },
 };
 
@@ -37,6 +37,7 @@ export const mobileMenu = [sections.home, sections.library, sections.indexes, se
 /** Tool cards shown on /explore after the indexes. Add one when its page exists. */
 export const exploreTools: { href: string; icon: string; title: string; text: string }[] = [
   { href: '/explore/lexicon/', icon: 'i-search', title: 'معجم الألفاظ', text: 'ألفاظ شرحتها حواشي الديوان، بمواضعها' },
+  { href: '/explore/atlas/', icon: 'i-map', title: 'أطلس المواضع', text: 'المواضع التي ذكرها الشاعر على الخريطة' },
 ];
 
 /** Pages listed in sitemap.xml besides the poems. Add a page here when it is built. */
@@ -53,4 +54,5 @@ export const indexablePages = [
   '/explore/stats/',
   '/about/',
   '/explore/lexicon/',
+  '/explore/atlas/',
 ];

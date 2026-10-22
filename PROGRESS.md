@@ -4,7 +4,7 @@ Where the rebuild stands. Short and current: what's done, what's next, what's op
 Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 
 ## Now
-- M7: atlas.
+- M8: other tools.
 
 ## Plan (working through it without stopping; commit + update this file after each milestone)
 UX problems to fix are listed with evidence in `reports/ux-audit.md`.
@@ -15,7 +15,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - [x] **M4 Indexes.** `/explore` hub, meters, rhymes (qafiya), first lines (matali), themes (أغراض الشعر), people (entities).
 - [x] **M5 About.** `/about` (the poet and the edition), from the old site's text and the people catalog.
 - [x] **M6 Lexicon.** `/explore/lexicon` from the glossary (344 entries).
-- [ ] **M7 Atlas.** `/explore/atlas` map of places from the atlas data.
+- [x] **M7 Atlas.** `/explore/atlas` map of places from the atlas data.
 - [ ] **M8 Other tools.** Rhyme wheel, relations, phrases, compare, stats: build what the data supports; list what can't be.
 - [ ] **M9 Final QA.** Broken-link check over the whole build, accessibility, performance, SEO, phone and desktop, light and dark.
 
@@ -23,9 +23,11 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - Custom domain or keep `diwan-alradi.pages.dev`? Easier to switch now, before the site is indexed.
 - When to review the postponed text issues (detached hamza, punctuation spacing — see `AGENTS.md`).
 - The old share image (`public/share.png`) shows empty boxes where the dots between words should be. Redraw it?
+- The old base map has no Iran outline, so al-Ahwaz sits on empty ground. Add Iran to `basemap.json`?
 - Intros: 121 poems are cleaned using the friend's reviewed boundaries (M1). Other intros may still hold stray glosses. Part of the text review.
 
 ## Done
+- 2026-10-22: **M7** `/explore/atlas/`: static SVG map (the old base map, Tigris and Euphrates, 32 mapped places sized by citations, labels placed without overlaps) and all 133 places by kind. A page per place at `/place/<name>/` (old URL format): kind, modern name, certainty, note, verified verses (349 links, all checked), indirect mentions, notes, sources, and the place highlighted on the map. No map library; no JavaScript.
 - 2026-10-22: **M6** `/explore/lexicon/` (329 words, letter navigation, filter) and a page per word at `/word/<word>/` (old URL format): meaning, the verse it explains, the note and its source page, and other verses where the word occurs. All 344 glosses checked against their verses. Poem pages link glossed words ("في المعجم").
 - 2026-10-22: **M5** `/about`: the friend's sourced biography (life, offices, works, critics, numbered sources), the people catalog (32 people from the poet's life, each with their poems), and a note on this edition (source print, joined waw, verified note links). Person structured data for search engines.
 - 2026-10-22: **M4** `/explore` hub and indexes: meters, rhymes (qafiya), first lines (matali, with a filter), themes (أغراض الشعر, marked as a first-pass classification), people and places (entities), stats. Each group folds open to its poems (links stay in the HTML for search engines) and links to the filtered `/diwan/`. Sitemap pages now listed in `src/lib/nav.ts`; `npm run verify` also checks every sitemap URL exists.

@@ -1,0 +1,130 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import AtlasMap from '../../components/AtlasMap.astro';
+import VerseList from '../../components/VerseList.astro';
+import { SITE_NAME } from '../../lib/diwan';
+import { places } from '../../lib/atlas';
+import type { Place } from '../../lib/atlas';
+import { arCount } from '../../scripts/shared';
+
+export function getStaticPaths() {
+  return places.map((place) => ({ params: { name: place.name }, props: { place } }));
+}
+interface Props {
+  place: Place;
+}
+const { place } = Astro.props;
+const title = `${place.name} في شعر الشريف الرضي | ${SITE_NAME}`;
+const description = place.verses.length
+  ? `${place.name} (${place.kindLabel}${place.modern ? `، ${place.modern}` : ''}): ورد في ${arCount(place.verses.length, ['بيت واحد', 'بيتين', 'أبيات', 'بيتًا'])} من ديوان الشريف الرضي.`
+  : `${place.name} (${place.kindLabel}) في حواشي ديوان الشريف الرضي.`;
+const mapped = place.lat !== undefined;
+---
+
+<Base title={title} description={description} section="atlas">
+  <PageHead title={place.name} parent={{ label: 'أطلس المواضع', href: '/explore/atlas/' }}>
+    <div class="chips">
+      <span class="chip">{place.kindLabel}</span>
+      {place.modern && <span class="chip">اليوم: {place.modern}</span>}
+      <span class="chip">{place.certainty}</span>
+    </div>
+  </PageHead>
+
+  {place.note && <p class="note glass">{place.note}</p>}
+
+  {mapped && <AtlasMap focus={place} label={`موقع ${place.name} على الخريطة`} />}
+
+  <section aria-labelledby="verses-title">
+    <h2 id="verses-title">في الأبيات</h2>
+    {
+      place.verses.length ? (
+        <VerseList refs={place.verses} />
+      ) : (
+        <p class="muted">لا شاهد له في الأبيات بعد المراجعة؛ ورد في الحواشي أو المقدمات.</p>
+      )
+    }
+  </section>
+
+  {
+    place.indirect.length > 0 && (
+      <section aria-labelledby="indirect-title">
+        <h2 id="indirect-title">إشارات غير مباشرة</h2>
+        <p class="muted">نسبة إلى الموضع أو استعمال عام لاسمه.</p>
+        <VerseList refs={place.indirect} />
+      </section>
+    )
+  }
+
+  {
+    place.notes.length > 0 && (
+      <section aria-labelledby="notes-title">
+        <h2 id="notes-title">في الحواشي</h2>
+        <ul class="notes">
+          {place.notes.map((n) => (
+            <li class="glass">
+              {n.text} <a href={`/poem/${n.poem.id}/`}>«{n.poem.title}»</a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    place.sources.length > 0 && (
+      <p class="sources">
+        مصادر التعيين:{' '}
+        {place.sources.map((s, i) => (
+          <>
+            {i > 0 && '، '}
+            <a href={s.url} rel="noopener" target="_blank">
+              {s.label}
+            </a>
+          </>
+        ))}
+      </p>
+    )
+  }
+</Base>
+
+<style>
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .note {
+    padding: 14px 18px;
+    font-size: 15px;
+    margin: 0 0 16px;
+  }
+  h2 {
+    font-size: 28px;
+    margin: 18px 0 6px;
+  }
+  .muted {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 10px;
+  }
+  .notes {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .notes li {
+    padding: 12px 16px;
+    font-family: var(--poem-font);
+    font-size: 17px;
+    line-height: 1.9;
+  }
+  .sources {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 18px;
+  }
+</style>

@@ -1,0 +1,99 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import AtlasMap from '../../components/AtlasMap.astro';
+import { SITE_NAME, ar } from '../../lib/diwan';
+import { places, placeHref, KIND_LABELS } from '../../lib/atlas';
+import { arCount } from '../../scripts/shared';
+
+const withVerses = places.filter((p) => p.verses.length > 0);
+const groups = Object.entries(KIND_LABELS)
+  .map(([kind, label]) => ({ kind, label, places: places.filter((p) => p.kind === kind) }))
+  .filter((g) => g.places.length)
+  .sort((a, b) => b.places.length - a.places.length);
+
+const title = `أطلس المواضع في شعر الشريف الرضي | ${SITE_NAME}`;
+const description = `خريطة المواضع التي ذكرها الشريف الرضي في شعره: ${places
+  .slice(0, 8)
+  .map((p) => p.name)
+  .join('، ')} وغيرها، مع الأبيات التي وردت فيها.`;
+---
+
+<Base title={title} description={description} section="atlas">
+  <PageHead
+    title="أطلس المواضع"
+    lede={`${ar(places.length)} موضعًا ورد ذكرها في الديوان، منها ${ar(withVerses.length)} لها شواهد في الأبيات رُوجعت في سياقها.`}
+    parent={{ label: 'الفهارس', href: '/explore/' }}
+  />
+
+  <AtlasMap label="خريطة المواضع التي ذكرها الشريف الرضي في العراق والجزيرة العربية والشام" />
+
+  {
+    groups.map((g) => (
+      <section class="kind" aria-labelledby={`k-${g.kind}`}>
+        <h2 id={`k-${g.kind}`}>
+          {g.label} <small>{ar(g.places.length)}</small>
+        </h2>
+        <ul class="place-list">
+          {g.places.map((p) => (
+            <li>
+              <a href={placeHref(p)}>
+                <b>{p.name}</b>
+                <span>
+                  {p.verses.length
+                    ? arCount(p.verses.length, ['شاهد واحد', 'شاهدان', 'شواهد', 'شاهدًا'])
+                    : 'في الحواشي'}
+                  {p.lat === undefined && '، بلا إحداثيات'}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Base>
+
+<style>
+  .kind h2 {
+    font-size: 28px;
+    margin: 16px 0 6px;
+  }
+  .kind h2 small {
+    font-family: var(--ui-font);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .place-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    gap: 8px;
+  }
+  .place-list a {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: var(--paper);
+    border: 1px solid var(--glass-border);
+    text-decoration: none;
+    color: var(--ink);
+    line-height: 1.6;
+    height: 100%;
+  }
+  .place-list a:hover {
+    background: var(--paper-strong);
+  }
+  .place-list b {
+    font-family: var(--display-font);
+    font-weight: 400;
+    font-size: 22px;
+  }
+  .place-list span {
+    font-size: 13px;
+    color: var(--muted);
+  }
+</style>
