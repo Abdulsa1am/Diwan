@@ -1,0 +1,28 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import IndexGroups from '../../components/IndexGroups.astro';
+import { SITE_NAME, ar, poems } from '../../lib/diwan';
+import { themeGroups, themedPoemCount } from '../../lib/indices';
+
+const title = `أغراض الشعر في ديوان الشريف الرضي | ${SITE_NAME}`;
+const description = `قصائد الشريف الرضي على أغراض الشعر: ${themeGroups.map((g) => g.label).slice(0, 8).join('، ')} وغيرها.`;
+---
+
+<Base title={title} description={description} section="themes">
+  <PageHead
+    title="أغراض الشعر"
+    lede={`${ar(themeGroups.length)} غرضًا تغطي ${ar(themedPoemCount)} قصيدة من ${ar(poems.length)}. قد تدخل القصيدة الواحدة في أكثر من غرض.`}
+  >
+    <p class="caveat">التصنيف أوّلي مأخوذ من أخبار القصائد وألفاظها، ولم يُراجع كله بعد.</p>
+  </PageHead>
+  <IndexGroups groups={themeGroups} />
+</Base>
+
+<style>
+  .caveat {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 6px 0 0;
+  }
+</style>

@@ -1,0 +1,20 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import IndexGroups from '../../components/IndexGroups.astro';
+import { SITE_NAME, ar } from '../../lib/diwan';
+import { meterGroups } from '../../lib/indices';
+
+const title = `بحور الشعر في ديوان الشريف الرضي | ${SITE_NAME}`;
+const top = meterGroups.slice(0, 3).map((g) => g.label).join(' و');
+const description = `فهرس قصائد الشريف الرضي على بحور الشعر (${ar(meterGroups.length)} بحرًا)، وأكثرها ${top}.`;
+---
+
+<Base title={title} description={description} section="indexes">
+  <PageHead
+    title="البحور"
+    lede={`قصائد الديوان على ${ar(meterGroups.length)} وزنًا، مرتبة من الأكثر استعمالًا. افتح البحر لترى قصائده.`}
+    parent={{ label: 'الفهارس', href: '/explore/' }}
+  />
+  <IndexGroups groups={meterGroups} filterLink={(g) => `/diwan/?meter=${encodeURIComponent(g.key)}`} />
+</Base>

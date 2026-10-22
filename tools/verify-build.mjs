@@ -60,7 +60,12 @@ for (const f of files.filter((f) => /\.(js|css|json|xml|txt)$/.test(f))) {
   if (/dimaa\.thalatha/.test(fs.readFileSync(path.join(dist, f), 'utf8'))) problems.push(`${f} contains the owner's email`);
 }
 
-console.log(`Pages: ${htmlFiles.length}, internal links: ${links}, verse halves checked: ${halves}`);
+// 5. Every sitemap URL is a real page
+const sitemap = fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8');
+const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname);
+for (const loc of locs) if (!resolves(loc)) problems.push(`sitemap lists a missing page: ${loc}`);
+
+console.log(`Pages: ${htmlFiles.length}, internal links: ${links}, verse halves checked: ${halves}, sitemap URLs: ${locs.length}`);
 console.log(`Largest page: ${largest.file} (${(largest.gzip / 1024).toFixed(1)} KB gzipped)`);
 if (problems.length) {
   console.log(`\n${problems.length} problem(s):`);

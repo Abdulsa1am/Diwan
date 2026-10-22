@@ -1,0 +1,187 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { SITE_NAME, ar, poems, versesLabel } from '../../lib/diwan';
+import { meterGroups, rhymeGroups } from '../../lib/indices';
+
+const verseTotal = poems.reduce((s, p) => s + p.verses.length, 0);
+const noteTotal = poems.reduce((s, p) => s + p.linkedNoteCount + p.notes.length, 0);
+const linkedTotal = poems.reduce((s, p) => s + p.linkedNoteCount, 0);
+const longest = [...poems].sort((a, b) => b.verses.length - a.verses.length).slice(0, 12);
+const sizes = [
+  { label: 'بيت أو بيتان', test: (n: number) => n <= 2 },
+  { label: 'من ٣ إلى ٦ أبيات', test: (n: number) => n >= 3 && n <= 6 },
+  { label: 'من ٧ إلى ٢٠ بيتًا', test: (n: number) => n >= 7 && n <= 20 },
+  { label: 'من ٢١ إلى ٥٠ بيتًا', test: (n: number) => n >= 21 && n <= 50 },
+  { label: 'أكثر من ٥٠ بيتًا', test: (n: number) => n > 50 },
+].map((s) => ({ ...s, count: poems.filter((p) => s.test(p.verses.length)).length }));
+const maxSize = Math.max(...sizes.map((s) => s.count));
+const byVerses = (g: { poems: typeof poems }) => g.poems.reduce((s, p) => s + p.verses.length, 0);
+const meterVerses = meterGroups.map((g) => ({ label: g.label, n: byVerses(g) })).sort((a, b) => b.n - a.n);
+const maxMeter = meterVerses[0].n;
+const rhymeVerses = rhymeGroups.map((g) => ({ label: g.key, n: byVerses(g) }));
+const maxRhyme = Math.max(...rhymeVerses.map((r) => r.n));
+
+const title = `إحصاءات ديوان الشريف الرضي | ${SITE_NAME}`;
+const description = `أرقام ديوان الشريف الرضي: ${ar(poems.length)} قصيدة و${ar(verseTotal)} بيتًا، وتوزيعها على البحور والقوافي، وأطول القصائد.`;
+---
+
+<Base title={title} description={description} section="indexes">
+  <PageHead title="إحصاءات الديوان" lede="أرقام الديوان كما في هذه النسخة." parent={{ label: 'الفهارس', href: '/explore/' }} />
+
+  <dl class="totals">
+    <div class="glass"><dt>القصائد</dt><dd>{ar(poems.length)}</dd></div>
+    <div class="glass"><dt>الأبيات</dt><dd>{ar(verseTotal)}</dd></div>
+    <div class="glass"><dt>البحور</dt><dd>{ar(meterGroups.length)}</dd></div>
+    <div class="glass"><dt>الحواشي</dt><dd>{ar(noteTotal)}</dd></div>
+  </dl>
+  <p class="note">منها {ar(linkedTotal)} حاشية رُبطت ببيتها بعد مقابلتها بصفحات الطبعة.</p>
+
+  <div class="grid">
+    <section class="card glass" aria-labelledby="t-meter">
+      <h2 id="t-meter">الأبيات على البحور</h2>
+      <ul class="bars">
+        {
+          meterVerses.map((m) => (
+            <li>
+              <span class="lbl">{m.label}</span>
+              <span class="bar"><span style={`width:${(m.n / maxMeter) * 100}%`} /></span>
+              <span class="val">{ar(m.n)}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="card glass" aria-labelledby="t-rhyme">
+      <h2 id="t-rhyme">الأبيات على حروف الروي</h2>
+      <ul class="bars">
+        {
+          rhymeVerses.map((r) => (
+            <li>
+              <span class="lbl">{r.label}</span>
+              <span class="bar"><span style={`width:${(r.n / maxRhyme) * 100}%`} /></span>
+              <span class="val">{ar(r.n)}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="card glass" aria-labelledby="t-size">
+      <h2 id="t-size">أطوال القصائد</h2>
+      <ul class="bars">
+        {
+          sizes.map((s) => (
+            <li>
+              <span class="lbl">{s.label}</span>
+              <span class="bar"><span style={`width:${(s.count / maxSize) * 100}%`} /></span>
+              <span class="val">{ar(s.count)}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="card glass" aria-labelledby="t-long">
+      <h2 id="t-long">أطول القصائد</h2>
+      <ol class="longest">
+        {
+          longest.map((p) => (
+            <li>
+              <a href={`/poem/${p.id}/`}>{p.title}</a>
+              <span>{versesLabel(p.verses.length)}، {p.meter}</span>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin: 0;
+  }
+  .totals div {
+    padding: 14px 18px;
+  }
+  .totals dt {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .totals dd {
+    margin: 0;
+    font-family: var(--display-font);
+    font-size: 40px;
+    line-height: 1.3;
+  }
+  .note {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 8px 2px 18px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+    gap: 16px;
+  }
+  .card {
+    padding: 16px 20px;
+  }
+  .card h2 {
+    font-size: 24px;
+    margin: 0 0 10px;
+  }
+  .bars {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .bars li {
+    display: grid;
+    grid-template-columns: 8.5rem 1fr 3.5rem;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+  }
+  .bar {
+    height: 8px;
+    background: var(--chip-bg);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .bar span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    opacity: 0.75;
+    border-radius: 8px;
+  }
+  .val {
+    color: var(--muted);
+    font-size: 13px;
+    text-align: end;
+  }
+  .longest {
+    margin: 0;
+    padding-inline-start: 1.4em;
+    display: grid;
+    gap: 4px;
+  }
+  .longest a {
+    font-family: var(--display-font);
+    font-size: 20px;
+    text-decoration: none;
+  }
+  .longest span {
+    font-size: 13px;
+    color: var(--muted);
+    margin-inline-start: 8px;
+  }
+</style>

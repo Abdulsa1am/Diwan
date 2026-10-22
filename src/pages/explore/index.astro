@@ -1,0 +1,90 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { SITE_NAME, ar, poems } from '../../lib/diwan';
+import { meterGroups, rhymeGroups, themeGroups, entityGroups } from '../../lib/indices';
+import { exploreTools } from '../../lib/nav';
+
+const indexes = [
+  { href: '/explore/meters/', icon: 'i-index', title: 'البحور', text: `${ar(meterGroups.length)} وزنًا، من الطويل إلى المجتث` },
+  { href: '/explore/qafiya/', icon: 'i-opening', title: 'القوافي', text: `${ar(rhymeGroups.length)} حرفًا من حروف الروي` },
+  { href: '/explore/matali/', icon: 'i-book', title: 'المطالع', text: `${ar(poems.length)} مطلعًا، البيت الأول من كل قصيدة` },
+  { href: '/explore/themes/', icon: 'i-network', title: 'أغراض الشعر', text: themeGroups.slice(0, 5).map((g) => g.label).join('، ') + '…' },
+  {
+    href: '/explore/entities/',
+    icon: 'i-user',
+    title: 'الأعلام والمواضع',
+    text: `${ar(entityGroups('علم').length + entityGroups('موضع').length)} اسمًا وردت في الأبيات`,
+  },
+  { href: '/explore/stats/', icon: 'i-spark', title: 'إحصاءات الديوان', text: 'الأبيات على البحور والقوافي، وأطول القصائد' },
+];
+---
+
+<Base
+  title={`فهارس ديوان الشريف الرضي | ${SITE_NAME}`}
+  description="فهارس ديوان الشريف الرضي: البحور، والقوافي، والمطالع، وأغراض الشعر، والأعلام والمواضع، وإحصاءات الديوان."
+  section="indexes"
+>
+  <PageHead title="الفهارس" lede="طرق أخرى للوصول إلى القصائد." />
+
+  <div class="cards">
+    {
+      [...indexes, ...exploreTools].map((c) => (
+        <a class="card glass" href={c.href}>
+          <svg class="ui-icon" aria-hidden="true">
+            <use href={`#${c.icon}`} />
+          </svg>
+          <h2>{c.title}</h2>
+          <p>{c.text}</p>
+        </a>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 14px;
+  }
+  .card {
+    display: block;
+    padding: 20px 22px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .card:hover {
+    background: var(--paper-strong);
+  }
+  .card .ui-icon {
+    width: 26px;
+    height: 26px;
+    color: var(--accent);
+  }
+  .card h2 {
+    font-size: 28px;
+    margin: 6px 0 0;
+  }
+  .card p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  @media (max-width: 560px) {
+    .card {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: 14px;
+      align-items: center;
+      padding: 14px 18px;
+    }
+    .card .ui-icon {
+      grid-row: span 2;
+    }
+    .card h2 {
+      font-size: 24px;
+      margin: 0;
+    }
+  }
+</style>

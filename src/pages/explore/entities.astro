@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import IndexGroups from '../../components/IndexGroups.astro';
+import { SITE_NAME } from '../../lib/diwan';
+import { entityGroups } from '../../lib/indices';
+
+const people = entityGroups('علم');
+const places = entityGroups('موضع');
+const title = `الأعلام والمواضع في شعر الشريف الرضي | ${SITE_NAME}`;
+const description = `الأعلام والمواضع التي وردت في أبيات الشريف الرضي: ${[...people, ...places].slice(0, 8).map((g) => g.label).join('، ')}.`;
+---
+
+<Base title={title} description={description} section="indexes">
+  <PageHead
+    title="الأعلام والمواضع"
+    lede="أسماء الناس والأماكن التي وردت في الأبيات، والقصائد التي ذُكرت فيها."
+    parent={{ label: 'الفهارس', href: '/explore/' }}
+  >
+    <p class="caveat">الحصر بمطابقة الاسم في النص؛ قد يدخل فيه من يوافق اسمه اسمًا آخر.</p>
+  </PageHead>
+
+  <h2 class="section-title" id="people">الأعلام</h2>
+  <IndexGroups groups={people} />
+
+  <h2 class="section-title" id="places">المواضع</h2>
+  <IndexGroups groups={places} />
+</Base>
+
+<style>
+  .caveat {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 6px 0 0;
+  }
+  .section-title {
+    font-size: 30px;
+    margin: 20px 0 10px;
+  }
+</style>
