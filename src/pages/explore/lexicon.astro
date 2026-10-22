@@ -1,0 +1,165 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { SITE_NAME, ar } from '../../lib/diwan';
+import { lexicon, lexiconByLetter, wordHref } from '../../lib/lexicon';
+
+const title = `معجم ألفاظ ديوان الشريف الرضي | ${SITE_NAME}`;
+const description = `معجم لـ${ar(lexicon.length)} لفظة من ألفاظ ديوان الشريف الرضي، بمعانيها من حواشي الديوان والبيت الذي وردت فيه.`;
+---
+
+<Base title={title} description={description} section="lexicon">
+  <PageHead
+    title="معجم الألفاظ"
+    lede={`${ar(lexicon.length)} لفظة شُرحت في حواشي الديوان، مع البيت الذي شُرحت فيه. افتح اللفظة لترى مواضعها الأخرى.`}
+    parent={{ label: 'الفهارس', href: '/explore/' }}
+  >
+    <nav class="letters" aria-label="الحروف">
+      {lexiconByLetter.map(([letter]) => <a href={`#l-${letter}`}>{letter}</a>)}
+    </nav>
+  </PageHead>
+
+  <label class="find glass">
+    <svg class="ui-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+    <span class="visually-hidden">ابحث في المعجم</span>
+    <input id="findWord" type="search" placeholder="ابحث عن لفظة أو معنى…" autocomplete="off" />
+    <output id="wordCount" aria-live="polite"></output>
+  </label>
+
+  {
+    lexiconByLetter.map(([letter, words]) => (
+      <section class="letter" id={`l-${letter}`} aria-label={`حرف ${letter}`}>
+        <h2>{letter}</h2>
+        <ul class="words">
+          {words.map((w) => (
+            <li>
+              <a href={wordHref(w)}>
+                <b>{w.headword}</b>
+                <span>{w.glosses[0].meaning}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+</Base>
+
+<script>
+  import { fold } from '../../scripts/arabic-search';
+  import { arCount } from '../../scripts/shared';
+
+  const input = document.getElementById('findWord') as HTMLInputElement;
+  const out = document.getElementById('wordCount')!;
+  const items = [...document.querySelectorAll<HTMLLIElement>('.words li')].map((li) => ({
+    li,
+    text: fold(li.textContent ?? '').text,
+  }));
+  const sections = [...document.querySelectorAll<HTMLElement>('.letter')];
+  input.addEventListener('input', () => {
+    const q = fold(input.value).text;
+    let shown = 0;
+    for (const { li, text } of items) {
+      li.hidden = Boolean(q) && !text.includes(q);
+      if (!li.hidden) shown++;
+    }
+    for (const s of sections) s.hidden = !s.querySelector('li:not([hidden])');
+    out.textContent = q ? arCount(shown, ['لفظة واحدة', 'لفظتان', 'ألفاظ', 'لفظة']) : '';
+  });
+</script>
+
+<style>
+  .letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .letters a {
+    font-family: var(--poem-font);
+    font-size: 17px;
+    padding: 2px 10px;
+    border-radius: 8px;
+    background: var(--chip-bg);
+    text-decoration: none;
+  }
+  .find {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 16px;
+    margin-bottom: 12px;
+    position: sticky;
+    top: 70px;
+    z-index: 5;
+    background: var(--paper-strong);
+  }
+  .find:focus-within {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .find .ui-icon {
+    color: var(--muted);
+  }
+  .find input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    background: none;
+    font: 400 18px/2 var(--poem-font);
+    color: var(--ink);
+  }
+  .find input:focus {
+    outline: none;
+  }
+  .find output {
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .letter {
+    scroll-margin-top: 140px;
+  }
+  .letter[hidden],
+  .words li[hidden] {
+    display: none;
+  }
+  .letter h2 {
+    font-size: 32px;
+    color: var(--accent);
+    margin: 16px 0 6px;
+  }
+  .words {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    gap: 8px;
+  }
+  .words a {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: var(--paper);
+    border: 1px solid var(--glass-border);
+    text-decoration: none;
+    color: var(--ink);
+    line-height: 1.6;
+    height: 100%;
+  }
+  .words a:hover {
+    background: var(--paper-strong);
+  }
+  .words b {
+    font-family: var(--poem-font);
+    font-size: 22px;
+    font-weight: 400;
+  }
+  .words span {
+    font-size: 14px;
+    color: var(--muted);
+  }
+</style>

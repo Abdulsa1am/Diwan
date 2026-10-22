@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import { poems, ar, versesLabel, verseText, POET, SITE_NAME } from '../../lib/diwan';
 import type { Poem } from '../../lib/diwan';
+import { wordsByVerse, wordHref } from '../../lib/lexicon';
 
 export function getStaticPaths() {
   return poems.map((poem, i) => ({
@@ -150,6 +151,17 @@ const jsonLd = {
               <span class="hemistich sadr">{v.sadr}</span>
               {v.ajuz && <span class="hemistich ajuz">{v.ajuz}</span>}
             </div>
+            {wordsByVerse.has(`${poem.id}#${v.n}`) && (
+              <p class="verse-words">
+                في المعجم:{' '}
+                {wordsByVerse.get(`${poem.id}#${v.n}`)!.map((w, i) => (
+                  <>
+                    {i > 0 && '، '}
+                    <a href={wordHref(w)}>{w}</a>
+                  </>
+                ))}
+              </p>
+            )}
             {v.notes.length > 0 && (
               <details class="verse-notes">
                 <summary>شرح{v.notes.length > 1 && ` (${ar(v.notes.length)})`}</summary>
@@ -451,6 +463,12 @@ const jsonLd = {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 
+  .verse-words {
+    margin: 2px 0 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+  }
   .verse-notes {
     margin: 4px auto 0;
     max-width: 640px;

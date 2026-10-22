@@ -4,7 +4,7 @@ Where the rebuild stands. Short and current: what's done, what's next, what's op
 Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 
 ## Now
-- M6: lexicon.
+- M7: atlas.
 
 ## Plan (working through it without stopping; commit + update this file after each milestone)
 UX problems to fix are listed with evidence in `reports/ux-audit.md`.
@@ -14,7 +14,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - [x] **M3 Search.** `/search` with Arabic-aware matching (diacritics, alef/ya forms, joined waw), filters, highlighted results linking to the verse. Filters on `/diwan/`.
 - [x] **M4 Indexes.** `/explore` hub, meters, rhymes (qafiya), first lines (matali), themes (أغراض الشعر), people (entities).
 - [x] **M5 About.** `/about` (the poet and the edition), from the old site's text and the people catalog.
-- [ ] **M6 Lexicon.** `/explore/lexicon` from the glossary (344 entries).
+- [x] **M6 Lexicon.** `/explore/lexicon` from the glossary (344 entries).
 - [ ] **M7 Atlas.** `/explore/atlas` map of places from the atlas data.
 - [ ] **M8 Other tools.** Rhyme wheel, relations, phrases, compare, stats: build what the data supports; list what can't be.
 - [ ] **M9 Final QA.** Broken-link check over the whole build, accessibility, performance, SEO, phone and desktop, light and dark.
@@ -26,6 +26,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - Intros: 121 poems are cleaned using the friend's reviewed boundaries (M1). Other intros may still hold stray glosses. Part of the text review.
 
 ## Done
+- 2026-10-22: **M6** `/explore/lexicon/` (329 words, letter navigation, filter) and a page per word at `/word/<word>/` (old URL format): meaning, the verse it explains, the note and its source page, and other verses where the word occurs. All 344 glosses checked against their verses. Poem pages link glossed words ("في المعجم").
 - 2026-10-22: **M5** `/about`: the friend's sourced biography (life, offices, works, critics, numbered sources), the people catalog (32 people from the poet's life, each with their poems), and a note on this edition (source print, joined waw, verified note links). Person structured data for search engines.
 - 2026-10-22: **M4** `/explore` hub and indexes: meters, rhymes (qafiya), first lines (matali, with a filter), themes (أغراض الشعر, marked as a first-pass classification), people and places (entities), stats. Each group folds open to its poems (links stay in the HTML for search engines) and links to the filtered `/diwan/`. Sitemap pages now listed in `src/lib/nav.ts`; `npm run verify` also checks every sitemap URL exists.
 - 2026-10-22: **M3** `/search`: Arabic-aware matching (diacritics, hamza forms, ta marbuta, finds words inside joined waw), any-words or exact phrase, fields (verses, titles, notes, intros), meter/rhyme/volume filters, highlighted results linking to the verse, shareable URL. Index loads only on the search page (543KB gzipped for verses, 171KB for notes). `/diwan/` filter bar (title/opening, meter, rhyme, volume) kept in the URL. Home search box. `npm test` for the matching rules.

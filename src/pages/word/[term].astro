@@ -1,0 +1,166 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { SITE_NAME, ar } from '../../lib/diwan';
+import { lexicon } from '../../lib/lexicon';
+import type { Word } from '../../lib/lexicon';
+import { arCount } from '../../scripts/shared';
+
+export function getStaticPaths() {
+  return lexicon.map((word) => ({ params: { term: word.headword }, props: { word } }));
+}
+
+interface Props {
+  word: Word;
+}
+const { word } = Astro.props;
+const first = word.glosses[0];
+const title = `معنى «${word.headword}» في شعر الشريف الرضي | ${SITE_NAME}`;
+const description = `${word.headword}: ${first.meaning} وردت في قصيدة «${first.poem.title}» للشريف الرضي.`;
+---
+
+<Base title={title} description={description} section="lexicon">
+  <PageHead title={word.headword} parent={{ label: 'معجم الألفاظ', href: '/explore/lexicon/' }} />
+
+  {
+    word.glosses.map((g) => (
+      <article class="gloss glass">
+        <p class="meaning">{g.meaning}</p>
+        {g.verse && (
+          <a class="verse" href={`/poem/${g.poem.id}/#v${g.verse.n}`}>
+            <span>{g.verse.sadr}</span>
+            {g.verse.ajuz && <span>{g.verse.ajuz}</span>}
+            <small>
+              «{g.poem.title}»، البيت {ar(g.verse.n)}
+            </small>
+          </a>
+        )}
+        <details class="note">
+          <summary>نص الحاشية</summary>
+          <p>{g.note}</p>
+          <p class="source">
+            الجزء {ar(g.poem.volume)}، ص {ar(g.page)}
+            {g.source && (
+              <>
+                {' '}
+                ·{' '}
+                <a href={g.source} rel="noopener" target="_blank">
+                  الصفحة في النسخة الرقمية
+                </a>
+              </>
+            )}
+          </p>
+        </details>
+      </article>
+    ))
+  }
+
+  <section class="elsewhere" aria-labelledby="elsewhere">
+    <h2 id="elsewhere">في مواضع أخرى من الديوان</h2>
+    {
+      word.occurrences.length ? (
+        <>
+          <p class="muted">
+            وردت «{word.headword}» في{' '}
+            {arCount(word.occurrenceCount, ['بيت واحد', 'بيتين', 'أبيات', 'بيتًا'])} من الديوان
+            {word.occurrenceCount > word.occurrences.length + word.glosses.length && '، هذه أوائلها'}.
+          </p>
+          <ul class="occ">
+            {word.occurrences.map(({ poem, verse }) => (
+              <li>
+                <a href={`/poem/${poem.id}/#v${verse.n}`}>
+                  <span>{verse.sadr}</span>
+                  {verse.ajuz && <span>{verse.ajuz}</span>}
+                  <small>
+                    «{poem.title}»، البيت {ar(verse.n)}
+                  </small>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <a class="btn" href={`/search/?q=${encodeURIComponent(word.headword)}`}>
+            ابحث عنها في الديوان كله
+          </a>
+        </>
+      ) : (
+        <p class="muted">لم ترد بهذه الصورة في موضع آخر من الديوان.</p>
+      )
+    }
+  </section>
+</Base>
+
+<style>
+  .gloss {
+    padding: 20px 24px;
+    margin-bottom: 14px;
+  }
+  .meaning {
+    font-family: var(--poem-font);
+    font-size: 24px;
+    line-height: 1.8;
+    margin: 0 0 12px;
+  }
+  .verse,
+  .occ a {
+    display: grid;
+    text-align: center;
+    font-family: var(--poem-font);
+    font-size: 22px;
+    line-height: 1.9;
+    padding: 12px;
+    border-radius: 14px;
+    background: var(--paper-strong);
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .verse small,
+  .occ small {
+    font-family: var(--ui-font);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .note {
+    margin-top: 10px;
+  }
+  .note summary {
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--accent);
+  }
+  .note p {
+    font-family: var(--poem-font);
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--muted);
+    margin: 6px 0 0;
+  }
+  .note .source {
+    font-family: var(--ui-font);
+    font-size: 13px;
+  }
+  .elsewhere h2 {
+    font-size: 28px;
+    margin: 22px 0 4px;
+  }
+  .muted {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 10px;
+  }
+  .occ {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr));
+    gap: 8px;
+  }
+  .occ a {
+    font-size: 20px;
+    background: var(--paper);
+    border: 1px solid var(--glass-border);
+  }
+  .occ a:hover {
+    background: var(--paper-strong);
+  }
+</style>
