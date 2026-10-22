@@ -27,7 +27,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 
 ## Open questions
 - Custom domain or keep `diwan-alradi.pages.dev`? Easier to switch now, before the site is indexed.
-- When to review the postponed text issues (detached hamza, punctuation spacing — see `AGENTS.md`).
+- Text review (report: `reports/text-issues.md`, list: `reports/text-issues.csv`, by a Codex agent, checked): approve the 361 certain spacing fixes (200 detached hamza joins like «أ ما» → «أما», 95 missing spaces after «!»/«؟», 66 spaces before punctuation)? They are ready in `tools/fix-text-issues.mjs --apply` (not run). Also needs the printed book: r2-016 v16 «و؟؟؟الفا», r2-042 v19–20 (one verse split in two), 552 possible split words, 243 notes ending in «:» with no gloss. Commas: recommendation is to keep them as printed.
 - The old share image (`public/share.png`) shows empty boxes where the dots between words should be. Redraw it?
 - The old base map has no Iran outline, so al-Ahwaz sits on empty ground. Add Iran to `basemap.json`?
 - Intros: 121 poems are cleaned using the friend's reviewed boundaries (M1). Other intros may still hold stray glosses. Part of the text review.
