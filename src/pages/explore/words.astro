@@ -1,0 +1,94 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { SITE_NAME, ar } from '../../lib/diwan';
+import indices from '../../../data/edition/indices.json';
+import { arCount } from '../../scripts/shared';
+
+// The friend's frequency list (counted before the waw was joined, so "و" is not glued to the words).
+const words = indices.words as { word: string; count: number; poems: number }[];
+const max = words[0].count;
+const title = `الألفاظ الأكثر دورانًا في شعر الشريف الرضي | ${SITE_NAME}`;
+const description = `أكثر الألفاظ ورودًا في ديوان الشريف الرضي: ${words
+  .slice(2, 12)
+  .map((w) => w.word)
+  .join('، ')}، مع عدد مراتها وقصائدها.`;
+---
+
+<Base title={title} description={description} section="indexes">
+  <PageHead
+    title="فهرس الألفاظ"
+    lede={`${ar(words.length)} لفظة من أكثر ألفاظ الديوان ورودًا. اختر لفظة لتبحث عنها في الأبيات.`}
+    parent={{ label: 'الفهارس', href: '/explore/' }}
+  >
+    <p class="caveat">العدّ على صورة اللفظة كما كُتبت بلا تشكيل؛ «الدهر» غير «دهر».</p>
+  </PageHead>
+
+  <ol class="words">
+    {
+      words.map((w) => (
+        <li>
+          <a href={`/search/?q=${encodeURIComponent(w.word)}`} style={`--w:${Math.max(8, (w.count / max) * 100)}%`}>
+            <b>{w.word}</b>
+            <span>
+              {arCount(w.count, ['مرة واحدة', 'مرتين', 'مرات', 'مرة'])} في {arCount(w.poems, ['قصيدة واحدة', 'قصيدتين', 'قصائد', 'قصيدة'])}
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</Base>
+
+<style>
+  .caveat {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 6px 0 0;
+  }
+  .words {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+    gap: 6px;
+  }
+  .words a {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--paper);
+    border: 1px solid var(--glass-border);
+    text-decoration: none;
+    color: var(--ink);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .words a::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: var(--w);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    z-index: -1;
+  }
+  .words a:hover {
+    background: var(--paper-strong);
+  }
+  .words b {
+    font-family: var(--poem-font);
+    font-weight: 400;
+    font-size: 21px;
+  }
+  .words span {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+</style>

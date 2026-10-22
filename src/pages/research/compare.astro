@@ -1,0 +1,305 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { SITE_NAME, poems } from '../../lib/diwan';
+
+// Options are rendered once into a <template> and copied into both selects by the script.
+---
+
+<Base
+  title={`مقارنة قصيدتين من ديوان الشريف الرضي | ${SITE_NAME}`}
+  description="قابل بين قصيدتين من ديوان الشريف الرضي: البحر والقافية والطول والمطلع والألفاظ المشتركة."
+  section="indexes"
+>
+  <PageHead
+    title="مقارنة قصيدتين"
+    lede="اختر قصيدتين لترى البحر والقافية والطول والمطلع، والألفاظ التي تشتركان فيها."
+    parent={{ label: 'الفهارس', href: '/explore/' }}
+  />
+
+  <form class="pickers glass" id="compareForm">
+    <label>
+      <span>القصيدة الأولى</span>
+      <select name="a" data-poem-select></select>
+    </label>
+    <button class="btn swap" type="button" id="swap" aria-label="بدّل القصيدتين">⇄</button>
+    <label>
+      <span>القصيدة الثانية</span>
+      <select name="b" data-poem-select></select>
+    </label>
+  </form>
+
+  <template id="poemOptions">
+    {poems.map((p) => <option value={p.id}>{`${p.title} (${p.meter}، ${p.rhyme})`}</option>)}
+  </template>
+
+  <p class="status" id="compareStatus" role="status" aria-live="polite"></p>
+
+  <div class="sides" id="sides" hidden>
+    <article class="side glass" data-side="a"></article>
+    <article class="side glass" data-side="b"></article>
+  </div>
+
+  <section class="shared glass" id="shared" hidden aria-labelledby="sharedTitle">
+    <h2 id="sharedTitle">ألفاظ مشتركة</h2>
+    <p class="muted" id="sharedNote"></p>
+    <ul id="sharedWords"></ul>
+  </section>
+
+  <noscript><p class="status">هذه الأداة تحتاج إلى تفعيل JavaScript.</p></noscript>
+</Base>
+
+<script>
+  import { loadCorpus } from '../../scripts/corpus';
+  import type { Corpus } from '../../scripts/corpus';
+  import { arCount } from '../../scripts/shared';
+
+  // Common particles and pronouns, normalized (no hamza, ى→ي), left out of word comparisons.
+  const STOP = new Set(
+    'في من علي الي عن ما لا لم لن ان قد ثم او هو هي هم انا انت كان كل اذا اذ حتي الا غير بين عند ذا ذي التي الذي به بها له لها لي بي منه منها فيه فيها عليه عليها يا كم مثل دون ليس لقد لما فما فلا وما ولا ومن وفي واذا وان فان كما بما لو ولو اني انني انه انها هذا هذه ذلك تلك اين كيف متي نحن هل بل اي ام اما الا لنا لكم لهم منك عليك فيك اليك وهو وهي وقد وكم ولم'.split(' '),
+  );
+
+  const form = document.getElementById('compareForm') as HTMLFormElement;
+  const selects = [...form.querySelectorAll<HTMLSelectElement>('[data-poem-select]')];
+  const template = document.getElementById('poemOptions') as HTMLTemplateElement;
+  for (const s of selects) s.append(template.content.cloneNode(true));
+  const statusEl = document.getElementById('compareStatus')!;
+  const sides = document.getElementById('sides')!;
+  const shared = document.getElementById('shared')!;
+  const digits = new Intl.NumberFormat('ar-EG');
+
+  const params = new URLSearchParams(location.search);
+  selects[0].value = params.get('a') ?? 'r1-001';
+  selects[1].value = params.get('b') ?? 'r1-002';
+
+  function wordCounts(corpus: Corpus, poemIndex: number) {
+    const counts = new Map<string, number>();
+    for (const v of corpus.verses) {
+      if (v.poem !== poemIndex) continue;
+      for (const w of v.words) if (w.length > 2 && !STOP.has(w)) counts.set(w, (counts.get(w) ?? 0) + 1);
+    }
+    return counts;
+  }
+
+  async function compare() {
+    const [a, b] = selects.map((s) => s.value);
+    history.replaceState(null, '', `?a=${a}&b=${b}`);
+    statusEl.textContent = 'جارٍ التحميل…';
+    const corpus = await loadCorpus();
+    statusEl.textContent = '';
+    const index = (id: string) => corpus.poems.findIndex((p) => p[0] === id);
+    const [ia, ib] = [index(a), index(b)];
+    const [ca, cb] = [wordCounts(corpus, ia), wordCounts(corpus, ib)];
+
+    for (const [side, i, counts, other] of [
+      ['a', ia, ca, ib],
+      ['b', ib, cb, ia],
+    ] as const) {
+      const p = corpus.poems[i];
+      const o = corpus.poems[other];
+      const verses = corpus.verses.filter((v) => v.poem === i);
+      const first = verses[0].text.split(' # ');
+      const top = [...counts].sort((x, y) => y[1] - x[1]).slice(0, 8);
+      const el = sides.querySelector<HTMLElement>(`[data-side="${side}"]`)!;
+      el.innerHTML = `
+        <h2><a></a></h2>
+        <dl>
+          <div><dt>البحر</dt><dd class="${p[2] === o[2] ? 'same' : ''}"></dd></div>
+          <div><dt>الروي</dt><dd class="${p[3] === o[3] ? 'same' : ''}"></dd></div>
+          <div><dt>الطول</dt><dd></dd></div>
+          <div><dt>الجزء</dt><dd></dd></div>
+        </dl>
+        <p class="first"><span></span><span></span></p>
+        <p class="top-label">أكثر ألفاظها ورودًا</p>
+        <ul class="top"></ul>`;
+      const link = el.querySelector('h2 a') as HTMLAnchorElement;
+      link.href = `/poem/${p[0]}/`;
+      link.textContent = p[1];
+      const dds = el.querySelectorAll('dd');
+      dds[0].textContent = p[2];
+      dds[1].textContent = p[3];
+      dds[2].textContent = arCount(verses.length, ['بيت واحد', 'بيتان', 'أبيات', 'بيتًا']);
+      dds[3].textContent = p[4] === 1 ? 'الأول' : 'الثاني';
+      const spans = el.querySelectorAll('.first span');
+      spans[0].textContent = first[0];
+      spans[1].textContent = first[1] ?? '';
+      el.querySelector('.top')!.append(
+        ...top.map(([w, n]) => {
+          const li = document.createElement('li');
+          li.textContent = `${corpus.spell(w)} `;
+          const small = document.createElement('small');
+          small.textContent = digits.format(n);
+          li.append(small);
+          return li;
+        }),
+      );
+    }
+    sides.hidden = false;
+
+    const common = [...ca.keys()]
+      .filter((w) => cb.has(w))
+      .map((w) => [w, Math.min(ca.get(w)!, cb.get(w)!)] as const)
+      .sort((x, y) => y[1] - x[1]);
+    shared.hidden = false;
+    document.getElementById('sharedNote')!.textContent = common.length
+      ? `تشترك القصيدتان في ${arCount(common.length, ['لفظة واحدة', 'لفظتين', 'ألفاظ', 'لفظة'])} (بعد استبعاد الأدوات والضمائر). اختر لفظة لتبحث عنها.`
+      : 'لا ألفاظ مشتركة بعد استبعاد الأدوات والضمائر.';
+    document.getElementById('sharedWords')!.replaceChildren(
+      ...common.slice(0, 40).map(([w]) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `/search/?q=${encodeURIComponent(corpus.spell(w))}`;
+        a.textContent = corpus.spell(w);
+        li.append(a);
+        return li;
+      }),
+    );
+  }
+
+  form.addEventListener('change', compare);
+  document.getElementById('swap')!.addEventListener('click', () => {
+    [selects[0].value, selects[1].value] = [selects[1].value, selects[0].value];
+    compare();
+  });
+  compare();
+</script>
+
+<style>
+  .pickers {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: end;
+    gap: 10px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .pickers label {
+    display: grid;
+    gap: 2px;
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 0;
+  }
+  .pickers select {
+    width: 100%;
+    font: 400 15px/1.6 var(--ui-font);
+    color: var(--ink);
+    background: var(--paper-strong);
+    border: 1px solid var(--line-dark);
+    border-radius: 12px;
+    padding: 8px 10px;
+    min-height: 44px;
+  }
+  .swap {
+    min-height: 44px;
+    font-size: 18px;
+  }
+  .status {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 4px;
+  }
+  .sides {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .sides[hidden],
+  .shared[hidden] {
+    display: none;
+  }
+  .side {
+    padding: 16px 18px;
+  }
+  .side :global(h2) {
+    font-size: 28px;
+    margin: 0 0 8px;
+  }
+  .side :global(h2 a) {
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .side :global(dl) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin: 0 0 10px;
+  }
+  .side :global(dt) {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .side :global(dd) {
+    margin: 0;
+    font-size: 15px;
+  }
+  .side :global(dd.same) {
+    color: var(--accent-deep);
+    font-weight: 700;
+  }
+  .side :global(.first) {
+    display: grid;
+    text-align: center;
+    font-family: var(--poem-font);
+    font-size: 20px;
+    line-height: 1.9;
+    padding: 10px;
+    border-radius: 12px;
+    background: var(--paper-strong);
+    margin: 0 0 10px;
+  }
+  .side :global(.top-label) {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 4px;
+  }
+  .side :global(.top),
+  #sharedWords {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+  }
+  .side :global(.top li),
+  #sharedWords :global(li) {
+    font-family: var(--poem-font);
+    font-size: 17px;
+    padding: 2px 10px;
+    border-radius: 8px;
+    background: var(--chip-bg);
+  }
+  .side :global(.top small) {
+    font-family: var(--ui-font);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  #sharedWords :global(a) {
+    text-decoration: none;
+  }
+  .shared {
+    margin-top: 12px;
+    padding: 16px 18px;
+  }
+  .shared h2 {
+    font-size: 26px;
+    margin: 0;
+  }
+  .muted {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 2px 0 10px;
+  }
+  @media (max-width: 700px) {
+    .pickers {
+      grid-template-columns: 1fr;
+    }
+    .swap {
+      justify-self: center;
+    }
+    .sides {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

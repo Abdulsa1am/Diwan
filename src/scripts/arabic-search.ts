@@ -2,7 +2,7 @@
 // ignore diacritics and tatweel, treat أ إ آ ٱ as ا, ى as ي, ؤ as و, ئ as ي, ة as ه, drop punctuation.
 // Each normalized string keeps a map back to the original text so matches can be highlighted.
 
-const DIACRITICS = /[ؐ-ًؚ-ٰٟۖ-ۭـ]/;
+const DIACRITICS = /[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/;
 const FOLD: Record<string, string> = { 'إ': 'ا', 'أ': 'ا', 'آ': 'ا', 'ٱ': 'ا', 'ى': 'ي', 'ؤ': 'و', 'ئ': 'ي', 'ة': 'ه' };
 
 export interface Folded {
@@ -20,7 +20,7 @@ export function fold(original: string): Folded {
     const ch = original[i];
     if (DIACRITICS.test(ch)) continue;
     const folded = FOLD[ch] ?? ch;
-    const isLetter = /[ء-ي0-9a-z]/i.test(folded);
+    const isLetter = /[\u0621-\u064A0-9a-z]/i.test(folded);
     if (!isLetter) {
       if (!lastWasSpace) {
         text += ' ';

@@ -1,0 +1,141 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { SITE_NAME, ar } from '../../lib/diwan';
+import { rhymeGroups } from '../../lib/indices';
+import { arCount } from '../../scripts/shared';
+
+// A wheel of the 28 rhyme letters; each arc's length follows the number of poems.
+const total = rhymeGroups.reduce((s, g) => s + g.poems.length, 0);
+const cx = 200;
+const cy = 200;
+const outer = 180;
+const inner = 92;
+let angle = -Math.PI / 2;
+const point = (r: number, a: number) => `${(cx + r * Math.cos(a)).toFixed(2)} ${(cy + r * Math.sin(a)).toFixed(2)}`;
+const arcs = rhymeGroups.map((g, i) => {
+  const sweep = (g.poems.length / total) * Math.PI * 2;
+  const a0 = angle;
+  const a1 = angle + sweep;
+  angle = a1;
+  const large = sweep > Math.PI ? 1 : 0;
+  const d = `M ${point(outer, a0)} A ${outer} ${outer} 0 ${large} 1 ${point(outer, a1)} L ${point(inner, a1)} A ${inner} ${inner} 0 ${large} 0 ${point(inner, a0)} Z`;
+  const mid = (a0 + a1) / 2;
+  const label = point((outer + inner) / 2, mid).split(' ').map(Number);
+  return { g, d, label, showLabel: sweep > 0.09, shade: i % 2 };
+});
+const top = [...rhymeGroups].sort((a, b) => b.poems.length - a.poems.length).slice(0, 3);
+
+const title = `عجلة القوافي في ديوان الشريف الرضي | ${SITE_NAME}`;
+const description = `توزيع قصائد الشريف الرضي على حروف الروي؛ أكثرها ${top.map((g) => g.key).join(' و')}.`;
+---
+
+<Base title={title} description={description} section="indexes">
+  <PageHead
+    title="عجلة القوافي"
+    lede="كل قطاع حرف روي، وطوله على قدر قصائده في الديوان. اختر قطاعًا لتنتقل إلى قصائده."
+    parent={{ label: 'الفهارس', href: '/explore/' }}
+  />
+
+  <div class="wheel-wrap glass">
+    <svg viewBox="0 0 400 400" role="img" aria-label="عجلة حروف الروي في الديوان">
+      {
+        arcs.map(({ g, d, label, showLabel, shade }) => (
+          <a href={`/explore/qafiya/#${g.key}`} class:list={['arc', { alt: shade }]}>
+            <title>{`${g.label}: ${arCount(g.poems.length, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة'])}`}</title>
+            <path d={d} />
+            {showLabel && (
+              <text x={label[0]} y={label[1] + 6}>
+                {g.key.replace(/^ال/, '')}
+              </text>
+            )}
+          </a>
+        ))
+      }
+      <text class="center" x="200" y="196">{ar(total)}</text>
+      <text class="center-sub" x="200" y="222">قصيدة</text>
+    </svg>
+  </div>
+
+  <ul class="legend">
+    {
+      rhymeGroups.map((g) => (
+        <li>
+          <a href={`/explore/qafiya/#${g.key}`}>
+            <b>{g.key}</b> <span>{ar(g.poems.length)}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Base>
+
+<style>
+  .wheel-wrap {
+    max-width: 520px;
+    margin: 0 auto 18px;
+    padding: 10px;
+  }
+  svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    direction: ltr;
+  }
+  .arc path {
+    fill: color-mix(in srgb, var(--accent) 55%, var(--paper-strong));
+    stroke: var(--bg);
+    stroke-width: 1.5;
+  }
+  .arc.alt path {
+    fill: color-mix(in srgb, var(--accent) 35%, var(--paper-strong));
+  }
+  .arc:hover path,
+  .arc:focus-visible path {
+    fill: var(--accent);
+  }
+  .arc:focus-visible {
+    outline: none;
+  }
+  .arc text {
+    font-family: var(--poem-font);
+    font-size: 17px;
+    text-anchor: middle;
+    fill: var(--ink);
+    pointer-events: none;
+  }
+  .center {
+    font-family: var(--display-font);
+    font-size: 44px;
+    text-anchor: middle;
+    fill: var(--ink);
+  }
+  .center-sub {
+    font-family: var(--ui-font);
+    font-size: 14px;
+    text-anchor: middle;
+    fill: var(--muted);
+  }
+  .legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 6px;
+  }
+  .legend a {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: var(--paper);
+    border: 1px solid var(--glass-border);
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .legend span {
+    color: var(--muted);
+  }
+</style>

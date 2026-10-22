@@ -1,0 +1,105 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { SITE_NAME, ar, poemById, versesLabel } from '../../lib/diwan';
+import type { Poem } from '../../lib/diwan';
+import indices from '../../../data/edition/indices.json';
+import { places, placeHref } from '../../lib/atlas';
+
+const terms = indices.hijaz_terms as string[];
+const placeNames = new Set(places.map((p) => p.name));
+const hijaz = (indices.hijaz_ids as string[]).map((id) => poemById.get(id)).filter((p): p is Poem => Boolean(p));
+const title = `الحجازيات: قصائد الشريف الرضي في الحجاز | ${SITE_NAME}`;
+const description = `حجازيات الشريف الرضي: ${ar(hijaz.length)} قصيدة يرد فيها الحجاز أو مواضعه مثل ${terms.slice(0, 5).join('، ')}.`;
+---
+
+<Base title={title} description={description} section="indexes">
+  <PageHead
+    title="الحجازيات"
+    lede={`عُرف الرضي بحجازياته: قصائد يحنّ فيها إلى الحجاز ومواضعه. هذه ${ar(hijaz.length)} قصيدة يرد فيها أحد هذه الأسماء:`}
+    parent={{ label: 'الفهارس', href: '/explore/' }}
+  >
+    <ul class="terms">
+      {
+        terms.map((t) => (
+          <li>{placeNames.has(t) ? <a href={placeHref(t)}>{t}</a> : <span>{t}</span>}</li>
+        ))
+      }
+    </ul>
+  </PageHead>
+
+  <ol class="poems">
+    {
+      hijaz.map((p) => (
+        <li>
+          <a class="glass" href={`/poem/${p.id}/`}>
+            <h2>{p.title}</h2>
+            <p class="verse">
+              <span>{p.verses[0].sadr}</span>
+              {p.verses[0].ajuz && <span>{p.verses[0].ajuz}</span>}
+            </p>
+            <small>
+              {p.meter}، {versesLabel(p.verses.length)}
+            </small>
+          </a>
+        </li>
+      ))
+    }
+  </ol>
+</Base>
+
+<style>
+  .terms {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 10px 0 0;
+    padding: 0;
+  }
+  .terms a,
+  .terms span {
+    font-family: var(--poem-font);
+    font-size: 17px;
+    padding: 2px 12px;
+    border-radius: 8px;
+    background: var(--chip-bg);
+    text-decoration: none;
+  }
+  .poems {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+    gap: 12px;
+  }
+  .poems a {
+    display: block;
+    height: 100%;
+    padding: 16px 20px;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .poems a:hover {
+    background: var(--paper-strong);
+  }
+  h2 {
+    font-size: 26px;
+    margin: 0;
+  }
+  .verse {
+    display: grid;
+    font-family: var(--poem-font);
+    font-size: 20px;
+    line-height: 1.9;
+    margin: 6px 0;
+  }
+  .verse span + span {
+    color: var(--muted);
+  }
+  small {
+    font-size: 13px;
+    color: var(--muted);
+  }
+</style>

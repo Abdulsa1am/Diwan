@@ -17,7 +17,7 @@ const reportDir = path.join(root, 'reports');
 
 // One or more standalone "و" (at the start, or after a space, hemistich mark "#" or punctuation),
 // each followed by spaces, and then an Arabic letter. "و و اللّه" -> "وواللّه".
-const DETACHED_WAW = /(^|[\s#،,.!?؟:؛«»"()\-—])((?:و\s+)+)(?=[ء-ي])/g;
+const DETACHED_WAW = /(^|[\s#،,.!?؟:؛«»"()\-—])((?:و\s+)+)(?=[\u0621-\u064A])/g;
 
 // A word split across the two halves of a verse is marked with a tatweel before "#":
 // in "بالعفـ # و و كشّاف" the first "و" ends the word "العفو", so it keeps its space.

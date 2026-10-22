@@ -1,2 +1,7 @@
-# Cloudflare Pages redirects. Old verse links from the previous site go to the verse on the poem page.
+# Cloudflare Pages redirects for links from the old site.
+# A verse link goes to the verse on the poem page.
 /poem/:id/verse/:n  /poem/:id/#v:n  301
+# Old tools merged into other pages.
+/explore/openings  /explore/matali/  301
+/research/observatory  /explore/stats/  301
+/relation/:term  /explore/relations/#:term  301

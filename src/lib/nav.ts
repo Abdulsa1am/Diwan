@@ -38,6 +38,12 @@ export const mobileMenu = [sections.home, sections.library, sections.indexes, se
 export const exploreTools: { href: string; icon: string; title: string; text: string }[] = [
   { href: '/explore/lexicon/', icon: 'i-search', title: 'معجم الألفاظ', text: 'ألفاظ شرحتها حواشي الديوان، بمواضعها' },
   { href: '/explore/atlas/', icon: 'i-map', title: 'أطلس المواضع', text: 'المواضع التي ذكرها الشاعر على الخريطة' },
+  { href: '/explore/hijaz/', icon: 'i-spark', title: 'الحجازيات', text: 'قصائد يرد فيها الحجاز ومواضعه' },
+  { href: '/explore/rhymes/', icon: 'i-wheel', title: 'عجلة القوافي', text: 'حروف الروي على قدر قصائدها' },
+  { href: '/explore/words/', icon: 'i-index', title: 'فهرس الألفاظ', text: 'أكثر الألفاظ دورانًا في الديوان' },
+  { href: '/explore/relations/', icon: 'i-network', title: 'شبكة العلاقات', text: 'ما يجتمع من الألفاظ والمواضع في القصائد' },
+  { href: '/explore/phrases/', icon: 'i-opening', title: 'شجرة العبارة', text: 'ما يسبق اللفظة وما يليها في الأبيات' },
+  { href: '/research/compare/', icon: 'i-compare', title: 'مقارنة قصيدتين', text: 'البحر والقافية والطول والألفاظ المشتركة' },
 ];
 
 /** Pages listed in sitemap.xml besides the poems. Add a page here when it is built. */
@@ -55,4 +61,10 @@ export const indexablePages = [
   '/about/',
   '/explore/lexicon/',
   '/explore/atlas/',
+  '/explore/hijaz/',
+  '/explore/rhymes/',
+  '/explore/words/',
+  '/explore/relations/',
+  '/explore/phrases/',
+  '/research/compare/',
 ];
