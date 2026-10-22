@@ -77,10 +77,21 @@ const labels = dots.map((d, i) => {
 </figure>
 
 <style>
+  /* Same palette as the site, with more separation between land, borders and rivers. */
   .atlas-map {
+    --map-sea: color-mix(in srgb, var(--accent) 6%, #ffffff);
+    --map-land: color-mix(in srgb, var(--accent) 20%, #ffffff);
+    --map-border: color-mix(in srgb, var(--accent-deep) 55%, transparent);
+    --map-river: color-mix(in srgb, var(--accent) 85%, #ffffff);
     margin: 0 0 18px;
     padding: 8px;
     overflow: hidden;
+  }
+  :global([data-theme='dark']) .atlas-map {
+    --map-sea: #142334;
+    --map-land: color-mix(in srgb, var(--accent) 22%, #1a2b3e);
+    --map-border: color-mix(in srgb, var(--accent) 50%, transparent);
+    --map-river: color-mix(in srgb, var(--accent) 80%, #111d2b);
   }
   svg {
     /* Label positions are computed left-to-right; Arabic names still render right-to-left inside. */
@@ -88,25 +99,27 @@ const labels = dots.map((d, i) => {
     display: block;
     width: 100%;
     height: auto;
+    border-radius: 12px;
+    background: var(--map-sea);
     touch-action: pan-x pan-y pinch-zoom;
   }
   .land path {
-    fill: color-mix(in srgb, var(--accent) 9%, var(--paper-strong));
-    stroke: color-mix(in srgb, var(--accent) 35%, transparent);
-    stroke-width: 0.8;
+    fill: var(--map-land);
+    stroke: var(--map-border);
+    stroke-width: 1;
   }
   .rivers polyline {
     fill: none;
-    stroke: color-mix(in srgb, var(--accent) 55%, transparent);
-    stroke-width: 2;
+    stroke: var(--map-river);
+    stroke-width: 2.5;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
   .place circle {
     fill: var(--accent);
-    fill-opacity: 0.55;
+    fill-opacity: 0.75;
     stroke: var(--accent-deep);
-    stroke-width: 1.2;
+    stroke-width: 1.4;
   }
   .place text {
     font-family: var(--ui-font);
