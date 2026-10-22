@@ -24,6 +24,8 @@ const title = `${poem.title} | ${SITE_NAME}`;
 const description = `قصيدة للشريف الرضي من بحر ${poem.meter}، قافية ${poem.rhyme}، ${versesLabel(count)}. مطلعها: ${verseText(opening)}`;
 const url = new URL(Astro.url.pathname, Astro.site).href;
 const home = new URL('/', Astro.site).href;
+const pages = poem.endPage !== poem.startPage ? `${ar(poem.startPage)}–${ar(poem.endPage)}` : ar(poem.startPage);
+const citation = `الشريف الرضي، «${poem.title}»، ديوان الشريف الرضي، ج${ar(poem.volume)}، ص${pages}`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -51,27 +53,75 @@ const jsonLd = {
 };
 ---
 
-<Base title={title} description={description} jsonLd={jsonLd} type="article" section="poem">
-  <article class="reader">
+<Base title={title} description={description} jsonLd={jsonLd} type="article" section="library" reading={{ title: poem.title, total: count }}>
+  <article
+    class="reader"
+    data-poem={poem.id}
+    data-title={poem.title}
+    data-first={opening.sadr}
+    data-citation={citation}
+  >
     <a class="back" href="/diwan/">
       <svg class="ui-icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
       العودة إلى الديوان
     </a>
 
-    <header class="reader-head">
+    <header class="reader-head" id="readerHead">
       <div class="reader-kicker">{poem.meter} · روي {poem.rhyme} · {versesLabel(count)}</div>
       <h1>{poem.title}</h1>
       <div class="meta">
         <span class="chip">الجزء {ar(poem.volume)}</span>
-        <span class="chip">ص {ar(poem.startPage)}{poem.endPage !== poem.startPage && `–${ar(poem.endPage)}`}</span>
+        <span class="chip">ص {pages}</span>
+        {poem.linkedNoteCount > 0 && <span class="chip">شروح الأبيات {ar(poem.linkedNoteCount)}</span>}
+      </div>
+      <div class="poem-actions" role="toolbar" aria-label="أدوات القصيدة">
+        <button class="btn" type="button" data-action="save" aria-pressed="false" aria-label="حفظ القصيدة في محفوظاتي">
+          <svg class="ui-icon" aria-hidden="true"><use href="#i-bookmark"></use></svg>
+          <span data-save-label>احفظ</span>
+        </button>
+        <button class="btn" type="button" data-action="copy-poem" aria-label="نسخ القصيدة">
+          <svg class="ui-icon" aria-hidden="true"><use href="#i-copy"></use></svg>
+          انسخ
+        </button>
+        <button class="btn" type="button" data-action="share" aria-label="مشاركة القصيدة">
+          <svg class="ui-icon" aria-hidden="true"><use href="#i-share"></use></svg>
+          شارك
+        </button>
+        <button class="btn" type="button" data-action="settings" aria-expanded="false" aria-controls="readerSettings">
+          <svg class="ui-icon" aria-hidden="true"><use href="#i-sliders"></use></svg>
+          صفة القراءة
+        </button>
+      </div>
+      <div class="reader-settings glass" id="readerSettings" hidden>
+        <div class="setting">
+          <span id="sizeLabel">حجم الخط</span>
+          <div class="stepper" role="group" aria-labelledby="sizeLabel">
+            <button class="btn" type="button" data-size="-1" aria-label="تصغير الخط">أ−</button>
+            <output data-size-value>١٠٠٪</output>
+            <button class="btn" type="button" data-size="1" aria-label="تكبير الخط">أ+</button>
+          </div>
+        </div>
+        <div class="setting">
+          <span id="layoutLabel">ترتيب الشطرين</span>
+          <div class="segmented" role="radiogroup" aria-labelledby="layoutLabel">
+            <button type="button" role="radio" data-layout="auto" aria-checked="true">تلقائي</button>
+            <button type="button" role="radio" data-layout="side" aria-checked="false">متجاوران</button>
+            <button type="button" role="radio" data-layout="stacked" aria-checked="false">متتابعان</button>
+          </div>
+        </div>
       </div>
     </header>
 
     {
-      poem.intro && (
+      (poem.intro || poem.introGlosses) && (
         <details class="intro glass">
           <summary>خبر القصيدة</summary>
-          <p>{poem.intro}</p>
+          {poem.intro && <p>{poem.intro}</p>}
+          {poem.introGlosses && (
+            <p class="intro-glosses">
+              <b>شروح وردت مع الخبر:</b> {poem.introGlosses}
+            </p>
+          )}
         </details>
       )
     }
@@ -89,17 +139,25 @@ const jsonLd = {
       )
     }
 
-    <ol class="poem-sheet">
+    <ol class="poem-sheet" id="poemSheet">
       {
         poem.verses.map((v) => (
-          <li class:list={['verse', { single: !v.ajuz }]} id={`v${v.n}`}>
-            <a class="verse-no" href={`#v${v.n}`} aria-label={`البيت ${ar(v.n)}`}>
+          <li class:list={['verse', { single: !v.ajuz }]} id={`v${v.n}`} data-n={v.n}>
+            <a class="verse-no" href={`#v${v.n}`} aria-haspopup="menu" aria-label={`البيت ${ar(v.n)}: أدوات البيت`}>
               {ar(v.n)}
             </a>
             <div class="verse-body">
               <span class="hemistich sadr">{v.sadr}</span>
               {v.ajuz && <span class="hemistich ajuz">{v.ajuz}</span>}
             </div>
+            {v.notes.length > 0 && (
+              <details class="verse-notes">
+                <summary>شرح{v.notes.length > 1 && ` (${ar(v.notes.length)})`}</summary>
+                {v.notes.map((note) => (
+                  <p>{note}</p>
+                ))}
+              </details>
+            )}
           </li>
         ))
       }
@@ -108,7 +166,7 @@ const jsonLd = {
     {
       poem.notes.length > 0 && (
         <section class="notes glass" aria-labelledby="notes-title">
-          <h2 id="notes-title">الحواشي</h2>
+          <h2 id="notes-title">{poem.linkedNoteCount > 0 ? 'حواشٍ أخرى' : 'الحواشي'}</h2>
           <ul>
             {poem.notes.map((note) => (
               <li>{note}</li>
@@ -145,7 +203,19 @@ const jsonLd = {
       }
     </nav>
   </article>
+
+  <div class="verse-menu glass" id="verseMenu" role="menu" hidden>
+    <b class="verse-menu-title" data-menu-title></b>
+    <button type="button" role="menuitem" data-verse-action="copy">نسخ البيت</button>
+    <button type="button" role="menuitem" data-verse-action="cite">نسخ البيت مع الإحالة</button>
+    <button type="button" role="menuitem" data-verse-action="link">نسخ رابط البيت</button>
+    <button type="button" role="menuitem" data-verse-action="share">مشاركة البيت</button>
+  </div>
 </Base>
+
+<script>
+  import '../../scripts/reader';
+</script>
 
 <style>
   .reader {
@@ -159,6 +229,7 @@ const jsonLd = {
     font-size: 14px;
     color: var(--muted);
     text-decoration: none;
+    min-height: 40px;
   }
   .back:hover {
     color: var(--accent);
@@ -166,7 +237,7 @@ const jsonLd = {
 
   .reader-head {
     text-align: center;
-    padding: 28px 0 22px;
+    padding: 8px 0 18px;
   }
   .reader-kicker {
     font-size: 13px;
@@ -174,35 +245,120 @@ const jsonLd = {
   }
   h1 {
     font-size: clamp(38px, 6vw, 52px);
-    margin: 6px 0 10px;
+    margin: 2px 0 8px;
   }
   .meta {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 6px;
   }
+  .poem-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .poem-actions .btn {
+    padding: 7px 14px;
+  }
+  .poem-actions .ui-icon {
+    width: 18px;
+    height: 18px;
+  }
+  .poem-actions [aria-pressed='true'] {
+    background: var(--primary-bg);
+    color: var(--primary-ink);
+  }
+  .poem-actions [aria-pressed='true'] .ui-icon {
+    fill: currentColor;
+  }
+
+  .reader-settings[hidden] {
+    display: none;
+  }
+  .reader-settings {
+    margin: 12px auto 0;
+    max-width: 460px;
+    padding: 14px 18px;
+    display: grid;
+    gap: 12px;
+    text-align: start;
+  }
+  .setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 14px;
+  }
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stepper .btn {
+    min-width: 44px;
+    justify-content: center;
+    padding: 6px 10px;
+  }
+  .stepper output {
+    min-width: 48px;
+    text-align: center;
+  }
+  .segmented {
+    display: flex;
+    background: var(--chip-bg);
+    border-radius: 12px;
+    padding: 3px;
+  }
+  .segmented button {
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font: 500 13px/1.6 var(--ui-font);
+    padding: 6px 10px;
+    border-radius: 9px;
+    cursor: pointer;
+    min-height: 36px;
+  }
+  .segmented [aria-checked='true'] {
+    background: var(--paper-strong);
+    color: var(--ink);
+    box-shadow: var(--glass-shadow-soft);
+  }
 
   .intro {
-    margin-bottom: 18px;
-    padding: 6px 22px;
+    margin-bottom: 16px;
+    padding: 2px 20px;
     border-inline-start: 3px solid var(--accent);
   }
   .intro summary {
     cursor: pointer;
     font-family: var(--display-font);
-    font-size: 24px;
+    font-size: 22px;
     color: var(--accent);
-    padding: 10px 0;
+    padding: 8px 0;
   }
   .intro p {
     font-family: var(--poem-font);
     font-size: 19px;
     line-height: 2;
-    margin: 0 0 14px;
+    margin: 0 0 12px;
+  }
+  .intro .intro-glosses {
+    font-size: 16px;
+    color: var(--muted);
+  }
+  .intro-glosses b {
+    font-family: var(--ui-font);
+    font-size: 13px;
+    font-weight: 500;
   }
 
   .quotation {
-    margin: 0 0 18px;
+    margin: 0 0 16px;
     padding: 18px 22px;
     text-align: center;
     color: var(--muted);
@@ -224,8 +380,8 @@ const jsonLd = {
   /* The poem sheet: big glass card, Amiri verses, small verse numbers at the start corner. */
   .poem-sheet {
     list-style: none;
-    margin: 0 0 18px;
-    padding: 25px clamp(8px, 3vw, 28px);
+    margin: 0 0 16px;
+    padding: 16px clamp(6px, 3vw, 28px);
     background: var(--paper-strong);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
@@ -235,61 +391,105 @@ const jsonLd = {
   }
   .verse {
     position: relative;
-    padding: 14px 36px 14px;
-    scroll-margin-top: 110px;
+    padding: 12px 40px 12px 8px;
+    scroll-margin-top: 120px;
     border-radius: 14px;
   }
   .verse + .verse {
     border-top: 1px solid var(--line-dark);
   }
-  .verse:target {
+  .verse:target,
+  .verse.is-active {
     background: color-mix(in srgb, var(--accent) 10%, transparent);
   }
   .verse-no {
     position: absolute;
-    top: 8px;
-    inset-inline-start: 4px;
-    min-width: 28px;
+    top: 6px;
+    inset-inline-start: 0;
+    min-width: 36px;
+    min-height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
     font-size: 13px;
     color: var(--muted);
     text-decoration: none;
     font-variant-numeric: tabular-nums;
   }
+  .verse-no:hover {
+    background: var(--chip-bg);
+    color: var(--accent);
+  }
   .verse-body {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 4px;
+    gap: 2px;
     text-align: center;
   }
   .hemistich {
     font-family: var(--poem-font);
-    font-size: clamp(22px, 5.6vw, 31px);
+    font-size: calc(clamp(21px, 5.6vw, 30px) * var(--poem-scale, 1));
     line-height: 1.95;
     color: var(--ink);
     font-feature-settings: 'kern', 'liga', 'calt', 'mark', 'mkmk';
   }
 
-  /* Wide screens: the two halves side by side ("responsive" layout of the old site). */
+  /* Side by side on wide screens (auto), or whenever the reader asks for it and there is room. */
   @media (min-width: 1180px) {
-    .verse-body {
+    :global(html:not([data-verse-layout='stacked'])) .verse-body {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 32px;
     }
-    .single .verse-body {
-      grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 700px) {
+    :global(html[data-verse-layout='side']) .verse-body {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 28px;
     }
-    .hemistich {
-      font-size: 28px;
-    }
+  }
+  .single .verse-body {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .verse-notes {
+    margin: 4px auto 0;
+    max-width: 640px;
+    text-align: start;
+  }
+  .verse-notes summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    padding: 2px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--line-dark);
+    background: var(--paper);
+    font-size: 13px;
+    color: var(--accent-deep);
+    cursor: pointer;
+    list-style: none;
+  }
+  .verse-notes summary::-webkit-details-marker {
+    display: none;
+  }
+  .verse-notes[open] summary {
+    background: var(--chip-bg);
+  }
+  .verse-notes p {
+    font-family: var(--poem-font);
+    font-size: 17px;
+    line-height: 1.9;
+    color: var(--muted);
+    margin: 8px 0 0;
   }
 
   .notes {
-    padding: 18px 24px;
-    margin-bottom: 18px;
+    padding: 16px 22px;
+    margin-bottom: 16px;
   }
   .notes h2 {
-    font-size: 26px;
-    margin: 0 0 8px;
+    font-size: 24px;
+    margin: 0 0 6px;
   }
   .notes ul {
     list-style: none;
@@ -337,9 +537,50 @@ const jsonLd = {
     background: var(--paper-strong);
   }
 
+  .verse-menu {
+    position: absolute;
+    z-index: 30;
+    display: grid;
+    min-width: 210px;
+    padding: 8px;
+    background: var(--menu-bg);
+    box-shadow: var(--glass-shadow);
+  }
+  .verse-menu[hidden] {
+    display: none;
+  }
+  .verse-menu-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    padding: 4px 10px 6px;
+  }
+  .verse-menu button {
+    border: 0;
+    background: none;
+    text-align: start;
+    font: 500 14px/1.6 var(--ui-font);
+    color: var(--ink);
+    padding: 9px 10px;
+    border-radius: 9px;
+    cursor: pointer;
+  }
+  .verse-menu button:hover,
+  .verse-menu button:focus-visible {
+    background: var(--chip-bg);
+  }
+
   @media (max-width: 620px) {
     .verse {
-      padding-inline: 26px 6px;
+      padding-inline: 34px 4px;
+    }
+    .poem-actions {
+      gap: 6px;
+    }
+    .poem-actions .btn {
+      font-size: 13px;
+      padding: 6px 10px;
+      gap: 5px;
     }
     .poem-nav a {
       font-size: 18px;

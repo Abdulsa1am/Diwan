@@ -8,9 +8,10 @@ import '../styles/global.css';
 import amiriRegular from '@fontsource/amiri/files/amiri-arabic-400-normal.woff2?url';
 import katibeh from '@fontsource/katibeh/files/katibeh-arabic-400-normal.woff2?url';
 import Icons from '../components/Icons.astro';
+import NavLink from '../components/NavLink.astro';
 import { SITE_NAME, volumeSizes } from '../lib/diwan';
-
-type Section = 'home' | 'library' | 'poem' | 'other';
+import { mainMenu, toolsMenu, mobileMenu, sections } from '../lib/nav';
+import type { SectionKey } from '../lib/nav';
 
 interface Props {
   title: string;
@@ -19,33 +20,16 @@ interface Props {
   jsonLd?: object;
   type?: 'website' | 'article';
   /** Which nav item to mark as current. */
-  section?: Section;
+  section?: SectionKey;
+  /** On poem pages: shown in the top bar once the reader scrolls past the title. */
+  reading?: { title: string; total: number };
+  /** Keep the page out of search engines (e.g. the personal saved list). */
+  noindex?: boolean;
 }
 
-const { title, description, jsonLd, type = 'website', section = 'other' } = Astro.props;
+const { title, description, jsonLd, type = 'website', section, reading, noindex } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const shareImage = new URL('/share.png', Astro.site);
-
-// Sections of the old site. Ones without `href` are not built yet: shown dimmed, not linked.
-const mainMenu = [
-  { label: 'الرئيسية', icon: 'i-home', href: '/', current: section === 'home' },
-  { label: 'الديوان', icon: 'i-book', href: '/diwan/', current: section === 'library' || section === 'poem' },
-  { label: 'الفهارس', icon: 'i-orbit' },
-  { label: 'أغراض الشعر', icon: 'i-network' },
-  { label: 'محفوظاتي', icon: 'i-bookmark' },
-];
-const toolsMenu = [
-  { label: 'معجم الألفاظ', icon: 'i-search' },
-  { label: 'أطلس المواضع', icon: 'i-map' },
-  { label: 'عن الشريف الرضي', icon: 'i-user' },
-];
-const mobileMenu = [
-  mainMenu[0],
-  mainMenu[1],
-  mainMenu[2],
-  { label: 'ابحث', icon: 'i-search' },
-  mainMenu[4],
-] as { label: string; icon: string; href?: string; current?: boolean }[];
 ---
 
 <!doctype html>
@@ -55,6 +39,7 @@ const mobileMenu = [
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href={amiriRegular} as="font" type="font/woff2" crossorigin />
@@ -70,12 +55,19 @@ const mobileMenu = [
     <meta name="twitter:card" content="summary_large_image" />
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <script is:inline>
-      // Apply the saved theme before the page paints, so there is no flash.
+      // Apply saved theme and reading settings before the page paints (no flash).
       (function () {
-        var t = null;
-        try { t = localStorage.getItem('radi-theme'); } catch (e) {}
+        var root = document.documentElement, t = null, r = null;
+        try {
+          t = localStorage.getItem('radi-theme');
+          r = JSON.parse(localStorage.getItem('radi-reading') || 'null');
+        } catch (e) {}
         if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.dataset.theme = t;
+        root.dataset.theme = t;
+        if (r) {
+          if (r.scale) root.style.setProperty('--poem-scale', r.scale);
+          if (r.layout) root.dataset.verseLayout = r.layout;
+        }
       })();
     </script>
   </head>
@@ -92,32 +84,11 @@ const mobileMenu = [
         <div class="sidebar-rule" aria-hidden="true">✦</div>
         <div class="sidebar-label">الأقسام</div>
         <nav class="menu" aria-label="أقسام الديوان">
-          {
-            mainMenu.map((item) =>
-              item.href ? (
-                <a href={item.href} aria-current={item.current ? 'page' : undefined}>
-                  <svg class="ui-icon" aria-hidden="true"><use href={`#${item.icon}`} /></svg>
-                  {item.label}
-                </a>
-              ) : (
-                <span aria-disabled="true" title="قريبًا">
-                  <svg class="ui-icon" aria-hidden="true"><use href={`#${item.icon}`} /></svg>
-                  {item.label}
-                </span>
-              ),
-            )
-          }
+          {mainMenu.map((item) => <NavLink item={item} current={section} />)}
         </nav>
         <div class="sidebar-label">فهارس وأدوات</div>
         <nav class="menu" aria-label="أدوات المعرفة">
-          {
-            toolsMenu.map((item) => (
-              <span aria-disabled="true" title="قريبًا">
-                <svg class="ui-icon" aria-hidden="true"><use href={`#${item.icon}`} /></svg>
-                {item.label}
-              </span>
-            ))
-          }
+          {toolsMenu.map((item) => <NavLink item={item} current={section} />)}
         </nav>
         <div class="sidebar-bottom">
           <div class="sidebar-verse">«ليهنك اليوم أنّ القلب مرعاك»</div>
@@ -125,11 +96,26 @@ const mobileMenu = [
         </div>
       </aside>
 
-      <header class="topbar">
+      <header class="topbar" id="topbar">
         <div class="topbar-inner">
           <a class="top-brand" href="/" aria-label="الرَّضي، الرئيسية">الرَّضِي</a>
           <div class="breadcrumb"><span class="breadcrumb-dot"></span><span>{SITE_NAME}</span></div>
+          {
+            reading && (
+              <div class="reading-status" id="readingStatus" aria-hidden="true">
+                <b>{reading.title}</b>
+                <span data-reading-pos>البيت ١ من {reading.total}</span>
+              </div>
+            )
+          }
           <div class="top-actions">
+            {
+              sections.search.href && (
+                <a class="iconbtn" href={sections.search.href} aria-label="ابحث في الديوان" title="ابحث في الديوان">
+                  <svg class="ui-icon" aria-hidden="true"><use href="#i-search" /></svg>
+                </a>
+              )
+            }
             <button
               class="iconbtn"
               type="button"
@@ -146,6 +132,7 @@ const mobileMenu = [
             </button>
           </div>
         </div>
+        {reading && <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>}
       </header>
 
       <main class="main" id="main">
@@ -153,24 +140,11 @@ const mobileMenu = [
         <footer class="site-footer">نصّ الديوان وفهارسه · شعر الشريف محمد بن الحسين الرضي (٣٥٩–٤٠٦ هـ)</footer>
       </main>
 
-      <nav class="mobile-nav" aria-label="التنقل على الهاتف">
-        {
-          mobileMenu.map((item) =>
-            item.href ? (
-              <a href={item.href} aria-current={item.current ? 'page' : undefined}>
-                <svg class="ui-icon" aria-hidden="true"><use href={`#${item.icon}`} /></svg>
-                {item.label}
-              </a>
-            ) : (
-              <span aria-disabled="true" title="قريبًا">
-                <svg class="ui-icon" aria-hidden="true"><use href={`#${item.icon}`} /></svg>
-                {item.label}
-              </span>
-            ),
-          )
-        }
+      <nav class="mobile-nav" id="mobileNav" aria-label="التنقل على الهاتف">
+        {mobileMenu.map((item) => <NavLink item={item} current={section} />)}
       </nav>
     </div>
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
     <script is:inline>
       (function () {
@@ -190,6 +164,20 @@ const mobileMenu = [
           while (pick >= sizes[v]) { pick -= sizes[v]; v++; }
           location.href = '/poem/r' + (v + 1) + '-' + String(pick + 1).padStart(3, '0') + '/';
         });
+        // Small screens: hide the top and bottom bars while reading down, show them on the way up.
+        var lastY = scrollY, ticking = false;
+        addEventListener('scroll', function () {
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(function () {
+            var y = scrollY;
+            if (Math.abs(y - lastY) > 8) {
+              root.classList.toggle('bars-hidden', y > lastY && y > 240);
+              lastY = y;
+            }
+            ticking = false;
+          });
+        }, { passive: true });
       })();
     </script>
   </body>

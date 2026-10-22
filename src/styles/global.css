@@ -20,6 +20,7 @@
   --chip-bg: #eaf0f7;
   --primary-bg: rgba(40, 74, 99, 0.82);
   --primary-ink: #fff;
+  --menu-bg: #fbfdff;
 
   --glass-border: rgba(255, 255, 255, 0.75);
   --glass-filter: blur(20px) saturate(125%);
@@ -54,6 +55,7 @@
   --chip-bg: #111d2b;
   --primary-bg: rgba(134, 185, 216, 0.26);
   --primary-ink: #eef5fa;
+  --menu-bg: #22344a;
   --glass-border: rgba(234, 247, 255, 0.14);
   --glass-shadow: 0 17px 38px rgba(0, 0, 0, 0.22);
   --glass-shadow-soft: 0 8px 22px rgba(0, 0, 0, 0.18);
@@ -437,5 +439,96 @@ h3 {
   body {
     background: #fff;
     color: #111;
+  }
+}
+
+/* ---------- Reading status (poem pages), toast, hiding bars while reading ---------- */
+a.iconbtn {
+  text-decoration: none;
+}
+.reading-status {
+  display: none;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.35;
+}
+.reading-status b {
+  font-family: var(--display-font);
+  font-weight: 400;
+  font-size: 20px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reading-status span {
+  font-size: 12px;
+  color: var(--muted);
+}
+html.is-reading .reading-status {
+  display: flex;
+}
+html.is-reading .top-brand,
+html.is-reading .breadcrumb {
+  display: none;
+}
+.reading-progress {
+  height: 3px;
+  background: transparent;
+}
+.reading-progress span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  border-radius: 0 3px 3px 0;
+  transition: width 0.15s linear;
+}
+
+.topbar,
+.mobile-nav {
+  transition: transform 0.25s ease;
+}
+@media (max-width: 1000px) {
+  html.bars-hidden .topbar {
+    transform: translateY(-100%);
+  }
+  html.bars-hidden .mobile-nav {
+    transform: translateY(100%);
+  }
+}
+
+.toast {
+  position: fixed;
+  z-index: 60;
+  inset-inline: 0;
+  bottom: calc(80px + env(safe-area-inset-bottom));
+  width: max-content;
+  max-width: calc(100% - 32px);
+  margin: 0 auto;
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: var(--primary-bg);
+  color: var(--primary-ink);
+  font-size: 14px;
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+.toast[hidden] {
+  display: none;
+}
+@media (min-width: 1001px) {
+  .toast {
+    bottom: 32px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .topbar,
+  .mobile-nav,
+  .reading-progress span {
+    transition: none;
   }
 }

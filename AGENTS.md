@@ -46,6 +46,9 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 - Dev server: `npm run dev`
 - Build: `npm run build` (output in `dist/`), then preview with `npm run preview`
 - Rebuild the data from the old site: `npm run data`
+- Type check: `npm run check`
+- Verify the build (verse text intact, no broken links, one h1, no email): `npm run verify` — run before every commit that touches pages
+- Nav sections are switched on in `src/lib/nav.ts` (add `href` when a section's page exists)
 
 ## Project structure
 - `_original/` — the friend's old site (v24.8.23), unzipped and cleaned. Reference only; don't edit it.

@@ -1,0 +1,28 @@
+---
+import type { NavItem, SectionKey } from '../lib/nav';
+
+interface Props {
+  item: NavItem;
+  current?: SectionKey;
+}
+
+const { item, current } = Astro.props;
+---
+
+{
+  item.href ? (
+    <a href={item.href} aria-current={item.key === current ? 'page' : undefined}>
+      <svg class="ui-icon" aria-hidden="true">
+        <use href={`#${item.icon}`} />
+      </svg>
+      {item.label}
+    </a>
+  ) : (
+    <span aria-disabled="true" title="قريبًا">
+      <svg class="ui-icon" aria-hidden="true">
+        <use href={`#${item.icon}`} />
+      </svg>
+      {item.label}
+    </span>
+  )
+}

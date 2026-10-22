@@ -4,12 +4,12 @@ Where the rebuild stands. Short and current: what's done, what's next, what's op
 Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 
 ## Now
-- Astro site built with the old site's identity: home, `/diwan/` (poem cards), 685 poem pages, 404, sitemap, robots. No JavaScript except the theme toggle and random poem buttons.
+- M2: saved poems and the home page.
 
 ## Plan (working through it without stopping; commit + update this file after each milestone)
 UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 
-- [ ] **M1 Poem page reading.** Notes under their verses (verified links), cleaned intros, slim reading bar with progress, verse menu (copy verse, copy link), copy poem, save poem, reading settings (font size, side-by-side or stacked). Poem visible on the first phone screen.
+- [x] **M1 Poem page reading.** Notes under their verses (verified links), cleaned intros, slim reading bar with progress, verse menu (copy verse, copy link), copy poem, save poem, reading settings (font size, side-by-side or stacked). Poem visible on the first phone screen.
 - [ ] **M2 Saved and home.** `/saved` (محفوظاتي), "continue reading", verse of the day, home entry points.
 - [ ] **M3 Search.** `/search` with Arabic-aware matching (diacritics, alef/ya forms, joined waw), filters, highlighted results linking to the verse. Filters on `/diwan/`.
 - [ ] **M4 Indexes.** `/explore` hub, meters, rhymes (qafiya), first lines (matali), themes (أغراض الشعر), people (entities).
@@ -26,6 +26,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - Some poem intros (خبر القصيدة) contain stray note glosses mixed into the text (e.g. r1-001). Part of the text review.
 
 ## Done
+- 2026-10-22: **M1** Poem page: 1,764 verified notes under their verses (all 6,324 notes accounted for), cleaned intros for 121 poems, verse menu (copy, cite, link, share), save, copy/share poem, reading settings (size, layout), reading bar with progress, bars hide while reading on phones. First verse now on the first phone screen (457px; old site 933px). Added `npm run verify` (verse integrity, broken links, page basics, privacy) and `npm run check`.
 - 2026-10-22: Old site reviewed; chose Astro, kept the URL structure, decisions recorded in `AGENTS.md`.
 - 2026-10-22: Old site data extracted unchanged into `data/source/` (`tools/extract-legacy-data.mjs`).
 - 2026-10-22: Detached waw joined into `data/edition/` (`tools/fix-detached-waw.mjs`), approved by the owner. Every change is listed in `reports/waw-changes.csv`.
