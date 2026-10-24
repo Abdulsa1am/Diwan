@@ -33,10 +33,11 @@ const description = `توزيع قصائد الشريف الرضي على حرو
 <Base title={title} description={description} section="indexes">
   <PageHead
     title="عجلة القوافي"
-    lede="كل قطاع حرف روي، وطوله على قدر قصائده في الديوان. اختر قطاعًا لتنتقل إلى قصائده."
+    lede="كل قطاع حرف روي، وطوله على قدر قصائده في الديوان. اختر قطاعًا أو حرفًا من القائمة لتنتقل إلى قصائده؛ القائمة أسهل للحروف ذات القطاعات الضيقة."
     parent={{ label: 'الفهارس', href: '/explore/' }}
   />
 
+  <a class="legend-jump" href="#legendTitle">اختر من قائمة الحروف، بما فيها القوافي النادرة</a>
   <div class="wheel-wrap glass">
     <svg viewBox="0 0 400 400" role="group" aria-label="عجلة حروف الروي في الديوان">
       {
@@ -57,11 +58,13 @@ const description = `توزيع قصائد الشريف الرضي على حرو
     </svg>
   </div>
 
-  <ul class="legend">
+  <h2 id="legendTitle" tabindex="-1">اختر حرف الروي</h2>
+  <p class="legend-note">كل الحروف متاحة هنا، بما فيها الحروف قليلة القصائد.</p>
+  <ul class="legend" aria-labelledby="legendTitle">
     {
       rhymeGroups.map((g) => (
         <li>
-          <a href={`/explore/qafiya/#${g.key}`}>
+          <a href={`/explore/qafiya/#${g.key}`} aria-label={`${g.label}، ${arCount(g.poems.length, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة'])}`}>
             <b>{g.key}</b> <span>{ar(g.poems.length)}</span>
           </a>
         </li>
@@ -116,6 +119,9 @@ const description = `توزيع قصائد الشريف الرضي على حرو
     text-anchor: middle;
     fill: var(--muted);
   }
+  .legend-jump { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 8px; }
+  #legendTitle { scroll-margin-top: 90px; font-size: 26px; margin: 8px 0 0; }
+  .legend-note { color: var(--muted); font-size: 14px; margin: 0 0 10px; }
   .legend {
     list-style: none;
     margin: 0;
@@ -126,6 +132,8 @@ const description = `توزيع قصائد الشريف الرضي على حرو
   }
   .legend a {
     display: flex;
+    align-items: center;
+    min-height: 44px;
     justify-content: space-between;
     padding: 6px 12px;
     border-radius: 10px;

@@ -14,24 +14,25 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     <p>قصائد الديوان كلها مرتبة على حروف القافية في جزأين.</p>
   </header>
 
+  <p class="count" id="filterNotice">تظهر قائمة القصائد كاملة. التصفية تحتاج إلى JavaScript وتبقى معطّلة حتى يكتمل تحميلها.</p>
   <form class="filter-bar glass" id="filters" role="search" aria-label="تصفية القصائد">
     <label class="title-filter">
       <svg class="ui-icon" aria-hidden="true"><use href="#i-search"></use></svg>
       <span class="visually-hidden">عنوان القصيدة أو مطلعها</span>
-      <input name="t" type="search" placeholder="عنوان أو مطلع…" autocomplete="off" />
+      <input disabled name="t" type="search" placeholder="عنوان أو مطلع…" autocomplete="off" />
     </label>
     <details class="filter-options" id="filterOptions">
       <summary id="filterSummary">تصفية</summary>
       <div class="filter-fields">
-        <select name="meter" aria-label="البحر">
+        <select disabled name="meter" aria-label="البحر">
           <option value="">البحور كلها</option>
           {meters.map((m) => <option value={m}>{m}</option>)}
         </select>
-        <select name="rhyme" aria-label="القافية">
+        <select disabled name="rhyme" aria-label="القافية">
           <option value="">القوافي كلها</option>
           {rhymes.map((r) => <option value={r}>{r}</option>)}
         </select>
-        <select name="vol" aria-label="الجزء">
+        <select disabled name="vol" aria-label="الجزء">
           <option value="">الجزآن</option>
           <option value="1">الجزء الأول</option>
           <option value="2">الجزء الثاني</option>
@@ -40,13 +41,16 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     </details>
   </form>
 
+  <div class="filter-restrictions" id="catalogueRestrictions" hidden>
+    <span id="catalogueRestrictionText"></span>
+    <button class="btn" type="button" id="clearFilters">إزالة القيود</button>
+  </div>
   <p class="count" id="count" aria-live="polite">في الديوان {ar(poems.length)} قصيدة</p>
   <nav class="rhyme-jump" id="rhymeJump" aria-label="انتقل إلى حرف القافية" hidden>
     {rhymes.map((r) => <button type="button" data-jump-rhyme={r} aria-label={`قافية ${r}`}>{r}</button>)}
   </nav>
   <p class="no-match glass" id="noMatch" hidden>
-    لا قصائد بهذه القيود. <button type="button" class="link-btn" id="clearFilters">أزل القيود</button> أو
-    <a href="/search/">ابحث في الأبيات</a>.
+    لا قصائد تطابق البحث. جرّب عنوانًا أو مطلعًا آخر، أو <a href="/search/">ابحث في الأبيات</a>.
   </p>
 
   <div class="cards">
@@ -96,6 +100,8 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   const form = document.getElementById('filters') as HTMLFormElement;
   const cards = [...document.querySelectorAll<HTMLAnchorElement>('.poem-card')];
   const count = document.getElementById('count')!;
+  const restrictions = document.getElementById('catalogueRestrictions')!;
+  const restrictionText = document.getElementById('catalogueRestrictionText')!;
   const noMatch = document.getElementById('noMatch')!;
   const filterOptions = document.getElementById('filterOptions') as HTMLDetailsElement;
   const filterSummary = document.getElementById('filterSummary')!;
@@ -141,8 +147,10 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
         if (!firstByRhyme.has(card.dataset.rhyme!)) firstByRhyme.set(card.dataset.rhyme!, card);
       }
     }
-    const active = [t, meter, rhyme, vol].filter(Boolean).length;
-    filterSummary.textContent = active ? `تصفية (${ar(active)})` : 'تصفية';
+    const labels = [meter && `البحر: ${meter}`, rhyme && `القافية: ${rhyme}`, vol && `الجزء ${vol === '1' ? 'الأول' : 'الثاني'}`].filter(Boolean);
+    filterSummary.textContent = 'تصفية';
+    restrictionText.textContent = `القيود: ${labels.join('، ')}`;
+    restrictions.hidden = !labels.length;
     for (const button of jumpButtons) button.disabled = !firstByRhyme.has(button.dataset.jumpRhyme!);
     const filtered = t || meter || rhyme || vol;
     count.textContent = filtered
@@ -157,9 +165,13 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   form.addEventListener('input', apply);
   form.addEventListener('submit', (e) => e.preventDefault());
   document.getElementById('clearFilters')!.addEventListener('click', () => {
-    form.reset();
+    for (const select of form.querySelectorAll('select')) select.value = '';
     apply();
+    (form.elements.namedItem('t') as HTMLInputElement).focus();
   });
+
+  // Enable controls only once their handlers are ready (also covers a failed script download).
+  for (const control of form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select')) control.disabled = false;
 
   // Restore filters from the URL (e.g. links from the indexes).
   const params = new URLSearchParams(location.search);
@@ -170,6 +182,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     }
   }
   apply();
+  document.getElementById('filterNotice')!.hidden = true;
 </script>
 
 <style>
@@ -252,7 +265,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     width: 100%;
     border: 0;
     background: none;
-    font: 400 15px/1.6 var(--ui-font);
+    font: 400 16px/1.6 var(--ui-font);
     color: var(--ink);
   }
   .title-filter input:focus {

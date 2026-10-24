@@ -1,10 +1,9 @@
 // Poem page: reading progress, save, copy, share, verse menu, reading settings.
-import { load, save, toast, copyText, shareOrCopy, SAVED_KEY, LAST_KEY, READING_KEY } from './shared';
-import type { PoemRef } from './shared';
+import { load, save, toast, copyText, shareOrCopy, SAVED_KEY, LAST_KEY, READING_KEY, READING_SCALES } from './shared';
+import type { PoemRef, ReadingSettings } from './shared';
 
 const reader = document.querySelector<HTMLElement>('.reader')!;
-type Reading = { scale?: number; layout?: string; notes?: boolean };
-let settings = load<Reading>(READING_KEY, {}) ?? {};
+let settings = load<ReadingSettings>(READING_KEY, {});
 // This module is deferred; restore annotations as its first DOM update. CSS hides
 // them before it runs, so the default reader never sees a flash of annotations.
 reader.classList.toggle('show-annotations', settings.notes === true);
@@ -50,8 +49,10 @@ function fitPoem() {
   if (!naturalWidths) measureHemistichs();
   const widths = naturalWidths!;
   const style = getComputedStyle(sheet);
-  const designSize = parseFloat(style.fontSize);
-  // Respect an explicitly smaller reading size: the floor must not exceed its cap.
+  const scale = settings.scale ?? 1;
+  // Fit the default once, then scale that result. Explicit enlargement must not
+  // disappear into a wider fitting cap; stacking/wrapping makes room instead.
+  const designSize = parseFloat(style.fontSize) / scale;
   const floor = Math.min(designSize, parseFloat(style.getPropertyValue('--verse-floor')));
   const fullWidth = firstBody.getBoundingClientRect().width;
   if (fullWidth <= 0) return;
@@ -69,6 +70,10 @@ function fitPoem() {
     size = fitSize();
   }
   size = Math.max(floor, size);
+  size *= scale;
+  if (side && widths.some((width, i) => width * size > (paired[i] ? pairWidth : fullWidth) - 1.5)) {
+    side = false;
+  }
   // All geometry reads are above; these writes never trigger another width read.
   sheet.dataset.fittedLayout = side ? 'side' : 'stacked';
   sheet.style.setProperty('--poem-fitted-size', `${size}px`);
@@ -138,11 +143,15 @@ const verseObserver = new IntersectionObserver(
 verses.forEach((v) => verseObserver.observe(v));
 
 let placeTimer: number | undefined;
+let placeFailureReported = false;
 function rememberPlace() {
   window.clearTimeout(placeTimer);
   placeTimer = window.setTimeout(() => {
     const last: PoemRef = { id, title, first, verse: current, total, t: Date.now() };
-    save(LAST_KEY, last);
+    if (!save(LAST_KEY, last) && !placeFailureReported) {
+      toast('تعذّر حفظ موضع القراءة على هذا الجهاز');
+      placeFailureReported = true;
+    }
   }, 600);
 }
 rememberPlace();
@@ -159,13 +168,11 @@ function paintSave() {
 paintSave();
 saveBtn.addEventListener('click', () => {
   const list = load<PoemRef[]>(SAVED_KEY, []);
-  if (isSaved()) {
-    save(SAVED_KEY, list.filter((p) => p.id !== id));
-    toast('أُزيلت القصيدة من محفوظاتي');
-  } else {
-    save(SAVED_KEY, [{ id, title, first, t: Date.now() }, ...list]);
-    toast('حُفظت القصيدة في محفوظاتي');
-  }
+  const removing = list.some((p) => p.id === id);
+  const next = removing ? list.filter((p) => p.id !== id) : [{ id, title, first, t: Date.now() }, ...list];
+  const persisted = save(SAVED_KEY, next);
+  toast(persisted ? (removing ? 'أُزيلت القصيدة من محفوظاتي' : 'حُفظت القصيدة في محفوظاتي')
+    : 'تعذّر تحديث محفوظاتك على هذا الجهاز، حاول مجددًا');
   paintSave();
 });
 
@@ -183,21 +190,23 @@ const settingsBtn = document.querySelector<HTMLButtonElement>('[data-action="set
 const panel = document.getElementById('readerSettings')!;
 const sizeOut = panel.querySelector('[data-size-value]')!;
 const notesBtn = document.querySelector<HTMLButtonElement>('[data-action="notes"]');
-const SCALES = [0.85, 0.92, 1, 1.1, 1.2, 1.32];
+const SCALES = READING_SCALES;
 
-function applySettings() {
+function applySettings(persist = false) {
   const scale = settings.scale ?? 1;
   root.style.setProperty('--poem-scale', String(scale));
   sizeOut.textContent = `${digits.format(Math.round(scale * 100))}٪`;
   const layout = settings.layout ?? 'auto';
   if (layout === 'auto') delete root.dataset.verseLayout;
   else root.dataset.verseLayout = layout;
-  panel.querySelectorAll<HTMLButtonElement>('[data-layout]').forEach((b) =>
-    b.setAttribute('aria-checked', String(b.dataset.layout === layout)),
-  );
+  panel.querySelectorAll<HTMLButtonElement>('[data-layout]').forEach((b) => {
+    const checked = b.dataset.layout === layout;
+    b.setAttribute('aria-checked', String(checked));
+    b.tabIndex = checked ? 0 : -1;
+  });
   reader.classList.toggle('show-annotations', settings.notes === true);
   notesBtn?.setAttribute('aria-pressed', String(settings.notes === true));
-  save(READING_KEY, settings);
+  if (persist && !save(READING_KEY, settings)) toast('تغيّرت صفة القراءة لهذه الزيارة فقط؛ تعذّر حفظها على هذا الجهاز');
   scheduleFit();
 }
 applySettings();
@@ -206,7 +215,7 @@ notesBtn?.addEventListener('click', () => {
   settings = { ...settings, notes: !settings.notes };
   // Switching all annotations off also clears any individually revealed verses.
   if (!settings.notes) verses.forEach((v) => v.classList.remove('annotations-revealed'));
-  applySettings();
+  applySettings(true);
 });
 
 settingsBtn.addEventListener('click', () => {
@@ -221,9 +230,34 @@ panel.addEventListener('click', (e) => {
     const next = SCALES[Math.min(SCALES.length - 1, Math.max(0, (i < 0 ? 2 : i) + Number(btn.dataset.size)))];
     settings = { ...settings, scale: next };
   } else if (btn.dataset.layout) {
-    settings = { ...settings, layout: btn.dataset.layout };
+    settings = { ...settings, layout: btn.dataset.layout as ReadingSettings['layout'] };
   }
-  applySettings();
+  applySettings(true);
+});
+
+panel.querySelector('[role="radiogroup"]')!.addEventListener('keydown', (event) => {
+  const e = event as KeyboardEvent;
+  const items = [...panel.querySelectorAll<HTMLButtonElement>('[data-layout]')];
+  const i = items.indexOf(document.activeElement as HTMLButtonElement);
+  if (i < 0 || !['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) return;
+  e.preventDefault();
+  // Visual order is RTL: left advances to the next option.
+  const next = e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1
+    : (i + (e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+  items[next].click();
+  items[next].focus();
+});
+
+const residualNotes = document.querySelector<HTMLDetailsElement>('#residualNotes');
+function openResidualNotes() {
+  if (location.hash === '#residualNotes' && residualNotes) residualNotes.open = true;
+}
+openResidualNotes();
+window.addEventListener('hashchange', openResidualNotes);
+document.querySelector('[href="#residualNotes"]')?.addEventListener('click', () => {
+  if (!residualNotes) return;
+  residualNotes.open = true;
+  residualNotes.querySelector('summary')?.focus({ preventScroll: true });
 });
 
 /* ---------- Verse menu ---------- */
@@ -233,11 +267,11 @@ const verseNotesBtn = menu.querySelector<HTMLButtonElement>('[data-verse-action=
 let menuVerse: HTMLLIElement | null = null;
 let menuOpener: HTMLElement | null = null;
 
-function closeMenu() {
+function closeMenu(restoreFocus = true) {
   if (menu.hidden) return;
   menu.hidden = true;
   menuVerse?.classList.remove('is-active');
-  menuOpener?.focus();
+  if (restoreFocus) menuOpener?.focus();
   menuVerse = menuOpener = null;
 }
 
@@ -264,7 +298,7 @@ reader.addEventListener('click', (e) => {
   e.preventDefault();
   if (!menu.hidden && menuOpener === opener) closeMenu();
   else {
-    closeMenu();
+    closeMenu(false);
     openMenu(opener);
   }
 });
@@ -292,22 +326,44 @@ menu.addEventListener('click', (e) => {
 
 document.addEventListener('click', (e) => {
   const t = e.target as HTMLElement;
-  if (!menu.hidden && !menu.contains(t) && !t.closest('.verse-no')) closeMenu();
+  if (!menu.hidden && !menu.contains(t) && !t.closest('.verse-no')) closeMenu(false);
+});
+menu.addEventListener('focusout', (e) => {
+  if (!menu.contains(e.relatedTarget as Node | null)) closeMenu(false);
+});
+menu.addEventListener('keydown', (e) => {
+  if (e.key === 'Tab') {
+    // Continue through the page from this verse; never restore the opener on Tab.
+    const stops = [...document.querySelectorAll<HTMLElement>('a[href], button, input, select, textarea, summary, [tabindex]')]
+      .filter((el) => el.tabIndex >= 0 && !el.matches(':disabled') && !menu.contains(el) && el.getClientRects().length > 0);
+    const i = stops.indexOf(menuOpener!);
+    const next = stops[i + (e.shiftKey ? -1 : 1)];
+    if (next) {
+      e.preventDefault();
+      next.focus();
+    }
+    closeMenu(false);
+    return;
+  }
+  if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp' && e.key !== 'Home' && e.key !== 'End') return;
+  e.preventDefault();
+  const items = [...menu.querySelectorAll<HTMLButtonElement>('button:not([hidden])')];
+  const i = items.indexOf(document.activeElement as HTMLButtonElement);
+  const next = e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1
+    : (i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+  items[next].focus();
 });
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    closeMenu();
+    if (!menu.hidden) {
+      e.preventDefault();
+      closeMenu();
+      return;
+    }
     if (!panel.hidden) {
       panel.hidden = true;
       settingsBtn.setAttribute('aria-expanded', 'false');
       settingsBtn.focus();
     }
-  }
-  // Arrow keys move between menu items.
-  if (!menu.hidden && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
-    e.preventDefault();
-    const items = [...menu.querySelectorAll<HTMLButtonElement>('button:not([hidden])')];
-    const i = items.indexOf(document.activeElement as HTMLButtonElement);
-    items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length].focus();
   }
 });

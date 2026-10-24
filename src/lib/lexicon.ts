@@ -23,6 +23,8 @@ export interface Word {
   bare: string;
   letter: string;
   glosses: Gloss[];
+  /** Normalized headword and every definition, independent of the first preview. */
+  searchText: string;
   /** Other verses in the diwan that contain the word (first 12) and the total. */
   occurrences: { poem: Poem; verse: Verse }[];
   occurrenceCount: number;
@@ -50,6 +52,7 @@ for (const e of glossary.entries as RawEntry[]) {
       bare,
       letter: fold(bare).text[0] ?? '',
       glosses: [],
+      searchText: '',
       occurrences: [],
       occurrenceCount: 0,
     });
@@ -62,6 +65,7 @@ const foldedVerses = poems.flatMap((poem) =>
   poem.verses.map((verse) => ({ poem, verse, text: ` ${fold(`${verse.sadr} ${verse.ajuz ?? ''}`).text} ` })),
 );
 for (const word of words.values()) {
+  word.searchText = fold([word.headword, ...word.glosses.map((g) => g.meaning)].join(' ')).text;
   const needle = fold(word.headword).text;
   const hits = foldedVerses.filter((v) => v.text.includes(needle));
   word.occurrenceCount = hits.length;

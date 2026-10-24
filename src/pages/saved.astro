@@ -14,6 +14,10 @@ import { SITE_NAME } from '../lib/diwan';
     <p>القصائد التي حفظتها. تبقى على هذا الجهاز وهذا المتصفح فقط.</p>
   </header>
 
+  <div class="saved-undo glass" id="savedUndo" hidden>
+    <span role="status" id="savedUndoMessage"></span>
+    <button class="btn" type="button" id="undoRemove">تراجع عن الإزالة</button>
+  </div>
   <div class="saved-list" id="savedList" aria-live="polite"></div>
 
   <section class="empty glass" id="savedEmpty" hidden>
@@ -48,12 +52,16 @@ import { SITE_NAME } from '../lib/diwan';
   const list = document.getElementById('savedList')!;
   const empty = document.getElementById('savedEmpty')!;
   const template = document.getElementById('savedItem') as HTMLTemplateElement;
+  const undo = document.getElementById('savedUndo')!;
+  const undoMessage = document.getElementById('savedUndoMessage')!;
+  const undoButton = document.getElementById('undoRemove')!;
+  let removed: { poem: PoemRef; index: number } | null = null;
 
-  function render() {
+  function render(focusIndex?: number) {
     const saved = load<PoemRef[]>(SAVED_KEY, []);
     list.replaceChildren();
     empty.hidden = saved.length > 0;
-    for (const poem of saved) {
+    for (const [index, poem] of saved.entries()) {
       const card = template.content.firstElementChild!.cloneNode(true) as HTMLElement;
       const link = card.querySelector<HTMLAnchorElement>('.saved-link')!;
       link.href = `/poem/${poem.id}/`;
@@ -62,16 +70,38 @@ import { SITE_NAME } from '../lib/diwan';
       const remove = card.querySelector<HTMLButtonElement>('.saved-remove')!;
       remove.setAttribute('aria-label', `إزالة «${poem.title}» من محفوظاتي`);
       remove.addEventListener('click', () => {
-        save(
-          SAVED_KEY,
-          load<PoemRef[]>(SAVED_KEY, []).filter((p) => p.id !== poem.id),
-        );
-        toast(`أُزيلت «${poem.title}»`);
-        render();
+        const current = load<PoemRef[]>(SAVED_KEY, []);
+        if (!save(SAVED_KEY, current.filter((p) => p.id !== poem.id))) {
+          toast('تعذّرت الإزالة من محفوظاتك على هذا الجهاز، حاول مجددًا');
+          return;
+        }
+        removed = { poem, index: Math.max(0, current.findIndex((p) => p.id === poem.id)) };
+        undo.hidden = false;
+        undoMessage.textContent = `أُزيلت «${poem.title}». يمكنك التراجع عن آخر إزالة.`;
+        render(index);
       });
       list.append(card);
     }
+    if (focusIndex !== undefined) {
+      const buttons = list.querySelectorAll<HTMLButtonElement>('.saved-remove');
+      const target = buttons[Math.min(focusIndex, buttons.length - 1)] ?? empty.querySelector<HTMLAnchorElement>('a');
+      target?.focus();
+    }
   }
+  undoButton.addEventListener('click', () => {
+    if (!removed) return;
+    const { poem, index } = removed;
+    const current = load<PoemRef[]>(SAVED_KEY, []);
+    if (!current.some((p) => p.id === poem.id)) current.splice(Math.min(index, current.length), 0, poem);
+    if (!save(SAVED_KEY, current)) {
+      toast('تعذّر استرجاع القصيدة إلى محفوظاتك، حاول مجددًا');
+      return;
+    }
+    render(current.findIndex((p) => p.id === poem.id));
+    removed = null;
+    undo.hidden = true;
+    toast('أُعيدت القصيدة إلى محفوظاتي');
+  });
   render();
 </script>
 
@@ -117,8 +147,26 @@ import { SITE_NAME } from '../lib/diwan';
     margin: 4px 0 0;
   }
   .saved-list :global(.saved-remove) {
+    min-height: 44px;
     padding: 6px 10px;
     font-size: 13px;
+  }
+  .saved-undo {
+    position: sticky;
+    top: 80px;
+    z-index: 2;
+    margin: 14px 0;
+    padding: 12px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .saved-undo[hidden] {
+    display: none;
+  }
+  .saved-undo .btn {
+    min-height: 44px;
   }
   .empty {
     text-align: center;

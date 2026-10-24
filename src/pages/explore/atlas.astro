@@ -28,6 +28,8 @@ const description = `خريطة المواضع التي ذكرها الشريف 
 
   <AtlasMap label="خريطة المواضع التي ذكرها الشريف الرضي في العراق والجزيرة العربية والشام" />
 
+  <h2 id="places-list" class="list-heading">قائمة المواضع</h2>
+
   {
     groups.map((g) => (
       <section class="kind" aria-labelledby={`k-${g.kind}`}>
@@ -55,6 +57,10 @@ const description = `خريطة المواضع التي ذكرها الشريف 
 </Base>
 
 <style>
+  .list-heading {
+    font-size: 30px;
+    scroll-margin-top: 90px;
+  }
   .kind h2 {
     font-size: 28px;
     margin: 16px 0 6px;

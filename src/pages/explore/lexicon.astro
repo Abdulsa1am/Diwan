@@ -13,11 +13,7 @@ const description = `معجم لـ${ar(lexicon.length)} لفظة من ألفاظ
     title="معجم الألفاظ"
     lede={`${ar(lexicon.length)} لفظة شُرحت في حواشي الديوان، مع البيت الذي شُرحت فيه. افتح اللفظة لترى مواضعها الأخرى.`}
     parent={{ label: 'الفهارس', href: '/explore/' }}
-  >
-    <nav class="letters" aria-label="الحروف">
-      {lexiconByLetter.map(([letter]) => <a href={`#l-${letter}`}>{letter}</a>)}
-    </nav>
-  </PageHead>
+  />
 
   <label class="find glass">
     <svg class="ui-icon" aria-hidden="true"><use href="#i-search"></use></svg>
@@ -26,13 +22,17 @@ const description = `معجم لـ${ar(lexicon.length)} لفظة من ألفاظ
     <output id="wordCount" aria-live="polite"></output>
   </label>
 
+  <nav class="letters" aria-label="الحروف">
+    {lexiconByLetter.map(([letter]) => <a href={`#l-${letter}`}>{letter}</a>)}
+  </nav>
+
   {
     lexiconByLetter.map(([letter, words]) => (
       <section class="letter" id={`l-${letter}`} aria-label={`حرف ${letter}`}>
         <h2>{letter}</h2>
         <ul class="words">
           {words.map((w) => (
-            <li>
+            <li data-search={w.searchText}>
               <a href={wordHref(w)}>
                 <b>{w.headword}</b>
                 <span>{w.glosses[0].meaning}</span>
@@ -53,11 +53,13 @@ const description = `معجم لـ${ar(lexicon.length)} لفظة من ألفاظ
   const out = document.getElementById('wordCount')!;
   const items = [...document.querySelectorAll<HTMLLIElement>('.words li')].map((li) => ({
     li,
-    text: fold(li.textContent ?? '').text,
+    text: li.dataset.search ?? '',
   }));
   const sections = [...document.querySelectorAll<HTMLElement>('.letter')];
-  input.addEventListener('input', () => {
+  const letters = document.querySelector<HTMLElement>('.letters')!;
+  const filter = () => {
     const q = fold(input.value).text;
+    letters.hidden = Boolean(q);
     let shown = 0;
     for (const { li, text } of items) {
       li.hidden = Boolean(q) && !text.includes(q);
@@ -65,7 +67,10 @@ const description = `معجم لـ${ar(lexicon.length)} لفظة من ألفاظ
     }
     for (const s of sections) s.hidden = !s.querySelector('li:not([hidden])');
     out.textContent = q ? arCount(shown, ['لفظة واحدة', 'لفظتان', 'ألفاظ', 'لفظة']) : '';
-  });
+  };
+  input.addEventListener('input', filter);
+  input.addEventListener('search', filter);
+  filter();
 </script>
 
 <style>
@@ -73,7 +78,7 @@ const description = `معجم لـ${ar(lexicon.length)} لفظة من ألفاظ
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-top: 12px;
+    margin: 0 0 12px;
   }
   .letters a {
     display: inline-flex;
@@ -126,6 +131,7 @@ const description = `معجم لـ${ar(lexicon.length)} لفظة من ألفاظ
   .letter {
     scroll-margin-top: 140px;
   }
+  .letters[hidden],
   .letter[hidden],
   .words li[hidden] {
     display: none;

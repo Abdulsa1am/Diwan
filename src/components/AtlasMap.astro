@@ -10,6 +10,7 @@ interface Props {
   label: string;
 }
 const { focus, label } = Astro.props;
+const sizeId = `map-size-${focus ? encodeURIComponent(focus.name) : 'atlas'}`;
 const mapped = places.filter((p) => p.lat !== undefined && p.lon !== undefined);
 const max = Math.max(...mapped.map((p) => p.verses.length), 1);
 
@@ -44,6 +45,11 @@ const labels = dots.map((d, i) => {
 ---
 
 <figure class="atlas-map glass">
+  <input class="map-size-toggle" id={sizeId} type="checkbox" />
+  <label class="map-size-label" for={sizeId}>خريطة كبيرة قابلة للتمرير</label>
+  <a class="list-link" href="/explore/atlas/#places-list">قائمة جميع المواضع</a>
+  <p class="map-help">فعّل العرض الكبير لقراءة الأسماء، ثم مرّر الخريطة أفقيًا وعموديًا. ويمكنك اختيار الموضع من القائمة.</p>
+  <div class="map-viewport" tabindex="0" role="region" aria-label="الخريطة، قابلة للتمرير عند تكبيرها">
   <svg viewBox={mapViewBox} role="group" aria-label={label}>
     <g class="land">
       {countryPaths.map(([, d]) => <path d={d} />)}
@@ -75,6 +81,7 @@ const labels = dots.map((d, i) => {
       }
     </g>
   </svg>
+  </div>
   <figcaption>حجم النقطة على قدر شواهد الموضع في الأبيات. المواضع بلا إحداثيات مذكورة في القائمة.</figcaption>
 </figure>
 
@@ -94,6 +101,41 @@ const labels = dots.map((d, i) => {
     --map-land: color-mix(in srgb, var(--accent) 22%, #1a2b3e);
     --map-border: color-mix(in srgb, var(--accent) 50%, transparent);
     --map-river: color-mix(in srgb, var(--accent) 80%, #111d2b);
+  }
+  .map-size-toggle {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin: 8px;
+    accent-color: var(--accent);
+  }
+  .map-size-label, .list-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 4px 8px;
+    font-size: 14px;
+  }
+  .map-size-label {
+    cursor: pointer;
+  }
+  .map-help {
+    margin: 0 8px 8px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .map-viewport {
+    overflow: auto;
+    max-height: 70vh;
+    border-radius: 12px;
+    direction: ltr;
+  }
+  .map-viewport:focus-visible, .map-size-toggle:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .map-size-toggle:checked ~ .map-viewport svg {
+    min-width: 1100px;
   }
   svg {
     /* Label positions are computed left-to-right; Arabic names still render right-to-left inside. */
@@ -150,7 +192,7 @@ const labels = dots.map((d, i) => {
     vector-effect: non-scaling-stroke;
   }
   @media (max-width: 620px) {
-    .place-hit {
+    .map-size-toggle:not(:checked) ~ .map-viewport .place-hit {
       /* The 900-unit map shrinks to about 300px on a phone: retain an 18px+ hit radius. */
       r: 60;
     }

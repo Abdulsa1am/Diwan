@@ -7,6 +7,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
+import { verifyWordIndexFile } from './build-word-index.mjs';
 
 const root = path.resolve(import.meta.dirname, '..');
 const dist = path.join(root, 'dist');
@@ -14,6 +15,13 @@ const data = JSON.parse(fs.readFileSync(path.join(root, 'data/edition/data.json'
 const quoted = JSON.parse(fs.readFileSync(path.join(root, 'data/edition/poem-edition.json'), 'utf8')).quoted_preface_verses;
 
 const problems = [];
+// Derived metadata must match current approved text, policy, shortlist and all recomputed counts.
+try {
+  await verifyWordIndexFile();
+} catch (error) {
+  console.error(error.message);
+  process.exit(1);
+}
 const escapeHtml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 const files = fs.readdirSync(dist, { recursive: true }).map((f) => f.replaceAll('\\', '/'));
 const htmlFiles = files.filter((f) => f.endsWith('.html'));

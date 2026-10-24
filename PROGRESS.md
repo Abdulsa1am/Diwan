@@ -5,10 +5,10 @@ Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 
 ## Now
 - All nine milestones done. Friends' test deployment is live on Cloudflare Pages: https://diwan-alradi-ce6.pages.dev (project `diwan-alradi`, built with `NOINDEX=1`).
-- UI/UX audit complete (2026-10-24): 37 consolidated findings in `reports/ux-2026-10-24.md`, with a 24-page-family screenshot matrix and a structural sweep of all 1,168 pages. Application and edition data unchanged; fixes remain to be implemented.
+- UX fixing phase implemented (2026-10-24): all 37 audit findings addressed by four GPT-6.1 Sol Medium CLI workers and lead review. Includes the owner's approved frequency rebuild (238 normalized entries); existing edition text/data unchanged. Results: `reports/ux-fixes-2026-10-24.md`. Changes are local and await redeployment; the live friends' test still has the earlier version.
 
 ## Next (suggestions)
-1. Implement the audit's first fixes: home name/height, effective reading enlargement, visible/preserved keyboard focus, complete glossary search, recoverable loads and comparison URLs. Derived index rebuilding needs a documented dry run and owner approval.
+1. Redeploy the reviewed UX fixes when requested. Check keyboard/fixed-navigation behavior on a real iPhone and spoken screen-reader announcements; desktop browser emulation cannot confirm these.
 2. Gather friends' feedback on the test deployment and font lab. Keep `NOINDEX=1` until the owner approves public indexing; only then submit the sitemap to search engines.
 3. Text review: the postponed items below, then the friend's `_original/content-review/` lists.
 4. Error reporting ("نبّهنا إلى خطأ") needs a recipient/form service; verse image maker also remains unbuilt.
@@ -34,6 +34,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - Intros: 121 poems are cleaned using the friend's reviewed boundaries (M1). Other intros may still hold stray glosses. Part of the text review.
 
 ## Done
+- 2026-10-24: Fixed all 37 consolidated UX findings with four GPT-6.1 Sol Medium CLI workers, reviewed and completed by the lead: home/reading size, focus and saved undo, complete glossary lookup, index navigation/disclosure, recoverable downloads and tool URLs, split-word analysis, accessible phrase pagination, larger map and wheel legend. Owner approved frequency policy after the full dry-run comparison; 240 legacy rows → 238 derived entries, with provenance and stale-data verification. Full data pipeline reproduced all 26 existing files byte-for-byte. Static build, integrity/link verification, type check and tests pass; 24 page families checked at phone/desktop in light/dark, plus network/storage failures and content extremes. No deployment.
 - 2026-10-24: UI/UX audit orchestrated with four GPT-6.1 Sol Medium reviewers; lead reproduced issues in the browser. All 24 page families captured at phone/desktop sizes in light/dark, plus interaction/content extremes (127 screenshot names). All 1,168 HTML pages structurally reviewed; build, verify, type check and Arabic search tests passed. Live 404 and legacy redirects checked. Report distinguishes browser observations, source-only defects and real-device gaps. No application/data/deployment edits.
 - 2026-10-23: Deployed all 1,203 static assets (1,168 HTML pages) to the owner's Cloudflare Pages project `diwan-alradi`: https://diwan-alradi-ce6.pages.dev. Deployment: https://0e9e5ca7.diwan-alradi-ce6.pages.dev. Built with the assigned `SITE_URL` and `NOINDEX=1`; build, verify and type check passed. Arabic search tests passed with `node src/scripts/_arabic-search.test.mts` (tsx hit a sandbox user-info error). All requested live HTTP checks passed, including Arabic paths, own 404, verse 301, sitemap and JSON. No data changes or commits.
 - 2026-10-23: Applied the 361 certain spacing fixes (owner approved): 286 verses plus titles, notes and intros; letters verified identical, `npm run data` now includes the step. Owner decided: no custom domain; the font lab ships in the preview so friends can vote.

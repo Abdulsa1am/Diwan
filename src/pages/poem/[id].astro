@@ -76,6 +76,7 @@ const jsonLd = {
         <span class="chip">الجزء {ar(poem.volume)}</span>
         <span class="chip">ص {pages}</span>
         {poem.linkedNoteCount > 0 && <span class="chip">شروح الأبيات {ar(poem.linkedNoteCount)}</span>}
+        {poem.notes.length > 0 && <a class="chip residual-shortcut" href="#residualNotes">{poem.linkedNoteCount > 0 ? 'حواشٍ أخرى' : 'الحواشي'} ({ar(poem.notes.length)})</a>}
       </div>
       <div class="poem-actions" role="toolbar" aria-label="أدوات القصيدة">
         <button class="btn" type="button" data-action="save" aria-pressed="false" aria-label="حفظ القصيدة في محفوظاتي">
@@ -189,7 +190,7 @@ const jsonLd = {
 
     {
       poem.notes.length > 0 && (
-        <details class="notes glass">
+        <details class="notes glass" id="residualNotes">
           <summary>{poem.linkedNoteCount > 0 ? 'حواشٍ أخرى' : 'الحواشي'} ({ar(poem.notes.length)})</summary>
           <ul>
             {poem.notes.map((note) => (
@@ -277,6 +278,11 @@ const jsonLd = {
     flex-wrap: wrap;
     justify-content: center;
     gap: 6px;
+  }
+  .residual-shortcut {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
   .poem-actions {
     display: flex;
@@ -509,6 +515,7 @@ const jsonLd = {
   .poem-sheet.is-fitted .hemistich.can-wrap {
     white-space: normal;
     text-wrap: balance;
+    overflow-wrap: anywhere;
   }
 
   .reader:not(.show-annotations) .verse:not(.annotations-revealed) .verse-words,
@@ -555,6 +562,7 @@ const jsonLd = {
   }
 
   .notes {
+    scroll-margin-top: 120px;
     padding: 16px 22px;
     margin-bottom: 16px;
   }

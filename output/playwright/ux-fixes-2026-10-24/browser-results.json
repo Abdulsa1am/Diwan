@@ -1,0 +1,849 @@
+{
+  "base": "http://127.0.0.1:4323",
+  "results": [
+    {
+      "name": "U01 home name and search at 320/375/768/1024/1440",
+      "pass": true,
+      "detail": [
+        {
+          "width": 320,
+          "nameLines": 1,
+          "searchBottom": 547.921875,
+          "overflow": false
+        },
+        {
+          "width": 375,
+          "nameLines": 1,
+          "searchBottom": 517.421875,
+          "overflow": false
+        },
+        {
+          "width": 768,
+          "nameLines": 1,
+          "searchBottom": 604.828125,
+          "overflow": false
+        },
+        {
+          "width": 1024,
+          "nameLines": 1,
+          "searchBottom": 643.265625,
+          "overflow": false
+        },
+        {
+          "width": 1440,
+          "nameLines": 1,
+          "searchBottom": 646.5625,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "name": "U05 search More focuses first appended result; U03 navigation remains visible",
+      "pass": true
+    },
+    {
+      "name": "U14 search HTTP failure offers retry that succeeds",
+      "pass": true
+    },
+    {
+      "name": "U15 clearing invalidates delayed search; U16 stale More hidden during notes download",
+      "pass": true
+    },
+    {
+      "name": "U14 notes HTTP failure retries independently",
+      "pass": true
+    },
+    {
+      "name": "U26 restrictions reset preserves catalogue and search queries; U32 mobile input size",
+      "pass": true
+    },
+    {
+      "name": "U34 catalogue without JavaScript retains static links and disabled filters",
+      "pass": true
+    },
+    {
+      "name": "U07 all lexicon meanings searchable; U08 alphabet hides/restores",
+      "pass": true
+    },
+    {
+      "name": "U09 U10 U22 rhyme hash opens disclosure with shortcut above poems",
+      "pass": true
+    },
+    {
+      "name": "U11 U27 local opening/word navigation and counts",
+      "pass": true,
+      "detail": [
+        {
+          "label": "مطلع واحد",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "name": "U29 larger map scrolls within viewport with readable labels and place list shortcut",
+      "pass": true,
+      "detail": {
+        "width": 325,
+        "scroll": 1100,
+        "documentOverflow": false,
+        "svg": 1100
+      }
+    },
+    {
+      "name": "U02 explicit reading enlargement grows through 120% and 132%; U25 radio keys",
+      "pass": true,
+      "detail": [
+        21,
+        23.1,
+        25.2,
+        27.72
+      ]
+    },
+    {
+      "name": "U04 menu Tab dismisses, Escape restores, unrelated arrows never recapture",
+      "pass": true
+    },
+    {
+      "name": "U24 malformed saved/reading JSON cannot break controls",
+      "pass": true
+    },
+    {
+      "name": "U23 denied storage writes announce failure; U06 saved remove focus and undo; U31 target",
+      "pass": true
+    },
+    {
+      "name": "U35 citation separator; U36 authored year digits; U37 residual note shortcut",
+      "pass": true
+    },
+    {
+      "name": "U14 U17 invalid comparison URL recovers; offline retry preserves choices",
+      "pass": true
+    },
+    {
+      "name": "U14 phrase download retry; U18 split token derived and highlighted without text mutation",
+      "pass": true
+    },
+    {
+      "name": "U19 all phrase branches/examples reachable; U20 focus continuation; U21 clear resets URL",
+      "pass": true,
+      "detail": {
+        "branchCount": 204,
+        "expansions": 14
+      }
+    },
+    {
+      "name": "24 page families: 375/1440 light/dark geometry and screenshots",
+      "pass": true,
+      "detail": 96
+    }
+  ],
+  "errors": [],
+  "consoleErrors": [
+    {
+      "url": "http://127.0.0.1:4323/search/?q=%D8%A7%D9%84%D8%B2%D9%85%D8%A7%D9%86",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "url": "http://127.0.0.1:4323/search/?q=%D8%A7%D9%84%D8%B2%D9%85%D8%A7%D9%86&in=notes",
+      "message": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    },
+    {
+      "url": "http://127.0.0.1:4323/research/compare/?a=r1-001&b=r1-002",
+      "message": "Failed to load resource: net::ERR_FAILED"
+    },
+    {
+      "url": "http://127.0.0.1:4323/explore/phrases/?q=%D8%A8%D8%A7%D9%84%D8%AE%D9%8A%D9%81",
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "url": "http://127.0.0.1:4323/does-not-exist/",
+      "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://127.0.0.1:4323/does-not-exist/",
+      "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://127.0.0.1:4323/does-not-exist/",
+      "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "url": "http://127.0.0.1:4323/does-not-exist/",
+      "message": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    }
+  ],
+  "geometry": [
+    {
+      "name": "home",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "diwan",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "search",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "saved",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "explore",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "meters",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "qafiya",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "matali",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "themes",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "entities",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "stats",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "lexicon",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "words",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "hijaz",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "atlas",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "rhymes",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "relations",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "phrases",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "compare",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "about",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "404",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "poem",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "word",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "place",
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "home",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "diwan",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "search",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "saved",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "explore",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "meters",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "qafiya",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "matali",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "themes",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "entities",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "stats",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "lexicon",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "words",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "hijaz",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "atlas",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "rhymes",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "relations",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "phrases",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "compare",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "about",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "404",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "poem",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "word",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "place",
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "h1": 1
+    },
+    {
+      "name": "home",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "diwan",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "search",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "saved",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "explore",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "meters",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "qafiya",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "matali",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "themes",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "entities",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "stats",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "lexicon",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "words",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "hijaz",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "atlas",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "rhymes",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "relations",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "phrases",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "compare",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "about",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "404",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "poem",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "word",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "place",
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "home",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "diwan",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "search",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "saved",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "explore",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "meters",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "qafiya",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "matali",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "themes",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "entities",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "stats",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "lexicon",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "words",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "hijaz",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "atlas",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "rhymes",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "relations",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "phrases",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "compare",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "about",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "404",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "poem",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "word",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    },
+    {
+      "name": "place",
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "h1": 1
+    }
+  ]
+}

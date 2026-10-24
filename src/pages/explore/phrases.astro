@@ -23,12 +23,14 @@ import { SITE_NAME } from '../../lib/diwan';
 
   <p class="status" id="phraseStatus" role="status" aria-live="polite">جرّب: الدهر، الزمان، الشيب، بغداد.</p>
 
+  <button class="btn" id="phraseRetry" type="button" hidden>أعد المحاولة</button>
+
   <div class="tree" id="tree" hidden>
     <section class="branch glass" aria-labelledby="beforeTitle">
       <h2 id="beforeTitle">قبلها</h2>
       <ol id="before"></ol>
     </section>
-    <div class="phrase" id="phrase" aria-live="polite"></div>
+    <div class="phrase" id="phrase" tabindex="-1"></div>
     <section class="branch glass" aria-labelledby="afterTitle">
       <h2 id="afterTitle">بعدها</h2>
       <ol id="after"></ol>
@@ -44,8 +46,8 @@ import { SITE_NAME } from '../../lib/diwan';
 </Base>
 
 <script>
-  import { loadCorpus } from '../../scripts/corpus';
-  import { fold, findAll, highlight } from '../../scripts/arabic-search';
+  import { loadCorpus, phraseRanges } from '../../scripts/corpus';
+  import { fold, highlight } from '../../scripts/arabic-search';
   import { arCount } from '../../scripts/shared';
 
   const form = document.getElementById('phraseForm') as HTMLFormElement;
@@ -53,111 +55,156 @@ import { SITE_NAME } from '../../lib/diwan';
   const statusEl = document.getElementById('phraseStatus')!;
   const tree = document.getElementById('tree')!;
   const phraseEl = document.getElementById('phrase')!;
-  const beforeEl = document.getElementById('before')!;
-  const afterEl = document.getElementById('after')!;
   const samplesWrap = document.getElementById('samplesWrap')!;
   const samplesEl = document.getElementById('samples')!;
+  const retry = document.getElementById('phraseRetry') as HTMLButtonElement;
   const digits = new Intl.NumberFormat('ar-EG');
+  let generation = 0;
+  const prompt = 'جرّب: الدهر، الزمان، الشيب، بغداد.';
 
-  input.addEventListener('focus', () => loadCorpus(), { once: true });
+  function queryURL(query: string) {
+    const url = new URL(location.href);
+    if (query) url.searchParams.set('q', query);
+    else url.searchParams.delete('q');
+    history.replaceState(null, '', url);
+  }
+  function clear() {
+    generation++;
+    tree.hidden = samplesWrap.hidden = retry.hidden = true;
+    input.value = '';
+    samplesEl.replaceChildren();
+    document.getElementById('before')!.replaceChildren();
+    document.getElementById('after')!.replaceChildren();
+    phraseEl.textContent = '';
+    statusEl.textContent = prompt;
+    queryURL('');
+  }
+  // Speculative loading must never create an unhandled rejection.
+  input.addEventListener('focus', () => { void loadCorpus().catch(() => {}); }, { once: true });
+  const onEdit = () => {
+    if (!fold(input.value).text) { clear(); return; }
+    generation++;
+    tree.hidden = samplesWrap.hidden = retry.hidden = true;
+    statusEl.textContent = 'اضغط «ابنِ الشجرة» لعرض العبارة الحالية.';
+  };
+  input.addEventListener('input', onEdit);
+  input.addEventListener('search', onEdit);
 
-  async function build(query: string) {
+  async function build(query: string, restoreFocus = false) {
     const terms = fold(query).text.split(' ').filter(Boolean);
-    if (!terms.length) return;
-    history.replaceState(null, '', `?q=${encodeURIComponent(query)}`);
+    if (!terms.length) { clear(); return; }
+    const request = ++generation;
+    queryURL(query);
+    tree.hidden = samplesWrap.hidden = retry.hidden = true;
     statusEl.textContent = 'جارٍ البناء…';
-    const corpus = await loadCorpus();
-
-    const before = new Map<string, number>();
-    const after = new Map<string, number>();
-    const hits: typeof corpus.verses = [];
-    for (const v of corpus.verses) {
-      const w = v.words;
-      let found = false;
-      for (let i = 0; i + terms.length <= w.length; i++) {
-        if (terms.every((t, k) => w[i + k] === t)) {
+    try {
+      const corpus = await loadCorpus();
+      if (request !== generation) return;
+      const before = new Map<string, number>();
+      const after = new Map<string, number>();
+      const hits = corpus.verses.filter((v) => {
+        let found = false;
+        for (let i = 0; i + terms.length <= v.words.length; i++) {
+          if (!terms.every((t, k) => v.words[i + k] === t)) continue;
           found = true;
-          if (i > 0) before.set(w[i - 1], (before.get(w[i - 1]) ?? 0) + 1);
-          const next = w[i + terms.length];
+          if (i > 0) before.set(v.words[i - 1], (before.get(v.words[i - 1]) ?? 0) + 1);
+          const next = v.words[i + terms.length];
           if (next) after.set(next, (after.get(next) ?? 0) + 1);
         }
+        return found;
+      });
+      if (!hits.length) {
+        statusEl.textContent = `لم ترد «${query}» بهذه الصورة كلمةً مستقلة. جرّب صورة أخرى (بـ«ال» أو بدونها).`;
+        if (restoreFocus) input.focus();
+        return;
       }
-      if (found) hits.push(v);
-    }
-
-    if (!hits.length) {
-      tree.hidden = true;
-      samplesWrap.hidden = true;
-      statusEl.textContent = `لم ترد «${query}» بهذه الصورة كلمةً مستقلة. جرّب صورة أخرى (بـ«ال» أو بدونها).`;
-      return;
-    }
-    statusEl.textContent = `وردت في ${arCount(hits.length, ['بيت واحد', 'بيتين', 'أبيات', 'بيتًا'])}.`;
-    tree.hidden = false;
-    phraseEl.textContent = query;
-    renderBranch(beforeEl, before, (w) => `${corpus.spell(w)} ${query}`, corpus.spell);
-    renderBranch(afterEl, after, (w) => `${query} ${corpus.spell(w)}`, corpus.spell);
-
-    samplesWrap.hidden = false;
-    samplesEl.replaceChildren(
-      ...hits.slice(0, 30).map((v) => {
+      statusEl.textContent = `«${query}»: وردت في ${arCount(hits.length, ['بيت واحد', 'بيتين', 'أبيات', 'بيتًا'])}.`;
+      tree.hidden = samplesWrap.hidden = false;
+      phraseEl.textContent = query;
+      renderBranch(document.getElementById('before')!, before, (w) => `${corpus.spell(w)} ${query}`, corpus.spell);
+      renderBranch(document.getElementById('after')!, after, (w) => `${query} ${corpus.spell(w)}`, corpus.spell);
+      samplesEl.replaceChildren();
+      paginate(samplesEl, hits, 30, (v) => {
         const p = corpus.poems[v.poem];
         const li = document.createElement('li');
         const a = document.createElement('a');
         a.href = `/poem/${p[0]}/#v${v.n}`;
-        a.innerHTML = `<span class="v">${v.text
-          .split(' # ')
-          .map((half) => `<span>${highlight(half, findAll(fold(half), [terms.join(' ')]) ?? [])}</span>`)
-          .join('')}</span><small></small>`;
+        const ranges = phraseRanges(v, terms);
+        let offset = 0;
+        const halves = v.text.split(' # ').map((half) => {
+          const start = offset;
+          offset += half.length + 3;
+          const clipped: [number, number][] = ranges
+            .filter(([s, e]) => s < start + half.length && e > start)
+            .map(([s, e]) => [Math.max(0, s - start), Math.min(half.length, e - start)]);
+          return `<span>${highlight(half, clipped)}</span>`;
+        });
+        a.innerHTML = `<span class="v">${halves.join('')}</span><small></small>`;
         a.querySelector('small')!.textContent = `«${p[1]}»، البيت ${digits.format(v.n)}`;
         li.append(a);
         return li;
-      }),
-    );
-  }
-
-  function renderBranch(
-    list: HTMLElement,
-    counts: Map<string, number>,
-    next: (w: string) => string,
-    spell: (w: string) => string,
-  ) {
-    const top = [...counts].sort((a, b) => b[1] - a[1]).slice(0, 14);
-    list.replaceChildren(
-      ...top.map(([word, n]) => {
-        const li = document.createElement('li');
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.innerHTML = `<b></b><small></small>`;
-        b.querySelector('b')!.textContent = spell(word);
-        b.querySelector('small')!.textContent = digits.format(n);
-        b.addEventListener('click', () => {
-          input.value = next(word);
-          build(input.value);
-        });
-        li.append(b);
-        return li;
-      }),
-    );
-    if (!top.length) {
-      const li = document.createElement('li');
-      li.className = 'empty';
-      li.textContent = 'لا شيء';
-      list.append(li);
+      }, 'الأبيات');
+      if (restoreFocus) phraseEl.focus();
+    } catch {
+      if (request !== generation) return;
+      statusEl.textContent = 'تعذّر تحميل أبيات الديوان. تحقّق من الاتصال ثم أعد المحاولة؛ عبارتك محفوظة.';
+      retry.hidden = false;
+      if (restoreFocus) retry.focus();
     }
   }
 
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    build(input.value.trim());
-  });
-  const q = new URLSearchParams(location.search).get('q');
-  if (q) {
-    input.value = q;
-    build(q);
+  function paginate<T>(list: HTMLElement, items: T[], batch: number, item: (value: T) => HTMLElement, unit: string) {
+    let shown = 0;
+    const controls = document.createElement('li');
+    controls.className = 'more-row';
+    const label = document.createElement('p');
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = 'عرض المزيد';
+    controls.append(label, button);
+    list.append(controls);
+    const append = (focus = false) => {
+      const rows = items.slice(shown, shown + batch).map(item);
+      rows.forEach((row) => list.insertBefore(row, controls));
+      shown += rows.length;
+      label.textContent = `${unit}: المعروض ${digits.format(shown)} من ${digits.format(items.length)}`;
+      button.hidden = shown >= items.length;
+      if (focus) {
+        rows[0]?.querySelector<HTMLElement>('button, a')?.focus();
+        statusEl.textContent = label.textContent;
+      }
+    };
+    button.addEventListener('click', () => append(true));
+    append();
   }
+
+  function renderBranch(list: HTMLElement, counts: Map<string, number>, next: (w: string) => string, spell: (w: string) => string) {
+    list.replaceChildren();
+    const sorted = [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ar'));
+    if (!sorted.length) { const li = document.createElement('li'); li.textContent = 'لا شيء'; list.append(li); return; }
+    paginate(list, sorted, 14, ([word, n]) => {
+      const li = document.createElement('li');
+      const button = document.createElement('button');
+      button.type = 'button';
+      const wordLabel = document.createElement('b');
+      wordLabel.textContent = spell(word);
+      const count = document.createElement('small');
+      count.textContent = digits.format(n);
+      button.append(wordLabel, count);
+      button.setAttribute('aria-label', `مدّ العبارة: ${next(word)}، ${arCount(n, ['موضع واحد', 'موضعان', 'مواضع', 'موضعًا'])}`);
+      button.addEventListener('click', () => { input.value = next(word); void build(input.value, true); });
+      li.append(button);
+      return li;
+    }, 'الخيارات');
+  }
+  form.addEventListener('submit', (e) => { e.preventDefault(); void build(input.value.trim()); });
+  retry.addEventListener('click', () => { void build(input.value.trim(), true); });
+  const q = new URLSearchParams(location.search).get('q');
+  if (q) { input.value = q; void build(q); }
 </script>
 
 <style>
+  #phraseRetry[hidden], .branch :global(button[hidden]) { display: none; }
   .phrase-form {
     display: flex;
     gap: 8px;
@@ -188,7 +235,7 @@ import { SITE_NAME } from '../../lib/diwan';
   }
   .tree {
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr);
     gap: 14px;
     align-items: start;
   }
@@ -197,6 +244,9 @@ import { SITE_NAME } from '../../lib/diwan';
     display: none;
   }
   .phrase {
+    min-width: 0;
+    max-width: 28ch;
+    overflow-wrap: anywhere;
     align-self: center;
     font-family: var(--poem-font);
     font-size: 30px;
@@ -207,6 +257,7 @@ import { SITE_NAME } from '../../lib/diwan';
     text-align: center;
   }
   .branch {
+    min-width: 0;
     padding: 12px 14px;
   }
   .branch h2 {
@@ -231,7 +282,9 @@ import { SITE_NAME } from '../../lib/diwan';
     border-radius: 10px;
     padding: 4px 10px;
     cursor: pointer;
-    min-height: 36px;
+    min-height: 44px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
   .branch :global(button b) {
     font-family: var(--poem-font);
@@ -283,6 +336,10 @@ import { SITE_NAME } from '../../lib/diwan';
     color: inherit;
     border-radius: 4px;
   }
+  .branch :global(.more-row), .samples :global(.more-row) { grid-column: 1 / -1; width: 100%; font-size: 14px; color: var(--muted); }
+  .branch :global(.more-row p), .samples :global(.more-row p) { margin: 8px 0; }
+  .branch :global(.more-row button), .samples :global(.more-row button) { min-height: 44px; }
+  .phrase:focus { outline: 2px solid var(--accent); outline-offset: 3px; }
   @media (max-width: 760px) {
     .tree {
       grid-template-columns: 1fr;

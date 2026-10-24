@@ -2,11 +2,11 @@
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
 import { SITE_NAME, ar } from '../../lib/diwan';
-import indices from '../../../data/edition/indices.json';
+import frequencies from '../../../data/edition/word-frequencies.json';
 import { arCount } from '../../scripts/shared';
 
-// The friend's frequency list (counted before the waw was joined, so "و" is not glued to the words).
-const words = indices.words as { word: string; count: number; poems: number }[];
+// Rebuilt at data preparation time; only selected words enter this static page.
+const words: { word: string; count: number; poems: number }[] = frequencies.words;
 const max = words[0].count;
 const title = `الألفاظ الأكثر دورانًا في شعر الشريف الرضي | ${SITE_NAME}`;
 const description = `أكثر الألفاظ ورودًا في ديوان الشريف الرضي: ${words
@@ -21,13 +21,19 @@ const description = `أكثر الألفاظ ورودًا في ديوان الش
     lede={`${ar(words.length)} لفظة من أكثر ألفاظ الديوان ورودًا. اختر لفظة لتبحث عنها في الأبيات.`}
     parent={{ label: 'الفهارس', href: '/explore/' }}
   >
-    <p class="caveat">العدّ على صورة اللفظة كما كُتبت بلا تشكيل؛ «الدهر» غير «دهر».</p>
+    <p class="caveat" id="word-count-method">نعدّ كل ورود للكلمة كاملةً في شعر الرضي، مع إهمال التشكيل وتوحيد صور الحروف كما في البحث؛ وتبقى «والزمان» مستقلةً عن «الزمان». لا تدخل الأبيات المنقولة في مقدمات القصائد في العدّ. فتح البطاقة ينقلك إلى البحث، الذي يعدّ الأبيات المطابقة ويجد اللفظة داخل كلمات أطول؛ لذلك قد تختلف نتائجه عن مرات الورود هنا.</p>
   </PageHead>
+
+  <label class="find glass">
+    <span>تصفية الألفاظ</span>
+    <input id="findFrequency" type="search" placeholder="ابحث عن لفظة في هذه القائمة…" autocomplete="off" aria-describedby="word-count-method" />
+  </label>
+  <p id="frequencyCount" role="status" aria-live="polite"></p>
 
   <ol class="words">
     {
       words.map((w) => (
-        <li>
+        <li data-word={w.word}>
           <a href={`/search/?q=${encodeURIComponent(w.word)}`} style={`--w:${Math.max(8, (w.count / max) * 100)}%`}>
             <b>{w.word}</b>
             <span>
@@ -40,7 +46,57 @@ const description = `أكثر الألفاظ ورودًا في ديوان الش
   </ol>
 </Base>
 
+<script>
+  import { fold } from '../../scripts/arabic-search';
+  import { arCount } from '../../scripts/shared';
+  const input = document.getElementById('findFrequency') as HTMLInputElement;
+  const status = document.getElementById('frequencyCount')!;
+  const items = [...document.querySelectorAll<HTMLLIElement>('.words li')].map((li) => ({ li, word: fold(li.dataset.word ?? '').text }));
+  const filter = () => {
+    const q = fold(input.value).text;
+    let shown = 0;
+    for (const { li, word } of items) {
+      li.hidden = Boolean(q) && !word.includes(q);
+      if (!li.hidden) shown++;
+    }
+    status.textContent = q ? arCount(shown, ['لفظة واحدة', 'لفظتان', 'ألفاظ', 'لفظة']) : '';
+  };
+  input.addEventListener('input', filter);
+  input.addEventListener('search', filter);
+  filter();
+</script>
+
 <style>
+  .find {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    padding: 10px 14px;
+  }
+  .find input {
+    flex: 1 1 200px;
+    min-width: 0;
+    width: 100%;
+    min-height: 44px;
+    font: 16px var(--ui-font);
+    color: var(--ink);
+    background: var(--paper-strong);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 6px 10px;
+  }
+  #frequencyCount {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  #frequencyCount:empty {
+    margin: 0 0 12px;
+  }
+  .words li[hidden] {
+    display: none;
+  }
+
   .caveat {
     font-size: 13px;
     color: var(--muted);
@@ -58,6 +114,7 @@ const description = `أكثر الألفاظ ورودًا في ديوان الش
     position: relative;
     display: flex;
     align-items: baseline;
+    flex-wrap: wrap;
     justify-content: space-between;
     gap: 8px;
     padding: 8px 12px;
@@ -89,6 +146,6 @@ const description = `أكثر الألفاظ ورودًا في ديوان الش
   .words span {
     font-size: 13px;
     color: var(--muted);
-    white-space: nowrap;
+    text-align: end;
   }
 </style>

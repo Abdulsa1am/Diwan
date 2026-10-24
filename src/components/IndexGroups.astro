@@ -1,7 +1,6 @@
 ---
 // A list of index groups (meter, rhyme, theme…). Each group folds open to its poems.
 // The poem links are in the HTML even when folded, so search engines see them.
-import { ar } from '../lib/diwan';
 import { anchor } from '../lib/indices';
 import type { Group } from '../lib/indices';
 import { arCount } from '../scripts/shared';
@@ -32,7 +31,11 @@ const max = Astro.props.max ?? Math.max(...groups.map((g) => g.poems.length));
               <span style={`width:${Math.max(3, (g.poems.length / max) * 100)}%`} />
             </span>
             <span class="num">{arCount(g.poems.length, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة'])}</span>
+            <svg class="chevron" viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="m5 7 5 5 5-5" /></svg>
           </summary>
+          {filterLink && (
+            <a class="filter-link filter-link-top" href={filterLink(g)}>عرض القصائد في الديوان</a>
+          )}
           <ol class="poems">
             {g.poems.map((p) => (
               <li>
@@ -71,7 +74,7 @@ const max = Astro.props.max ?? Math.max(...groups.map((g) => g.poems.length));
   summary {
     min-height: 44px;
     display: grid;
-    grid-template-columns: minmax(7rem, 1.2fr) 2fr auto;
+    grid-template-columns: minmax(7rem, 1.2fr) 2fr auto auto;
     align-items: center;
     gap: 14px;
     padding: 14px 18px;
@@ -80,6 +83,24 @@ const max = Astro.props.max ?? Math.max(...groups.map((g) => g.poems.length));
   }
   summary::-webkit-details-marker {
     display: none;
+  }
+  .chevron {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transform: rotate(0deg);
+  }
+  details[open] .chevron {
+    transform: rotate(180deg);
+  }
+  summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .filter-link.filter-link-top {
+    margin-block: 6px 0;
   }
   .label {
     display: flex;
@@ -159,7 +180,7 @@ const max = Astro.props.max ?? Math.max(...groups.map((g) => g.poems.length));
   }
   @media (max-width: 560px) {
     summary {
-      grid-template-columns: 1fr auto;
+      grid-template-columns: minmax(0, 1fr) auto auto;
     }
     .bar {
       grid-column: 1 / -1;

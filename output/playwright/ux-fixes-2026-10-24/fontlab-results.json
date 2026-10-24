@@ -1,0 +1,20 @@
+{
+  "measurements": [
+    {
+      "width": 375,
+      "textWidth": 248.515625,
+      "containerWidth": 297,
+      "searchBottom": 517.421875,
+      "doc": 375
+    },
+    {
+      "width": 1024,
+      "textWidth": 272.140625,
+      "containerWidth": 325.28125,
+      "searchBottom": 643.265625,
+      "doc": 1024
+    }
+  ],
+  "before": "30px",
+  "errors": []
+}

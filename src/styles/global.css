@@ -502,13 +502,26 @@ html.is-reading .breadcrumb {
   transition: transform 0.25s ease;
 }
 @media (max-width: 1000px) {
-  html.bars-hidden .topbar {
+  html.bars-hidden .topbar:not(:focus-within) {
     transform: translateY(-100%);
   }
-  html.bars-hidden .mobile-nav {
+  html.bars-hidden .mobile-nav:not(:focus-within) {
     transform: translateY(100%);
   }
 }
+
+/* Shared, compact descriptions of restrictions outside collapsed filter options. */
+.filter-restrictions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin: 8px 0 12px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.filter-restrictions[hidden] { display: none; }
+.filter-restrictions .btn { min-height: 44px; cursor: pointer; }
 
 .toast {
   position: fixed;

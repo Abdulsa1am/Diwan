@@ -35,6 +35,8 @@ import { SITE_NAME, poems } from '../../lib/diwan';
 
   <p class="status" id="compareStatus" role="status" aria-live="polite"></p>
 
+  <button class="btn" id="compareRetry" type="button" hidden>أعد المحاولة</button>
+
   <div class="sides" id="sides" hidden>
     <article class="side glass" data-side="a"></article>
     <article class="side glass" data-side="b"></article>
@@ -69,8 +71,15 @@ import { SITE_NAME, poems } from '../../lib/diwan';
   const digits = new Intl.NumberFormat('ar-EG');
 
   const params = new URLSearchParams(location.search);
-  selects[0].value = params.get('a') ?? 'r1-001';
-  selects[1].value = params.get('b') ?? 'r1-002';
+  const retry = document.getElementById('compareRetry') as HTMLButtonElement;
+  let generation = 0;
+  let invalidLink = false;
+  selects.forEach((select, i) => {
+    const value = params.get(i === 0 ? 'a' : 'b');
+    const valid = value !== null && [...select.options].some((option) => option.value === value);
+    if (value !== null && !valid) invalidLink = true;
+    select.value = valid ? value! : (i === 0 ? 'r1-001' : 'r1-002');
+  });
 
   function wordCounts(corpus: Corpus, poemIndex: number) {
     const counts = new Map<string, number>();
@@ -83,79 +92,103 @@ import { SITE_NAME, poems } from '../../lib/diwan';
 
   async function compare() {
     const [a, b] = selects.map((s) => s.value);
-    history.replaceState(null, '', `?a=${a}&b=${b}`);
-    statusEl.textContent = 'جارٍ التحميل…';
-    const corpus = await loadCorpus();
-    statusEl.textContent = '';
-    const index = (id: string) => corpus.poems.findIndex((p) => p[0] === id);
-    const [ia, ib] = [index(a), index(b)];
-    const [ca, cb] = [wordCounts(corpus, ia), wordCounts(corpus, ib)];
+    const request = ++generation;
+    const recoverFocus = document.activeElement === retry;
+    const url = new URL(location.href);
+    url.searchParams.set('a', a);
+    url.searchParams.set('b', b);
+    history.replaceState(null, '', url);
+    sides.hidden = shared.hidden = retry.hidden = true;
+    statusEl.textContent = invalidLink ? 'رابط المقارنة يحتوي اختيارًا غير صالح؛ استُبدل باختيار افتراضي. جارٍ التحميل…' : 'جارٍ التحميل…';
+    try {
+      const corpus = await loadCorpus();
+      if (request !== generation) return;
+      statusEl.textContent = invalidLink ? 'رابط المقارنة يحتوي اختيارًا غير صالح؛ عُرضت المقارنة باختيار افتراضي. يمكنك تغييره أعلاه.' : 'اكتملت المقارنة.';
+      invalidLink = false;
+      const index = (id: string) => corpus.poems.findIndex((p) => p[0] === id);
+      const [ia, ib] = [index(a), index(b)];
+      if ([ia, ib].some((i) => i < 0 || !corpus.verses.some((v) => v.poem === i))) {
+        statusEl.textContent = 'لا تتوافر أبيات لأحد الاختيارين. اختر قصيدة أخرى أعلاه أو أعد المحاولة.';
+        retry.hidden = false;
+        if (recoverFocus) retry.focus();
+        return;
+      }
+      const [ca, cb] = [wordCounts(corpus, ia), wordCounts(corpus, ib)];
 
-    for (const [side, i, counts, other] of [
-      ['a', ia, ca, ib],
-      ['b', ib, cb, ia],
-    ] as const) {
-      const p = corpus.poems[i];
-      const o = corpus.poems[other];
-      const verses = corpus.verses.filter((v) => v.poem === i);
-      const first = verses[0].text.split(' # ');
-      const top = [...counts].sort((x, y) => y[1] - x[1]).slice(0, 8);
-      const el = sides.querySelector<HTMLElement>(`[data-side="${side}"]`)!;
-      el.innerHTML = `
-        <h2><a></a></h2>
-        <dl>
-          <div><dt>البحر</dt><dd class="${p[2] === o[2] ? 'same' : ''}"></dd></div>
-          <div><dt>الروي</dt><dd class="${p[3] === o[3] ? 'same' : ''}"></dd></div>
-          <div><dt>الطول</dt><dd></dd></div>
-          <div><dt>الجزء</dt><dd></dd></div>
-        </dl>
-        <p class="first"><span></span><span></span></p>
-        <p class="top-label">أكثر ألفاظها ورودًا</p>
-        <ul class="top"></ul>`;
-      const link = el.querySelector('h2 a') as HTMLAnchorElement;
-      link.href = `/poem/${p[0]}/`;
-      link.textContent = p[1];
-      const dds = el.querySelectorAll('dd');
-      dds[0].textContent = p[2];
-      dds[1].textContent = p[3];
-      dds[2].textContent = arCount(verses.length, ['بيت واحد', 'بيتان', 'أبيات', 'بيتًا']);
-      dds[3].textContent = p[4] === 1 ? 'الأول' : 'الثاني';
-      const spans = el.querySelectorAll('.first span');
-      spans[0].textContent = first[0];
-      spans[1].textContent = first[1] ?? '';
-      el.querySelector('.top')!.append(
-        ...top.map(([w, n]) => {
+      for (const [side, i, counts, other] of [
+        ['a', ia, ca, ib],
+        ['b', ib, cb, ia],
+      ] as const) {
+        const p = corpus.poems[i];
+        const o = corpus.poems[other];
+        const verses = corpus.verses.filter((v) => v.poem === i);
+        const first = verses[0].text.split(' # ');
+        const top = [...counts].sort((x, y) => y[1] - x[1]).slice(0, 8);
+        const el = sides.querySelector<HTMLElement>(`[data-side="${side}"]`)!;
+        el.innerHTML = `
+          <h2><a></a></h2>
+          <dl>
+            <div><dt>البحر</dt><dd class="${p[2] === o[2] ? 'same' : ''}"></dd></div>
+            <div><dt>الروي</dt><dd class="${p[3] === o[3] ? 'same' : ''}"></dd></div>
+            <div><dt>الطول</dt><dd></dd></div>
+            <div><dt>الجزء</dt><dd></dd></div>
+          </dl>
+          <p class="first"><span></span><span></span></p>
+          <p class="top-label">أكثر ألفاظها ورودًا</p>
+          <ul class="top"></ul>`;
+        const link = el.querySelector('h2 a') as HTMLAnchorElement;
+        link.href = `/poem/${p[0]}/`;
+        link.textContent = p[1];
+        const dds = el.querySelectorAll('dd');
+        dds[0].textContent = p[2];
+        dds[1].textContent = p[3];
+        dds[2].textContent = arCount(verses.length, ['بيت واحد', 'بيتان', 'أبيات', 'بيتًا']);
+        dds[3].textContent = p[4] === 1 ? 'الأول' : 'الثاني';
+        const spans = el.querySelectorAll('.first span');
+        spans[0].textContent = first[0];
+        spans[1].textContent = first[1] ?? '';
+        el.querySelector('.top')!.append(
+          ...top.map(([w, n]) => {
+            const li = document.createElement('li');
+            li.textContent = `${corpus.spell(w)} `;
+            const small = document.createElement('small');
+            small.textContent = digits.format(n);
+            li.append(small);
+            return li;
+          }),
+        );
+      }
+      sides.hidden = false;
+
+      const common = [...ca.keys()]
+        .filter((w) => cb.has(w))
+        .map((w) => [w, Math.min(ca.get(w)!, cb.get(w)!)] as const)
+        .sort((x, y) => y[1] - x[1]);
+      shared.hidden = false;
+      document.getElementById('sharedNote')!.textContent = common.length
+        ? `تشترك القصيدتان في ${arCount(common.length, ['لفظة واحدة', 'لفظتين', 'ألفاظ', 'لفظة'])} (بعد استبعاد الأدوات والضمائر). اختر لفظة لتبحث عنها في الديوان كله.`
+        : 'لا ألفاظ مشتركة بعد استبعاد الأدوات والضمائر.';
+      document.getElementById('sharedWords')!.replaceChildren(
+        ...common.slice(0, 40).map(([w]) => {
           const li = document.createElement('li');
-          li.textContent = `${corpus.spell(w)} `;
-          const small = document.createElement('small');
-          small.textContent = digits.format(n);
-          li.append(small);
+          const a = document.createElement('a');
+          a.href = `/search/?q=${encodeURIComponent(corpus.spell(w))}`;
+          a.textContent = corpus.spell(w);
+          li.append(a);
           return li;
         }),
       );
+      if (recoverFocus) selects[0].focus();
+    } catch {
+      if (request !== generation) return;
+      statusEl.textContent = 'تعذّر تحميل أبيات الديوان. تحقّق من الاتصال ثم أعد المحاولة؛ اختياراتك محفوظة.';
+      retry.hidden = false;
+      if (recoverFocus) retry.focus();
     }
-    sides.hidden = false;
-
-    const common = [...ca.keys()]
-      .filter((w) => cb.has(w))
-      .map((w) => [w, Math.min(ca.get(w)!, cb.get(w)!)] as const)
-      .sort((x, y) => y[1] - x[1]);
-    shared.hidden = false;
-    document.getElementById('sharedNote')!.textContent = common.length
-      ? `تشترك القصيدتان في ${arCount(common.length, ['لفظة واحدة', 'لفظتين', 'ألفاظ', 'لفظة'])} (بعد استبعاد الأدوات والضمائر). اختر لفظة لتبحث عنها.`
-      : 'لا ألفاظ مشتركة بعد استبعاد الأدوات والضمائر.';
-    document.getElementById('sharedWords')!.replaceChildren(
-      ...common.slice(0, 40).map(([w]) => {
-        const li = document.createElement('li');
-        const a = document.createElement('a');
-        a.href = `/search/?q=${encodeURIComponent(corpus.spell(w))}`;
-        a.textContent = corpus.spell(w);
-        li.append(a);
-        return li;
-      }),
-    );
   }
 
+  retry.addEventListener('click', () => { void compare(); });
+  form.addEventListener('submit', (e) => { e.preventDefault(); void compare(); });
   form.addEventListener('change', compare);
   document.getElementById('swap')!.addEventListener('click', () => {
     [selects[0].value, selects[1].value] = [selects[1].value, selects[0].value];
@@ -165,6 +198,7 @@ import { SITE_NAME, poems } from '../../lib/diwan';
 </script>
 
 <style>
+  #compareRetry[hidden] { display: none; }
   .pickers {
     display: grid;
     grid-template-columns: 1fr auto 1fr;

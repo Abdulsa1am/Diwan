@@ -70,14 +70,14 @@ const shareImage = new URL('/share.png', Astro.site);
         } catch (e) {}
         if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         root.dataset.theme = t;
-        if (r) {
-          if (r.scale) root.style.setProperty('--poem-scale', r.scale);
-          if (r.layout) root.dataset.verseLayout = r.layout;
+        if (r && typeof r === 'object' && !Array.isArray(r)) {
+          if ([0.85, 0.92, 1, 1.1, 1.2, 1.32].includes(r.scale)) root.style.setProperty('--poem-scale', String(r.scale));
+          if (r.layout === 'side' || r.layout === 'stacked') root.dataset.verseLayout = r.layout;
         }
       })();
     </script>
   </head>
-  <body>
+  <body data-reading-page={reading ? "true" : undefined}>
     <Icons />
     <a class="skip" href="#main">انتقل إلى المحتوى</a>
     <div class="shell">
@@ -142,7 +142,7 @@ const shareImage = new URL('/share.png', Astro.site);
             >
               <svg class="ui-icon" aria-hidden="true"><use href="#i-shuffle"></use></svg>
             </button>
-            <button class="iconbtn" type="button" id="themeToggle" aria-label="تبديل الوضع الليلي" title="الوضع الليلي">
+            <button class="iconbtn" type="button" id="themeToggle" aria-label="الوضع الليلي" aria-pressed="false" title="الوضع الليلي">
               <svg class="ui-icon theme-light-icon" aria-hidden="true"><use href="#i-moon"></use></svg>
               <svg class="ui-icon theme-dark-icon" aria-hidden="true"><use href="#i-sun"></use></svg>
             </button>
@@ -167,9 +167,15 @@ const shareImage = new URL('/share.png', Astro.site);
     <script is:inline>
       (function () {
         var root = document.documentElement;
-        document.getElementById('themeToggle').addEventListener('click', function () {
+        var themeToggle = document.getElementById('themeToggle');
+        function syncThemeToggle() {
+          themeToggle.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
+        }
+        syncThemeToggle();
+        themeToggle.addEventListener('click', function () {
           var next = root.dataset.theme === 'dark' ? 'light' : 'dark';
           root.dataset.theme = next;
+          syncThemeToggle();
           try { localStorage.setItem('radi-theme', next); } catch (e) {}
         });
         var random = document.getElementById('randomPoem');
@@ -182,7 +188,11 @@ const shareImage = new URL('/share.png', Astro.site);
           while (pick >= sizes[v]) { pick -= sizes[v]; v++; }
           location.href = '/poem/r' + (v + 1) + '-' + String(pick + 1).padStart(3, '0') + '/';
         });
-        // Small screens: hide the top and bottom bars while reading down, show them on the way up.
+        // Only poem reading hides the bars; focused navigation always remains visible.
+        var bars = [document.getElementById('topbar'), document.getElementById('mobileNav')];
+        bars.forEach(function (bar) {
+          bar.addEventListener('focusin', function () { root.classList.remove('bars-hidden'); });
+        });
         var lastY = scrollY, ticking = false;
         addEventListener('scroll', function () {
           if (ticking) return;
@@ -190,7 +200,8 @@ const shareImage = new URL('/share.png', Astro.site);
           requestAnimationFrame(function () {
             var y = scrollY;
             if (Math.abs(y - lastY) > 8) {
-              root.classList.toggle('bars-hidden', y > lastY && y > 240);
+              var focused = bars.some(function (bar) { return bar.contains(document.activeElement); });
+              root.classList.toggle('bars-hidden', document.body.dataset.readingPage === 'true' && !focused && y > lastY && y > 240);
               lastY = y;
             }
             ticking = false;

@@ -22,11 +22,15 @@ const description = 'فهرس مطالع قصائد ديوان الشريف ال
     <output id="matlaCount" aria-live="polite"></output>
   </label>
 
+  <nav class="letters" aria-label="انتقل إلى حرف الروي">
+    {rhymeGroups.map((g) => <a href={`#r-${g.key}`}>{g.key}</a>)}
+  </nav>
+
   {
     rhymeGroups.map((g) => (
       <section class="rhyme" aria-labelledby={`r-${g.key}`}>
         <h2 id={`r-${g.key}`}>
-          {g.label} <small>{ar(g.poems.length)}</small>
+          {g.label} <small data-group-count>{ar(g.poems.length)}</small>
         </h2>
         <ol class="matali">
           {g.poems.map((p) => (
@@ -60,19 +64,52 @@ const description = 'فهرس مطالع قصائد ديوان الشريف ال
   }));
   const sections = [...document.querySelectorAll<HTMLElement>('.rhyme')];
 
-  input.addEventListener('input', () => {
+  const jumps = [...document.querySelectorAll<HTMLAnchorElement>('.letters a')];
+  const filter = () => {
     const q = fold(input.value).text;
     let shown = 0;
     for (const { li, text } of items) {
       li.hidden = Boolean(q) && !text.includes(q);
       if (!li.hidden) shown++;
     }
-    for (const s of sections) s.hidden = !s.querySelector('li:not([hidden])');
+    for (const [i, section] of sections.entries()) {
+      const count = section.querySelectorAll('li:not([hidden])').length;
+      section.hidden = count === 0;
+      section.querySelector('[data-group-count]')!.textContent = arCount(count, ['مطلع واحد', 'مطلعان', 'مطالع', 'مطلعًا']);
+      jumps[i].hidden = count === 0;
+    }
     out.textContent = q ? arCount(shown, ['مطلع واحد', 'مطلعان', 'مطالع', 'مطلعًا']) : '';
-  });
+  };
+  input.addEventListener('input', filter);
+  input.addEventListener('search', filter);
+  filter();
 </script>
 
 <style>
+  .letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+  .letters a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 2px 10px;
+    background: var(--chip-bg);
+    border-radius: 8px;
+    text-decoration: none;
+    font-family: var(--poem-font);
+  }
+  .letters a[hidden] {
+    display: none;
+  }
+  .rhyme h2 {
+    scroll-margin-top: 145px;
+  }
   .find {
     display: flex;
     align-items: center;

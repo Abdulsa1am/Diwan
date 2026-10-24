@@ -20,6 +20,11 @@ const description = `الأعلام والمواضع التي وردت في أب
     <p class="caveat">الحصر بمطابقة الاسم في النص؛ قد يدخل فيه من يوافق اسمه اسمًا آخر.</p>
   </PageHead>
 
+  <nav class="section-jumps" aria-label="أقسام الفهرس">
+    <a href="#people">الأعلام</a>
+    <a href="#places">المواضع</a>
+  </nav>
+
   <h2 class="section-title" id="people">الأعلام</h2>
   <IndexGroups groups={people} />
 
@@ -28,12 +33,27 @@ const description = `الأعلام والمواضع التي وردت في أب
 </Base>
 
 <style>
+  .section-jumps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .section-jumps a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 4px 14px;
+    background: var(--chip-bg);
+    border-radius: 8px;
+    text-decoration: none;
+  }
   .caveat {
     font-size: 13px;
     color: var(--muted);
     margin: 6px 0 0;
   }
   .section-title {
+    scroll-margin-top: 90px;
     font-size: 30px;
     margin: 20px 0 10px;
   }

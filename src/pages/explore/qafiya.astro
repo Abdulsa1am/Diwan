@@ -22,6 +22,21 @@ const description = `فهرس قصائد الشريف الرضي على حروف
   <IndexGroups groups={rhymeGroups} filterLink={(g) => `/diwan/?rhyme=${encodeURIComponent(g.key)}`} />
 </Base>
 
+<script>
+  const openRhyme = () => {
+    let id: string;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+    if (!id) return;
+    const target = document.getElementById(id);
+    const disclosure = target?.querySelector<HTMLDetailsElement>('details.group');
+    if (!target || !disclosure) return;
+    disclosure.open = true;
+    requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+  };
+  openRhyme();
+  window.addEventListener('hashchange', openRhyme);
+</script>
+
 <style>
   .letters {
     display: flex;

@@ -65,9 +65,14 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     </details>
   </form>
 
+  <div class="filter-restrictions" id="searchRestrictions" hidden>
+    <span id="searchRestrictionText"></span>
+    <button class="btn" type="button" id="clearRestrictions">إزالة القيود</button>
+  </div>
   <div class="status" id="searchStatus" role="status" aria-live="polite">
     اكتب لفظة للبحث في {ar(poems.length)} قصيدة.
   </div>
+  <button class="btn" id="retrySearch" type="button" hidden>إعادة المحاولة</button>
   <ol class="results" id="results"></ol>
   <button class="btn more" id="more" type="button" hidden>عرض المزيد</button>
 
@@ -103,6 +108,9 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   const results = document.getElementById('results')!;
   const more = document.getElementById('more') as HTMLButtonElement;
   const tips = document.getElementById('tips')!;
+  const retry = document.getElementById('retrySearch') as HTMLButtonElement;
+  const restrictions = document.getElementById('searchRestrictions')!;
+  const restrictionText = document.getElementById('searchRestrictionText')!;
   const options = document.getElementById('searchOptions') as HTMLDetailsElement;
   const optionsSummary = document.getElementById('optionsSummary')!;
   const phone = matchMedia('(max-width: 620px)');
@@ -110,7 +118,6 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   syncDisclosure();
   phone.addEventListener('change', syncDisclosure);
   const digits = new Intl.NumberFormat('ar-EG');
-  const ar = (n: number) => digits.format(n);
   const PAGE = 40;
 
   let poems: PoemRow[] = [];
@@ -120,29 +127,39 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
 
   function loadMain() {
     mainLoad ??= fetch('/search-index.json')
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((data: { poems: PoemRow[]; verses: Entry[] }) => {
         poems = data.poems;
         fields.verses = data.verses.map((entry) => ({ entry }));
         fields.titles = data.poems.map((p, i) => ({ entry: [i, 0, p[1]] as Entry }));
-      });
+      })
+      .catch((error) => { mainLoad = null; throw error; });
     return mainLoad;
   }
   function loadNotes() {
     notesLoad ??= fetch('/search-notes.json')
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
       .then((data: { notes: Entry[]; intros: Entry[] }) => {
         fields.notes = data.notes.map((entry) => ({ entry }));
         fields.intros = data.intros.map((entry) => ({ entry }));
-      });
+      })
+      .catch((error) => { notesLoad = null; throw error; });
     return notesLoad;
   }
 
   // Start downloading as soon as the visitor shows intent.
-  input.addEventListener('focus', () => loadMain(), { once: true });
+  input.addEventListener('focus', () => { void loadMain().catch(() => {}); }, { once: true });
 
   let matches: { item: Indexed; ranges: [number, number][] }[] = [];
   let shown = 0;
+  // Appended results always use the state that produced their matches.
+  let completed: ReturnType<typeof read> | null = null;
 
   function read() {
     const fd = new FormData(form);
@@ -168,30 +185,62 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
   }
 
+  const fieldLabels: Record<string, string> = {
+    verses: 'الأبيات', titles: 'عناوين القصائد', notes: 'الحواشي والشروح', intros: 'أخبار القصائد',
+  };
   function updateOptions() {
     const s = read();
-    const active = [s.mode !== 'any', s.field !== 'verses', !!s.meter, !!s.rhyme, !!s.vol].filter(Boolean).length;
-    optionsSummary.textContent = active ? `خيارات البحث (${ar(active)})` : 'خيارات البحث';
+    const labels = [
+      s.mode !== 'any' && 'العبارة كما هي',
+      s.field !== 'verses' && `المجال: ${fieldLabels[s.field]}`,
+      s.meter && `البحر: ${s.meter}`,
+      s.rhyme && `القافية: ${s.rhyme}`,
+      s.vol && `الجزء ${s.vol === '1' ? 'الأول' : 'الثاني'}`,
+    ].filter(Boolean);
+    optionsSummary.textContent = 'خيارات البحث';
+    restrictionText.textContent = `القيود: ${labels.join('، ')}`;
+    restrictions.hidden = !labels.length;
   }
 
   let runId = 0;
+  function invalidate() {
+    ++runId;
+    completed = null;
+    matches = [];
+    shown = 0;
+    results.replaceChildren();
+    more.disabled = true;
+    more.hidden = true;
+    retry.hidden = true;
+    results.setAttribute('aria-busy', 'false');
+  }
   async function run() {
+    window.clearTimeout(typingTimer);
+    invalidate();
+    const id = runId;
     const s = read();
     updateOptions();
     writeUrl(s);
     const terms = queryTerms(s.q, s.mode === 'exact');
     if (!terms.length) {
-      results.replaceChildren();
-      more.hidden = true;
       tips.hidden = false;
       statusEl.textContent = 'اكتب لفظة للبحث في الديوان.';
       return;
     }
     tips.hidden = true;
-    const id = ++runId;
-    statusEl.textContent = 'جارٍ البحث…';
-    await loadMain();
-    if (s.field === 'notes' || s.field === 'intros') await loadNotes();
+    results.setAttribute('aria-busy', 'true');
+    statusEl.textContent = `جارٍ البحث عن «${s.q}» في ${fieldLabels[s.field]}…`;
+    try {
+      await loadMain();
+      if (id !== runId) return;
+      if (s.field === 'notes' || s.field === 'intros') await loadNotes();
+    } catch {
+      if (id !== runId) return;
+      results.setAttribute('aria-busy', 'false');
+      statusEl.textContent = 'تعذّر تحميل بيانات البحث. تحقّق من الاتصال ثم أعد المحاولة؛ تبقى عبارتك وخياراتك محفوظة هنا.';
+      retry.hidden = false;
+      return;
+    }
     if (id !== runId) return;
 
     matches = [];
@@ -204,17 +253,20 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
       const ranges = findAll(item.folded, terms);
       if (ranges) matches.push({ item, ranges });
     }
-    results.replaceChildren();
-    shown = 0;
+    completed = s;
+    results.setAttribute('aria-busy', 'false');
+    more.disabled = false;
     renderMore();
     const poemsHit = new Set(matches.map((m) => m.item.entry[0])).size;
     statusEl.textContent = matches.length
-      ? `${arCount(matches.length, ['نتيجة واحدة', 'نتيجتان', 'نتائج', 'نتيجة'])} في ${arCount(poemsHit, ['قصيدة واحدة', 'قصيدتين', 'قصائد', 'قصيدة'])}`
+      ? `${arCount(matches.length, ['نتيجة واحدة', 'نتيجتان', 'نتائج', 'نتيجة'])} في ${arCount(poemsHit, ['قصيدة واحدة', 'قصيدتين', 'قصائد', 'قصيدة'])}، عن «${s.q}» في ${fieldLabels[s.field]}`
       : 'لا نتائج. جرّب لفظة أقصر، أو «كل الألفاظ»، أو أزل قيود البحر والقافية.';
   }
 
-  function renderMore() {
-    const field = read().field;
+  function renderMore(moveFocus = false) {
+    if (!completed || more.disabled) return;
+    const field = completed.field;
+    let firstNewLink: HTMLAnchorElement | undefined;
     const frag = document.createDocumentFragment();
     for (const { item, ranges } of matches.slice(shown, shown + PAGE)) {
       const [pi, n, text] = item.entry;
@@ -223,6 +275,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
       li.className = 'result glass';
       const a = document.createElement('a');
       a.href = `/poem/${p[0]}/${n ? `#v${n}` : ''}`;
+      firstNewLink ??= a;
       const body = document.createElement('div');
       body.className = field === 'verses' ? 'result-verse' : field === 'titles' ? 'result-title' : 'result-note';
       if (field === 'verses') {
@@ -251,6 +304,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
       frag.append(li);
     }
     results.append(frag);
+    if (moveFocus) firstNewLink?.focus();
     shown = Math.min(matches.length, shown + PAGE);
     more.hidden = shown >= matches.length;
     if (!more.hidden) more.textContent = `عرض المزيد (${digits.format(matches.length - shown)} متبقية)`;
@@ -259,17 +313,36 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   let typingTimer: number | undefined;
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    input.blur();
-    run();
+    window.clearTimeout(typingTimer);
+    void run();
   });
   input.addEventListener('input', () => {
     window.clearTimeout(typingTimer);
-    typingTimer = window.setTimeout(run, 250);
+    // Invalidate immediately, including the debounce window and native search-clear button.
+    invalidate();
+    updateOptions();
+    writeUrl(read());
+    if (!queryTerms(input.value, read().mode === 'exact').length) {
+      void run();
+      return;
+    }
+    tips.hidden = true;
+    results.setAttribute('aria-busy', 'true');
+    statusEl.textContent = 'جارٍ إعداد البحث…';
+    typingTimer = window.setTimeout(() => { void run(); }, 250);
   });
   form.addEventListener('change', (e) => {
-    if ((e.target as HTMLElement) !== input) run();
+    if ((e.target as HTMLElement) !== input) void run();
   });
-  more.addEventListener('click', renderMore);
+  more.addEventListener('click', () => renderMore(true));
+  retry.addEventListener('click', () => { void run(); input.focus(); });
+  document.getElementById('clearRestrictions')!.addEventListener('click', () => {
+    const q = input.value;
+    form.reset();
+    input.value = q;
+    void run();
+    input.focus();
+  });
 
   // Restore a search from the URL (shared links, back button).
   const params = new URLSearchParams(location.search);
@@ -280,7 +353,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
       if (!value) continue;
       const el = form.elements.namedItem(name);
       if (el instanceof RadioNodeList) el.value = value;
-      else if (el instanceof HTMLSelectElement) el.value = value;
+      else if (el instanceof HTMLSelectElement && [...el.options].some((option) => option.value === value)) el.value = value;
     }
     run();
   }
@@ -421,6 +494,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   }
   .results :global(.result a) {
     display: block;
+    scroll-margin-block: 80px;
     padding: 14px 18px;
     color: var(--ink);
     text-decoration: none;
@@ -459,6 +533,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     display: flex;
     margin: 14px auto 0;
   }
+  #retrySearch[hidden],
   .more[hidden] {
     display: none;
   }

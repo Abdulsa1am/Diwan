@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "name": "Poem content extremes, every layout, maximum size, phone/desktop light/dark",
+      "pass": true
+    },
+    {
+      "name": "U03 focused bars stay visible with normal transitions on reading page; U33 theme state",
+      "pass": true
+    },
+    {
+      "name": "U24 early paint rejects malicious-shaped scale/layout on nonreader page",
+      "pass": true
+    },
+    {
+      "name": "U06 adjacent saved focus for first/middle/last; U23 failed remove/undo preserve state",
+      "pass": true
+    },
+    {
+      "name": "U14 network and malformed JSON recovery repeatedly retry; U17 empty corpus guard",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

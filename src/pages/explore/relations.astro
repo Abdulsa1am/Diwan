@@ -45,19 +45,19 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
             <li id={t.label}>
               <details>
                 <summary>
-                  <b>{t.label}</b>
+                  <span class="disclosure" aria-hidden="true">⌄</span><b>{t.label}</b>
                   <small>{arCount(t.poems, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة'])}</small>
                 </summary>
-                <p class="with">يجتمع في القصائد مع:</p>
+                <p class="with">يجتمع في القصائد مع (الأرقام عدد القصائد المشتركة):</p>
                 <ul class="related">
                   {t.related.slice(0, 12).map((r) => (
                     <li>
                       {r.type === 'موضع' && placeNames.has(r.name) ? (
-                        <a href={placeHref(r.name)}>{r.name}<small>{ar(r.shared)}</small></a>
+                        <a href={placeHref(r.name)} aria-label={`${r.name}، ${arCount(r.shared, ['قصيدة مشتركة واحدة', 'قصيدتان مشتركتان', 'قصائد مشتركة', 'قصيدة مشتركة'])}`}>{r.name}<small>{ar(r.shared)}</small></a>
                       ) : termLabels.has(r.name) ? (
-                        <a href={`#${r.name}`}>{r.name}<small>{ar(r.shared)}</small></a>
+                        <a href={`#${r.name}`} aria-label={`${r.name}، ${arCount(r.shared, ['قصيدة مشتركة واحدة', 'قصيدتان مشتركتان', 'قصائد مشتركة', 'قصيدة مشتركة'])}`}>{r.name}<small>{ar(r.shared)}</small></a>
                       ) : (
-                        <span>{r.name}<small>{ar(r.shared)}</small></span>
+                        <span>{r.name}<small>{arCount(r.shared, ['قصيدة مشتركة واحدة', 'قصيدتان مشتركتان', 'قصائد مشتركة', 'قصيدة مشتركة'])}</small></span>
                       )}
                     </li>
                   ))}
@@ -130,6 +130,9 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
   summary::-webkit-details-marker {
     display: none;
   }
+  .disclosure { transition: transform 120ms; color: var(--accent); }
+  details[open] .disclosure { transform: rotate(180deg); }
+  summary small { margin-inline-start: auto; }
   summary b {
     font-family: var(--poem-font);
     font-weight: 400;

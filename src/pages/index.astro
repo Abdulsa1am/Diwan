@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { poems, ar, versesLabel, POET, SITE_NAME } from '../lib/diwan';
+import { poems, ar, POET, SITE_NAME } from '../lib/diwan';
 import { sections } from '../lib/nav';
 
 const verseCount = poems.reduce((sum, p) => sum + p.verses.length, 0);
@@ -44,7 +44,6 @@ const jsonLd = {
   <div class="welcome">
     <div>
       <span class="overline">القصائد والفهارس</span>
-      <h2>{SITE_NAME}</h2>
     </div>
     <span class="edition">ديوانٌ من القرن الرابع الهجري</span>
   </div>
@@ -52,7 +51,7 @@ const jsonLd = {
   <section class="hero" aria-labelledby="heroTitle">
     <div class="hero-copy">
       <div class="tag"><span></span> نصّ الديوان · فهارس · أدوات قراءة</div>
-      <h1 id="heroTitle">ديوان الشريف<br />الرضي</h1>
+      <h1 id="heroTitle"><span>ديوان</span> <span class="poet-name">الشريف الرضي</span></h1>
       <p>قصائد الشريف الرضي، مع البحر والقافية وشروح الأبيات.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="/diwan/">
@@ -193,7 +192,9 @@ const jsonLd = {
   .hero-copy {
     position: relative;
     z-index: 1;
-    padding: 44px 46px;
+    padding: 28px clamp(22px, 3vw, 40px);
+    min-width: 0;
+    container-type: inline-size;
   }
   .tag {
     display: flex;
@@ -209,10 +210,16 @@ const jsonLd = {
     background: var(--accent);
   }
   h1 {
-    font-size: clamp(54px, 8.2vw, 102px);
-    line-height: 1.34;
-    margin: 19px 0 14px;
-    text-wrap: balance;
+    font-size: clamp(44px, 6vw, 72px);
+    font-size: clamp(32px, 17cqi, 72px);
+    line-height: 1.15;
+    margin: 12px 0;
+  }
+  h1 span {
+    display: block;
+  }
+  .poet-name {
+    white-space: nowrap;
   }
   .hero-copy > p {
     max-width: 490px;
@@ -434,8 +441,9 @@ const jsonLd = {
       margin-bottom: 12px;
     }
     h1 {
-      font-size: clamp(52px, 14vw, 75px);
-      line-height: 1.28;
+      font-size: clamp(38px, 13vw, 64px);
+      font-size: clamp(32px, 17cqi, 64px);
+      line-height: 1.15;
       margin: 10px 0;
     }
     .hero-copy {

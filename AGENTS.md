@@ -34,10 +34,11 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 
 ## Data
 - `data/source/` — the old site's data blocks, extracted unchanged by `tools/extract-legacy-data.mjs`. Never edit by hand.
-- `data/edition/` — what the site uses. Built from `data/source/` in two approved steps that only touch spaces and stop if any letter would change:
+- `data/edition/` — what the site uses. Edition text is built from `data/source/` in two approved steps that only touch spaces and stop if any letter would change; a third step rebuilds derived word counts:
   1. `tools/fix-detached-waw.mjs` — joins the detached waw (log: `reports/waw-changes.csv`).
   2. `tools/fix-text-issues.mjs --apply` — the 361 "certain" spacing fixes from the text review (log: `reports/text-issues.csv`, report: `reports/text-issues.md`), approved by the owner 2026-10-23: detached interrogative hamza joined («أ ما» → «أما»), a space after «!»/«؟», no space before punctuation.
-- To rebuild: `npm run data` (runs extraction and both steps).
+  3. `tools/build-word-index.mjs --apply` — `word-frequencies.json`, approved by the owner 2026-10-24 after reviewing `reports/word-index-proposal.md` and the full CSV comparison. Count complete normalized surface words: attached waw stays attached; exclude quoted prefaces; join only explicitly marked split words for analysis. Keep the legacy shortlist, merging its two normalization duplicates (240 rows → 238 entries). Count occurrences and distinct poems separately. Search-style letter folding is intentional; these are spelling counts, not linguistic senses. Never change poetry text to calculate them. The artifact records its counting policy and input hash; verification rejects stale or altered counts.
+- To rebuild: `npm run data` (runs extraction and all three steps). The standalone word builder defaults to a read-only dry run without `--apply`.
 - Search must still find `الزمان` inside `والزمان` now that the waw is joined. The old precomputed word lists (`indices.json`) were built from the detached text, so rebuild them instead of reusing them.
 
 ## Text issues still open (need the printed book)
