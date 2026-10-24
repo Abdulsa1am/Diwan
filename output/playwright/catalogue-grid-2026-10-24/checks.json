@@ -1,0 +1,109 @@
+{
+  "results": [
+    {
+      "name": "320px light: every page, numbering, filtering and navigation",
+      "pass": true,
+      "detail": {
+        "pages": 7,
+        "uniquePoems": 685,
+        "lastPage": 85,
+        "filterRestore": true,
+        "backForward": true,
+        "rhymeJump": true
+      }
+    },
+    {
+      "name": "320px dark: every page, numbering, filtering and navigation",
+      "pass": true,
+      "detail": {
+        "pages": 7,
+        "uniquePoems": 685,
+        "lastPage": 85,
+        "filterRestore": true,
+        "backForward": true,
+        "rhymeJump": true
+      }
+    },
+    {
+      "name": "375px light: every page, numbering, filtering and navigation",
+      "pass": true,
+      "detail": {
+        "pages": 7,
+        "uniquePoems": 685,
+        "lastPage": 85,
+        "filterRestore": true,
+        "backForward": true,
+        "rhymeJump": true
+      }
+    },
+    {
+      "name": "375px dark: every page, numbering, filtering and navigation",
+      "pass": true,
+      "detail": {
+        "pages": 7,
+        "uniquePoems": 685,
+        "lastPage": 85,
+        "filterRestore": true,
+        "backForward": true,
+        "rhymeJump": true
+      }
+    },
+    {
+      "name": "430px light: every page, numbering, filtering and navigation",
+      "pass": true,
+      "detail": {
+        "pages": 7,
+        "uniquePoems": 685,
+        "lastPage": 85,
+        "filterRestore": true,
+        "backForward": true,
+        "rhymeJump": true
+      }
+    },
+    {
+      "name": "430px dark: every page, numbering, filtering and navigation",
+      "pass": true,
+      "detail": {
+        "pages": 7,
+        "uniquePoems": 685,
+        "lastPage": 85,
+        "filterRestore": true,
+        "backForward": true,
+        "rhymeJump": true
+      }
+    },
+    {
+      "name": "1440px light: every page, numbering, filtering and navigation",
+      "pass": true,
+      "detail": {
+        "pages": 7,
+        "uniquePoems": 685,
+        "lastPage": 85,
+        "filterRestore": true,
+        "backForward": true,
+        "rhymeJump": true
+      }
+    },
+    {
+      "name": "1440px dark: every page, numbering, filtering and navigation",
+      "pass": true,
+      "detail": {
+        "pages": 7,
+        "uniquePoems": 685,
+        "lastPage": 85,
+        "filterRestore": true,
+        "backForward": true,
+        "rhymeJump": true
+      }
+    },
+    {
+      "name": "No JavaScript retains all 685 numbered static poem links and honest filter notice",
+      "pass": true
+    },
+    {
+      "name": "320px compact search row and paging targets fit",
+      "pass": true
+    }
+  ],
+  "errors": []
+}
