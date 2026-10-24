@@ -5,11 +5,11 @@ Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 
 ## Now
 - Friends' test deployment updated 2026-10-24: https://diwan-alradi-ce6.pages.dev (project `diwan-alradi`, `NOINDEX=1`, font lab retained). Published source: `36ea45a`; deployment: https://03631dae.diwan-alradi-ce6.pages.dev. GitHub has the 37 UX fixes, approved frequency rebuild, balanced title, straight dividers, map picking and release documentation. All 17 live HTTP/browser scenarios passed.
-- LOCAL follow-up ready for owner review: centered/minimal mobile home card; catalogue letters inside filters, two-column cards with full titles/index/verse count/meter only, 100-item pages (50 rows), bottom-only paging. All checks passed. Owner explicitly requires stopping here: do not push or deploy these changes without further instruction.
+- Owner authorized publishing the reviewed local follow-ups on 2026-10-24: minimal home, 100-item two-column catalogue, edge numbering and whole-verse tap actions. Latest clarification moves continue-reading into the former home search-entry slot and groups poem metadata below the title. Final local QA passes; documentation/push/deployment in progress.
 - Release changes are detailed in `CHANGELOG.md`, `reports/ux-fixes-2026-10-24.md` and `reports/map-picking-2026-10-24.md`; poetry text is unchanged.
 
 ## Next (suggestions)
-1. Wait for owner review of the local mobile home/catalogue follow-up before any push/deployment. Check keyboard/fixed-navigation behavior on a real iPhone and spoken screen-reader announcements; desktop browser emulation cannot confirm these.
+1. Publish the requested reading/home/catalogue update, then verify live routes, interactions, noindex and the assigned sitemap URL. Check native long-press selection and spoken screen-reader behavior on actual phones; desktop emulation cannot confirm platform selection handles.
 2. Gather friends' feedback on the test deployment and font lab. Keep `NOINDEX=1` until the owner approves public indexing; only then submit the sitemap to search engines.
 3. Text review: the postponed items below, then the friend's `_original/content-review/` lists.
 4. Error reporting ("نبّهنا إلى خطأ") needs a recipient/form service; verse image maker also remains unbuilt.
@@ -28,7 +28,6 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - [x] **M9 Final QA.** Broken-link check over the whole build, accessibility, performance, SEO, phone and desktop, light and dark.
 
 ## Open questions
-- Owner review pending: minimal centered mobile home card; two-column catalogue with full names, letters inside filters, 100-item pages and bottom-only navigation. Explicitly local only until the owner asks to continue.
 - Fonts: the TEMPORARY font lab («مختبر الخطوط», or the T button on phones) ships in the preview deployment on purpose: the owner's friends try fonts and vote. When the fonts are chosen: self-host them with @fontsource, delete `src/components/FontLab.astro`, `src/scripts/font-lab.ts` and every block marked `TEMPORARY font lab` (Base.astro, reader.ts), and redeploy.
 - Text: the 878 "likely"/"needs-review" rows in `reports/text-issues.csv` need the printed book (see `AGENTS.md`).
 - The old share image (`public/share.png`) shows empty boxes where the dots between words should be. Redraw it?

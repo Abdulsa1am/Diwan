@@ -1,0 +1,288 @@
+{
+  "results": [
+    {
+      "name": "320 light r1-003: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "320 light r1-227: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "320 light r2-156: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "320 dark r1-003: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "320 dark r1-227: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "320 dark r2-156: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "375 light r1-003: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "375 light r1-227: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "375 light r2-156: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "375 dark r1-003: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "375 dark r1-227: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "375 dark r2-156: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "1440 light r1-003: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "1440 light r1-227: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "1440 light r2-156: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "1440 dark r1-003: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "1440 dark r1-227: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "1440 dark r2-156: centered text and whole-row menu",
+      "pass": true,
+      "detail": {
+        "centeredVerses": 12,
+        "textTap": true,
+        "paddingTap": true,
+        "copy": true,
+        "link": true,
+        "keyboard": true
+      }
+    },
+    {
+      "name": "Desktop native selection, holds, double/triple click and existing-selection dismissal",
+      "pass": true
+    },
+    {
+      "name": "Mobile native long hold, drag, cancellation and multi-touch do not open actions",
+      "pass": true,
+      "detail": {
+        "nativeLongPressSelectionObserved": false,
+        "longHoldSuppressed": true,
+        "dragSuppressed": true,
+        "cancelSuppressed": true,
+        "multiTouchSuppressed": true
+      }
+    },
+    {
+      "name": "Annotation summary and glossary links retain their own actions",
+      "pass": true
+    },
+    {
+      "name": "Mobile menu at viewport edge (480px high)",
+      "pass": true
+    },
+    {
+      "name": "Mobile menu at viewport edge (812px high)",
+      "pass": true
+    },
+    {
+      "name": "Catalogue edge markers leave full titles in normal flow, including three digits",
+      "pass": true,
+      "detail": [
+        {
+          "width": 320,
+          "theme": "light",
+          "markersChecked": 85
+        },
+        {
+          "width": 320,
+          "theme": "dark",
+          "markersChecked": 85
+        },
+        {
+          "width": 375,
+          "theme": "light",
+          "markersChecked": 85
+        },
+        {
+          "width": 375,
+          "theme": "dark",
+          "markersChecked": 85
+        },
+        {
+          "width": 1440,
+          "theme": "light",
+          "markersChecked": 85
+        },
+        {
+          "width": 1440,
+          "theme": "dark",
+          "markersChecked": 85
+        }
+      ]
+    },
+    {
+      "name": "No-JS verses remain centered, selectable and anchored",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

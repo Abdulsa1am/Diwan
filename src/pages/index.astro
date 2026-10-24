@@ -22,7 +22,7 @@ const today = daily[0];
 // Entry points: only sections that exist are linked.
 const entries = [
   { item: sections.library, text: `${ar(poems.length)} قصيدة مرتبة على القوافي` },
-  { item: sections.search, text: 'ابحث بلفظة أو شطر من بيت' },
+  { item: { ...sections.library, key: 'reading', label: 'ابدأ القراءة', href: `/poem/${first.id}/` }, text: first.title },
   { item: sections.indexes, text: 'البحور والقوافي والمطالع' },
   { item: sections.themes, text: 'المدح والرثاء والفخر والحنين…' },
   { item: sections.about, text: 'سيرة الشاعر وعن هذه النسخة' },
@@ -75,16 +75,6 @@ const jsonLd = {
     <button class="btn btn-primary" type="submit">ابحث</button>
   </form>
 
-  <a class="resume glass" id="resume" hidden>
-    <svg class="ui-icon" aria-hidden="true"><use href="#i-book"></use></svg>
-    <span>
-      <small>تابع القراءة</small>
-      <b data-resume-title></b>
-      <span data-resume-pos></span>
-    </span>
-    <svg class="ui-icon chevron" aria-hidden="true"><use href="#i-chevron-left"></use></svg>
-  </a>
-
   <div class="home-duo">
     <section class="daily glass" aria-labelledby="dailyTitle">
       <h2 id="dailyTitle">بيت اليوم</h2>
@@ -100,13 +90,14 @@ const jsonLd = {
     <section class="entries" aria-label="أقسام الديوان">
       {
         entries.map(({ item, text }) => (
-          <a class="entry glass" href={item.href}>
+          <a class="entry glass" href={item.href} id={item.key === 'reading' ? 'resume' : undefined}>
             <svg class="ui-icon" aria-hidden="true">
               <use href={`#${item.icon}`} />
             </svg>
             <span>
-              <b>{item.label}</b>
-              <small>{text}</small>
+              <b data-resume-label={item.key === 'reading' ? '' : undefined}>{item.label}</b>
+              <small data-resume-title={item.key === 'reading' ? '' : undefined}>{text}</small>
+              {item.key === 'reading' && <small data-resume-pos></small>}
             </span>
           </a>
         ))
@@ -161,10 +152,10 @@ const jsonLd = {
   const resume = document.getElementById('resume') as HTMLAnchorElement;
   if (last?.id) {
     resume.href = `/poem/${last.id}/${last.verse && last.verse > 1 ? `#v${last.verse}` : ''}`;
+    resume.querySelector('[data-resume-label]')!.textContent = 'تابع القراءة';
     resume.querySelector('[data-resume-title]')!.textContent = last.title;
     resume.querySelector('[data-resume-pos]')!.textContent =
       last.verse && last.total ? `البيت ${digits.format(last.verse)} من ${digits.format(last.total)}` : '';
-    resume.hidden = false;
   }
 
   // Verse of the day: same verse for everyone on the same day.
@@ -358,44 +349,6 @@ const jsonLd = {
   .home-search input:focus {
     outline: none;
   }
-  .resume {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 16px 20px;
-    margin-bottom: 18px;
-    color: var(--ink);
-    text-decoration: none;
-  }
-  .resume[hidden] {
-    display: none;
-  }
-  .resume > span {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    line-height: 1.5;
-  }
-  .resume small {
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .resume b {
-    font-family: var(--display-font);
-    font-weight: 400;
-    font-size: 24px;
-  }
-  .resume span span {
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .resume .ui-icon {
-    color: var(--accent);
-  }
-  .resume:hover {
-    background: var(--paper-strong);
-  }
-
   .home-duo {
     display: grid;
     grid-template-columns: 1.3fr 1fr;
@@ -441,15 +394,20 @@ const jsonLd = {
     align-items: center;
     gap: 14px;
     padding: 14px 18px;
+    min-height: 44px;
+    min-width: 0;
     color: var(--ink);
     text-decoration: none;
   }
   .entry .ui-icon {
+    flex-shrink: 0;
     color: var(--accent);
     width: 22px;
     height: 22px;
   }
   .entry span {
+    min-width: 0;
+    overflow-wrap: anywhere;
     display: flex;
     flex-direction: column;
     line-height: 1.5;

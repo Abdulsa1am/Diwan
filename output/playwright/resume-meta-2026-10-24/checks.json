@@ -1,0 +1,157 @@
+{
+  "results": [
+    {
+      "name": "375 light fresh: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "375 light returning: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-227/#v119",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "375 light malformed: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "375 light denied: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "375 dark fresh: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "375 dark returning: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-227/#v119",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "375 dark malformed: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "375 dark denied: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "1440 light fresh: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "1440 light returning: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-227/#v119",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "1440 light malformed: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "1440 light denied: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "1440 dark fresh: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "1440 dark returning: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-227/#v119",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "1440 dark malformed: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "1440 dark denied: home reading entry and compact poem header",
+      "pass": true,
+      "detail": {
+        "href": "/poem/r1-001/",
+        "noDuplicateResume": true,
+        "headerGrouped": true
+      }
+    },
+    {
+      "name": "375 no-JS fresh reading entry",
+      "pass": true
+    },
+    {
+      "name": "1440 no-JS fresh reading entry",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

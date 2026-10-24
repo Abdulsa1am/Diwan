@@ -1,0 +1,110 @@
+[
+  {
+    "width": 375,
+    "theme": "light",
+    "layout": "auto",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  },
+  {
+    "width": 375,
+    "theme": "light",
+    "layout": "side",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  },
+  {
+    "width": 375,
+    "theme": "light",
+    "layout": "stacked",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "layout": "auto",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "layout": "side",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "layout": "stacked",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "layout": "auto",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "layout": "side",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "layout": "stacked",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "layout": "auto",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "layout": "side",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "layout": "stacked",
+    "centered": true,
+    "numberClear": true,
+    "numberCenter": true,
+    "overflow": false
+  }
+]

@@ -266,41 +266,159 @@ const menuTitle = menu.querySelector('[data-menu-title]')!;
 const verseNotesBtn = menu.querySelector<HTMLButtonElement>('[data-verse-action="notes"]')!;
 let menuVerse: HTMLLIElement | null = null;
 let menuOpener: HTMLElement | null = null;
+let menuPoint: { x: number; y: number } | undefined;
+
+const verseOpeners = verses.map((v) => v.querySelector<HTMLElement>('.verse-no')!);
+verseOpeners.forEach((opener) => {
+  opener.setAttribute('aria-controls', 'verseMenu');
+  opener.setAttribute('aria-expanded', 'false');
+});
 
 function closeMenu(restoreFocus = true) {
   if (menu.hidden) return;
   menu.hidden = true;
   menuVerse?.classList.remove('is-active');
+  menuOpener?.setAttribute('aria-expanded', 'false');
   if (restoreFocus) menuOpener?.focus();
   menuVerse = menuOpener = null;
+  menuPoint = undefined;
 }
 
-function openMenu(opener: HTMLElement) {
+function positionMenu() {
+  if (menu.hidden || !menuOpener) return;
+  const viewport = window.visualViewport;
+  const left = (viewport?.offsetLeft ?? 0) + 8;
+  const top = (viewport?.offsetTop ?? 0) + 8;
+  const right = left + (viewport?.width ?? window.innerWidth) - 16;
+  let bottom = top + (viewport?.height ?? window.innerHeight) - 16;
+  const nav = document.querySelector<HTMLElement>('.mobile-nav');
+  if (nav && nav.getClientRects().length) {
+    const navRect = nav.getBoundingClientRect();
+    if (navRect.top < bottom && navRect.bottom > top) bottom = navRect.top - 8;
+  }
+  menu.style.maxWidth = `${Math.max(0, right - left)}px`;
+  menu.style.minWidth = `${Math.min(210, Math.max(0, right - left))}px`;
+  menu.style.maxHeight = `${Math.max(0, bottom - top)}px`;
+  const r = menuOpener.getBoundingClientRect();
+  const x = menuPoint?.x ?? (r.left + r.right) / 2;
+  const below = (menuPoint?.y ?? r.bottom) + 8;
+  const above = (menuPoint?.y ?? r.top) - menu.offsetHeight - 8;
+  const y = below + menu.offsetHeight <= bottom ? below : above;
+  menu.style.left = `${Math.max(left, Math.min(x - menu.offsetWidth / 2, right - menu.offsetWidth))}px`;
+  menu.style.top = `${Math.max(top, Math.min(y, bottom - menu.offsetHeight))}px`;
+}
+
+function openMenu(opener: HTMLElement, point?: { x: number; y: number }) {
   menuVerse = opener.closest('.verse');
   menuOpener = opener;
   if (!menuVerse) return;
+  menuPoint = point;
   menuVerse.classList.add('is-active');
-  menuTitle.textContent = `البيت ${opener.textContent!.trim()}`;
+  opener.setAttribute('aria-expanded', 'true');
+  menuTitle.textContent = `البيت ${digits.format(Number(menuVerse.dataset.n))}`;
   verseNotesBtn.hidden = !menuVerse.hasAttribute('data-annotated');
   menu.hidden = false;
-  // Place the menu just under the verse number, kept inside the screen.
-  const r = opener.getBoundingClientRect();
-  const width = menu.offsetWidth;
-  const right = Math.min(Math.max(8, window.innerWidth - r.right), window.innerWidth - width - 8);
-  menu.style.top = `${r.bottom + window.scrollY + 6}px`;
-  menu.style.right = `${right}px`;
-  menu.querySelector<HTMLButtonElement>('button:not([hidden])')!.focus();
+  positionMenu();
+  menu.querySelector<HTMLButtonElement>('button:not([hidden])')!.focus({ preventScroll: true });
 }
 
-reader.addEventListener('click', (e) => {
-  const opener = (e.target as HTMLElement).closest<HTMLElement>('.verse-no');
-  if (!opener) return;
-  e.preventDefault();
+// Observe gestures without cancelling native selection, scrolling or context menus.
+// Delay a single click so a second/triple click can select words/lines normally.
+const hasSelection = () => window.getSelection()?.isCollapsed === false;
+const interactive = 'a, button, input, select, textarea, summary, details, label, [role="button"], [role="link"], [contenteditable]:not([contenteditable="false"]), [tabindex], .verse-notes, .verse-words';
+const pointers = new Set<number>();
+type VerseGesture = {
+  pointer: number; verse: HTMLLIElement; x: number; y: number;
+  started: number; invalid: boolean; ended: boolean; wasOpen: boolean;
+};
+let gesture: VerseGesture | undefined;
+let tapTimer: number | undefined;
+function cancelTap() {
+  window.clearTimeout(tapTimer);
+  tapTimer = undefined;
+  if (gesture) gesture.invalid = true;
+}
+document.addEventListener('pointerdown', (e) => {
+  cancelTap();
+  pointers.add(e.pointerId);
+  const target = e.target instanceof Element ? e.target : null;
+  const verse = target?.closest<HTMLLIElement>('.verse');
+  const control = target?.closest(interactive);
+  if (pointers.size !== 1 || !e.isPrimary || e.button !== 0 || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey
+      || !verse || (control && !control.matches('.verse-no'))) return;
+  gesture = {
+    pointer: e.pointerId, verse, x: e.clientX, y: e.clientY,
+    started: performance.now(), invalid: hasSelection(), ended: false,
+    wasOpen: !menu.hidden && menuVerse === verse,
+  };
+}, { capture: true, passive: true });
+document.addEventListener('pointermove', (e) => {
+  if (gesture?.pointer === e.pointerId && Math.hypot(e.clientX - gesture.x, e.clientY - gesture.y) > 8) cancelTap();
+}, { capture: true, passive: true });
+document.addEventListener('pointerup', (e) => {
+  pointers.delete(e.pointerId);
+  if (gesture?.pointer !== e.pointerId) return;
+  gesture.ended = true;
+  if (performance.now() - gesture.started >= 450 || hasSelection()
+      || Math.hypot(e.clientX - gesture.x, e.clientY - gesture.y) > 8) cancelTap();
+}, { capture: true, passive: true });
+document.addEventListener('pointercancel', (e) => {
+  pointers.delete(e.pointerId);
+  cancelTap();
+}, { capture: true, passive: true });
+document.addEventListener('contextmenu', cancelTap, { capture: true, passive: true });
+document.addEventListener('selectionchange', () => {
+  if (hasSelection()) cancelTap();
+});
+document.addEventListener('scroll', (e) => {
+  cancelTap();
+  if (!(e.target instanceof Node) || !menu.contains(e.target)) closeMenu(false);
+}, { capture: true, passive: true });
+window.addEventListener('blur', () => { pointers.clear(); cancelTap(); });
+window.addEventListener('resize', positionMenu, { passive: true });
+window.visualViewport?.addEventListener('resize', positionMenu, { passive: true });
+window.visualViewport?.addEventListener('scroll', () => { cancelTap(); closeMenu(false); }, { passive: true });
+
+function toggleVerseMenu(opener: HTMLElement, point?: { x: number; y: number }) {
   if (!menu.hidden && menuOpener === opener) closeMenu();
   else {
     closeMenu(false);
-    openMenu(opener);
+    openMenu(opener, point);
   }
+}
+
+reader.addEventListener('click', (e) => {
+  if (e.button !== 0 || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return;
+  const target = e.target instanceof Element ? e.target : null;
+  const verse = target?.closest<HTMLLIElement>('.verse');
+  const opener = verse?.querySelector<HTMLElement>('.verse-no');
+  const control = target?.closest(interactive);
+  if (!verse || !opener || (control && control !== opener)) return;
+  if (target?.closest('.verse-no') && e.detail === 0) {
+    e.preventDefault();
+    e.stopPropagation();
+    cancelTap();
+    toggleVerseMenu(opener);
+    return;
+  }
+  // Even rejected pointer clicks on the marker must not jump after a long hold.
+  if (control === opener) e.preventDefault();
+  const tap = gesture;
+  if (e.detail !== 1 || !tap || tap.verse !== verse || !tap.ended || tap.invalid || hasSelection()) {
+    cancelTap();
+    return;
+  }
+  e.stopPropagation(); // The accepted row click is not an outside-menu click.
+  const point = { x: e.clientX, y: e.clientY };
+  tapTimer = window.setTimeout(() => {
+    tapTimer = undefined;
+    if (gesture !== tap || tap.invalid || hasSelection() || pointers.size) return;
+    // Native pointer focus may already have closed this menu via focusout.
+    if (tap.wasOpen) {
+      closeMenu(false);
+      opener.focus({ preventScroll: true });
+    } else toggleVerseMenu(opener, point);
+  }, 450);
 });
 
 menu.addEventListener('click', (e) => {
@@ -354,6 +472,7 @@ menu.addEventListener('keydown', (e) => {
   items[next].focus();
 });
 document.addEventListener('keydown', (e) => {
+  cancelTap();
   if (e.key === 'Escape') {
     if (!menu.hidden) {
       e.preventDefault();

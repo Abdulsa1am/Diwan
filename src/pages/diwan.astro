@@ -416,13 +416,26 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   .count { scroll-margin-top: 100px; }
   .card-heading { min-width: 0; }
   .card-heading h2 { min-width: 0; }
-  .catalogue-number { flex: none; color: var(--muted); font: 500 14px/1.7 var(--ui-font); font-variant-numeric: tabular-nums; }
+  .catalogue-number {
+    position: absolute;
+    top: 0;
+    inset-inline-start: 16px;
+    transform: translateY(-50%);
+    padding: 0 6px;
+    border-radius: 4px;
+    background: var(--paper-strong);
+    color: var(--ink);
+    font: 500 14px/1.4 var(--ui-font);
+    font-variant-numeric: tabular-nums;
+  }
   .cards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    gap: 20px 16px;
+    padding-block-start: 10px;
   }
   .poem-card {
+    position: relative;
     display: flex;
     flex-direction: column;
     min-width: 0;
@@ -456,7 +469,8 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     .filter-options[open] summary { background: var(--paper); border-color: var(--accent); }
     .filter-fields select { min-width: 0; }
     .count { margin: 12px 0 4px; }
-    .cards { gap: 8px; }
+    .cards { gap: 20px 8px; }
+    .catalogue-number { inset-inline-start: 10px; }
     .poem-card { padding: 10px; }
     .poem-card h2 {
       font-size: 24px;
