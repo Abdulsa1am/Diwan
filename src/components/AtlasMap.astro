@@ -10,7 +10,8 @@ interface Props {
   label: string;
 }
 const { focus, label } = Astro.props;
-const sizeId = `map-size-${focus ? encodeURIComponent(focus.name) : 'atlas'}`;
+const instanceId = `map-${crypto.randomUUID()}`;
+const sizeId = `${instanceId}-size`;
 const mapped = places.filter((p) => p.lat !== undefined && p.lon !== undefined);
 const max = Math.max(...mapped.map((p) => p.verses.length), 1);
 
@@ -63,11 +64,11 @@ const labels = dots.map((d, i) => {
         ))
       }
     </g>
-    <!-- Drawn least important first, so where tap areas overlap the more cited place is on top. -->
+    <!-- Paint order retains the original emphasis; pointer picking uses every live point center. -->
     <g class="places">
       {
         [...labels].reverse().map(({ p, x, y, r, isFocus, label: l }) => (
-          <a href={placeHref(p)} class:list={['place', { focus: isFocus, dim: focus && !isFocus }]}>
+          <a href={placeHref(p)} data-place-name={p.name} class:list={['place', { focus: isFocus, dim: focus && !isFocus }]}>
             <title>{`${p.name}: ${p.verses.length ? arCount(p.verses.length, ['شاهد واحد', 'شاهدان', 'شواهد', 'شاهدًا']) : 'في الحواشي'}`}</title>
             <circle class="place-hit" cx={x.toFixed(1)} cy={y.toFixed(1)} r="18" />
             <circle class="place-dot" cx={x.toFixed(1)} cy={y.toFixed(1)} r={r.toFixed(1)} />
@@ -83,7 +84,17 @@ const labels = dots.map((d, i) => {
   </svg>
   </div>
   <figcaption>حجم النقطة على قدر شواهد الموضع في الأبيات. المواضع بلا إحداثيات مذكورة في القائمة.</figcaption>
+  <dialog class="map-picker" aria-labelledby={`${instanceId}-title`} aria-describedby={`${instanceId}-description`}>
+    <h2 id={`${instanceId}-title`}>مواضع متقاربة</h2>
+    <p id={`${instanceId}-description`}>اختر الموضع</p>
+    <ul class="map-picker-places"></ul>
+    <button type="button" class="map-picker-close">إغلاق</button>
+  </dialog>
 </figure>
+
+<script>
+  import '../scripts/atlas-map';
+</script>
 
 <style>
   /* Same palette as the site, with more separation between land, borders and rivers. */
@@ -191,11 +202,60 @@ const labels = dots.map((d, i) => {
     stroke-width: 3;
     vector-effect: non-scaling-stroke;
   }
-  @media (max-width: 620px) {
-    .map-size-toggle:not(:checked) ~ .map-viewport .place-hit {
-      /* The 900-unit map shrinks to about 300px on a phone: retain an 18px+ hit radius. */
-      r: 60;
+  .map-picker {
+    box-sizing: border-box;
+    width: min(360px, calc(100vw - 32px));
+    max-height: 80vh;
+    max-height: 80dvh;
+    overflow: hidden;
+    padding: 20px;
+    border: 1px solid var(--accent);
+    border-radius: 16px;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--ui-font);
+    direction: rtl;
+  }
+  .map-picker[open] { display: flex; flex-direction: column; }
+  .map-picker::backdrop { background: rgb(0 0 0 / 45%); }
+  .map-picker h2 { flex-shrink: 0; margin: 0 0 8px; font-size: 24px; }
+  .map-picker p { flex-shrink: 0; margin: 0 0 12px; }
+  .map-picker-places {
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+    padding: 6px;
+    margin: 0 0 12px;
+  }
+  .map-picker :global(a), .map-picker-close {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    width: 100%;
+    padding: 10px 12px;
+    overflow-wrap: anywhere;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    color: var(--ink);
+    background: var(--bg);
+    font: inherit;
+  }
+  .map-picker :global(li + li) { margin-top: 6px; }
+  .map-picker-close { flex-shrink: 0; justify-content: center; cursor: pointer; }
+  .map-picker :global(a:focus-visible), .map-picker-close:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 2px;
+  }
+  @media (forced-colors: active) {
+    .map-picker { background: Canvas; color: CanvasText; border-color: CanvasText; }
+    .map-picker :global(a), .map-picker-close {
+      background: Canvas;
+      color: LinkText;
+      border-color: ButtonText;
     }
+    .map-picker :global(a:focus-visible), .map-picker-close:focus-visible { outline-color: Highlight; }
   }
   .place:focus-visible text {
     font-weight: 700;

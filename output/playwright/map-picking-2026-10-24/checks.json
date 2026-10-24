@@ -1,0 +1,181 @@
+{
+  "results": [
+    {
+      "name": "375 light /explore/atlas/ compact: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 24,
+        "direct": 4,
+        "navigated": 1
+      }
+    },
+    {
+      "name": "375 light /explore/atlas/ large: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 16,
+        "direct": 12,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "375 light /place/بغداد/ compact: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 24,
+        "direct": 4,
+        "navigated": 1
+      }
+    },
+    {
+      "name": "375 light /place/بغداد/ large: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 16,
+        "direct": 12,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "375 dark /explore/atlas/ compact: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 24,
+        "direct": 4,
+        "navigated": 1
+      }
+    },
+    {
+      "name": "375 dark /explore/atlas/ large: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 16,
+        "direct": 12,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "375 dark /place/بغداد/ compact: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 24,
+        "direct": 4,
+        "navigated": 1
+      }
+    },
+    {
+      "name": "375 dark /place/بغداد/ large: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 16,
+        "direct": 12,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "1440 light /explore/atlas/ compact: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 17,
+        "direct": 11,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "1440 light /explore/atlas/ large: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 16,
+        "direct": 12,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "1440 light /place/بغداد/ compact: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 17,
+        "direct": 11,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "1440 light /place/بغداد/ large: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 16,
+        "direct": 12,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "1440 dark /explore/atlas/ compact: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 17,
+        "direct": 11,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "1440 dark /explore/atlas/ large: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 16,
+        "direct": 12,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "1440 dark /place/بغداد/ compact: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 17,
+        "direct": 11,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "1440 dark /place/بغداد/ large: every in-map point center is selectable",
+      "pass": true,
+      "detail": {
+        "points": 28,
+        "chooser": 16,
+        "direct": 12,
+        "navigated": 0
+      }
+    },
+    {
+      "name": "Keyboard/native Enter, Escape, modal focus containment and close return",
+      "pass": true
+    },
+    {
+      "name": "Touch drag, cancellation, and two-finger gesture never select a place",
+      "pass": true
+    },
+    {
+      "name": "No-JS static SVG links, place list and native large-view checkbox remain usable",
+      "pass": true
+    },
+    {
+      "name": "Forced-colors chooser and short phone viewport retain visible close and scrolling choices",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

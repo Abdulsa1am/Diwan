@@ -1,0 +1,292 @@
+{
+  "width": 375,
+  "points": 32,
+  "visible": 28,
+  "wrongAtVisibleCenter": 19,
+  "results": [
+    {
+      "visible": true,
+      "name": "كربلاء",
+      "href": "/place/كربلاء/",
+      "x": 265.5710754394531,
+      "y": 471.1321716308594,
+      "hit": "/place/العراق/",
+      "wrong": true
+    },
+    {
+      "visible": false,
+      "name": "طوس",
+      "href": "/place/طوس/",
+      "x": 484.5094909667969,
+      "y": 431.66331481933594,
+      "wrong": true
+    },
+    {
+      "visible": false,
+      "name": "خراسان",
+      "href": "/place/خراسان/",
+      "x": 477.1790313720703,
+      "y": 438.6326599121094,
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "اليمن",
+      "href": "/place/اليمن/",
+      "x": 314.68145751953125,
+      "y": 642.7296447753906,
+      "hit": "/place/اليمن/",
+      "wrong": false
+    },
+    {
+      "visible": true,
+      "name": "الموصل",
+      "href": "/place/الموصل/",
+      "x": 252.75181579589844,
+      "y": 433.1799621582031,
+      "hit": "/place/الموصل/",
+      "wrong": false
+    },
+    {
+      "visible": true,
+      "name": "الكوفة",
+      "href": "/place/الكوفة/",
+      "x": 271.4209899902344,
+      "y": 476.8737487792969,
+      "hit": "/place/العراق/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "الرصافة",
+      "href": "/place/الرصافة/",
+      "x": 271.168212890625,
+      "y": 463.72950744628906,
+      "hit": "/place/العراق/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "قباء",
+      "href": "/place/قباء/",
+      "x": 203.28032684326172,
+      "y": 554.547607421875,
+      "hit": "/place/الحجاز/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "سامراء",
+      "href": "/place/سامراء/",
+      "x": 263.5849914550781,
+      "y": 454.9907531738281,
+      "hit": "/place/العراق/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "دجلة",
+      "href": "/place/دجلة/",
+      "x": 270.8793487548828,
+      "y": 463.72950744628906,
+      "hit": "/place/العراق/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "الكرخ",
+      "href": "/place/الكرخ/",
+      "x": 270.3015594482422,
+      "y": 464.0183868408203,
+      "hit": "/place/العراق/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "الغري",
+      "href": "/place/الغري/",
+      "x": 270.1210021972656,
+      "y": 477.12652587890625,
+      "hit": "/place/العراق/",
+      "wrong": true
+    },
+    {
+      "visible": false,
+      "name": "الري",
+      "href": "/place/الري/",
+      "x": 370.32786560058594,
+      "y": 440.72706604003906,
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "البصرة",
+      "href": "/place/البصرة/",
+      "x": 318.6175079345703,
+      "y": 492.6179504394531,
+      "hit": "/place/الأهواز/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "مصر",
+      "href": "/place/مصر/",
+      "x": 67.39622116088867,
+      "y": 528.4396362304688,
+      "hit": "/place/مصر/",
+      "wrong": false
+    },
+    {
+      "visible": true,
+      "name": "رضوى",
+      "href": "/place/رضوى/",
+      "x": 184.39449310302734,
+      "y": 553.0309448242188,
+      "hit": "/place/المدينة/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "خيبر",
+      "href": "/place/خيبر/",
+      "x": 198.51373291015625,
+      "y": 541.5477905273438,
+      "hit": "/place/الحجاز/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "تهامة",
+      "href": "/place/تهامة/",
+      "x": 210.10520935058594,
+      "y": 592.7164916992188,
+      "hit": "/place/منى/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "المدينة",
+      "href": "/place/المدينة/",
+      "x": 203.2442169189453,
+      "y": 554.2587280273438,
+      "hit": "/place/الحجاز/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "المدائن",
+      "href": "/place/المدائن/",
+      "x": 273.44317626953125,
+      "y": 466.3655700683594,
+      "hit": "/place/العراق/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "الحجاز",
+      "href": "/place/الحجاز/",
+      "x": 211.51353454589844,
+      "y": 559.0614624023438,
+      "hit": "/place/الحجاز/",
+      "wrong": false
+    },
+    {
+      "visible": false,
+      "name": "فارس",
+      "href": "/place/فارس/",
+      "x": 392.3914337158203,
+      "y": 508.00108337402344,
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "الأهواز",
+      "href": "/place/الأهواز/",
+      "x": 331.40065002441406,
+      "y": 484.34864807128906,
+      "hit": "/place/الأهواز/",
+      "wrong": false
+    },
+    {
+      "visible": true,
+      "name": "الفرات",
+      "href": "/place/الفرات/",
+      "x": 267.34046936035156,
+      "y": 471.27662658691406,
+      "hit": "/place/العراق/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "الشام",
+      "href": "/place/الشام/",
+      "x": 156.40878295898438,
+      "y": 462.1045379638672,
+      "hit": "/place/الشام/",
+      "wrong": false
+    },
+    {
+      "visible": true,
+      "name": "الحيرة",
+      "href": "/place/الحيرة/",
+      "x": 272.10707092285156,
+      "y": 478.5348358154297,
+      "hit": "/place/العراق/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "مكة",
+      "href": "/place/مكة/",
+      "x": 206.24138641357422,
+      "y": 585.3138122558594,
+      "hit": "/place/منى/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "جمع",
+      "href": "/place/جمع/",
+      "x": 206.81916046142578,
+      "y": 585.4221496582031,
+      "hit": "/place/منى/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "بغداد",
+      "href": "/place/بغداد/",
+      "x": 270.87933349609375,
+      "y": 463.7294921875,
+      "hit": "/place/العراق/",
+      "wrong": true
+    },
+    {
+      "visible": true,
+      "name": "العراق",
+      "href": "/place/العراق/",
+      "x": 269.47100830078125,
+      "y": 466.1850128173828,
+      "hit": "/place/العراق/",
+      "wrong": false
+    },
+    {
+      "visible": true,
+      "name": "نجد",
+      "href": "/place/نجد/",
+      "x": 272.28761291503906,
+      "y": 548.8421325683594,
+      "hit": "/place/نجد/",
+      "wrong": false
+    },
+    {
+      "visible": true,
+      "name": "منى",
+      "href": "/place/منى/",
+      "x": 207.18025970458984,
+      "y": 585.4582824707031,
+      "hit": "/place/منى/",
+      "wrong": false
+    }
+  ]
+}
