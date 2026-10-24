@@ -1,0 +1,201 @@
+{
+  "results": [
+    {
+      "theme": "light",
+      "width": 375,
+      "scroll": 375,
+      "sheet": [
+        "20px",
+        "20px",
+        "20px",
+        "20px"
+      ],
+      "rows": [
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "0px",
+          "color": "rgb(28, 48, 67)"
+        },
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "1px",
+          "color": "rgba(112, 140, 163, 0.32)"
+        },
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "1px",
+          "color": "rgba(112, 140, 163, 0.32)"
+        }
+      ],
+      "number": [
+        "10px",
+        "10px",
+        "10px",
+        "10px"
+      ]
+    },
+    {
+      "theme": "dark",
+      "width": 375,
+      "scroll": 375,
+      "sheet": [
+        "20px",
+        "20px",
+        "20px",
+        "20px"
+      ],
+      "rows": [
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "0px",
+          "color": "rgb(238, 245, 250)"
+        },
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "1px",
+          "color": "rgba(204, 230, 248, 0.24)"
+        },
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "1px",
+          "color": "rgba(204, 230, 248, 0.24)"
+        }
+      ],
+      "number": [
+        "10px",
+        "10px",
+        "10px",
+        "10px"
+      ]
+    },
+    {
+      "theme": "light",
+      "width": 1440,
+      "scroll": 1440,
+      "sheet": [
+        "20px",
+        "20px",
+        "20px",
+        "20px"
+      ],
+      "rows": [
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "0px",
+          "color": "rgb(28, 48, 67)"
+        },
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "1px",
+          "color": "rgba(112, 140, 163, 0.32)"
+        },
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "1px",
+          "color": "rgba(112, 140, 163, 0.32)"
+        }
+      ],
+      "number": [
+        "10px",
+        "10px",
+        "10px",
+        "10px"
+      ]
+    },
+    {
+      "theme": "dark",
+      "width": 1440,
+      "scroll": 1440,
+      "sheet": [
+        "20px",
+        "20px",
+        "20px",
+        "20px"
+      ],
+      "rows": [
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "0px",
+          "color": "rgb(238, 245, 250)"
+        },
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "1px",
+          "color": "rgba(204, 230, 248, 0.24)"
+        },
+        {
+          "corners": [
+            "0px",
+            "0px",
+            "0px",
+            "0px"
+          ],
+          "border": "1px",
+          "color": "rgba(204, 230, 248, 0.24)"
+        }
+      ],
+      "number": [
+        "10px",
+        "10px",
+        "10px",
+        "10px"
+      ]
+    }
+  ],
+  "errors": []
+}
