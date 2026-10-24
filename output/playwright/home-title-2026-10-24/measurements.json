@@ -1,0 +1,425 @@
+{
+  "measurements": [
+    {
+      "theme": "light",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 177.40625,
+      "title": "ديوان الشريف الرضي",
+      "width": 320,
+      "scrollWidth": 320,
+      "searchBottom": 547.921875,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 242,
+          "height": 49,
+          "x": 39
+        },
+        {
+          "text": "ديوان",
+          "width": 67.96875,
+          "height": 49,
+          "x": 213.03125
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 174.734375,
+          "height": 49,
+          "x": 106.265625
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 217.71875,
+      "title": "ديوان الشريف الرضي",
+      "width": 375,
+      "scrollWidth": 375,
+      "searchBottom": 517.421875,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 297,
+          "height": 60,
+          "x": 39
+        },
+        {
+          "text": "ديوان",
+          "width": 83.421875,
+          "height": 60,
+          "x": 252.578125
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 214.4375,
+          "height": 60,
+          "x": 121.5625
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 275.96875,
+      "title": "ديوان الشريف الرضي",
+      "width": 547,
+      "scrollWidth": 547,
+      "searchBottom": 520.765625,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 457.25,
+          "height": 77,
+          "x": 44.875
+        },
+        {
+          "text": "ديوان",
+          "width": 105.734375,
+          "height": 77,
+          "x": 396.390625
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 271.8125,
+          "height": 77,
+          "x": 230.3125
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 310.46875,
+      "title": "ديوان الشريف الرضي",
+      "width": 768,
+      "scrollWidth": 768,
+      "searchBottom": 604.828125,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 644.5625,
+          "height": 86,
+          "x": 61.71875
+        },
+        {
+          "text": "ديوان",
+          "width": 118.953125,
+          "height": 86,
+          "x": 587.328125
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 305.796875,
+          "height": 86,
+          "x": 400.484375
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 238.421875,
+      "title": "ديوان الشريف الرضي",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "searchBottom": 643.265625,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 325.28125,
+          "height": 66,
+          "x": 382.046875
+        },
+        {
+          "text": "ديوان",
+          "width": 91.34375,
+          "height": 66,
+          "x": 615.984375
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 234.828125,
+          "height": 66,
+          "x": 472.5
+        }
+      ]
+    },
+    {
+      "theme": "light",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 310.46875,
+      "title": "ديوان الشريف الرضي",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "searchBottom": 646.5625,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 465.546875,
+          "height": 86,
+          "x": 583.453125
+        },
+        {
+          "text": "ديوان",
+          "width": 118.953125,
+          "height": 86,
+          "x": 930.046875
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 305.796875,
+          "height": 86,
+          "x": 743.203125
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 177.40625,
+      "title": "ديوان الشريف الرضي",
+      "width": 320,
+      "scrollWidth": 320,
+      "searchBottom": 547.921875,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 242,
+          "height": 49,
+          "x": 39
+        },
+        {
+          "text": "ديوان",
+          "width": 67.96875,
+          "height": 49,
+          "x": 213.03125
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 174.734375,
+          "height": 49,
+          "x": 106.265625
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 217.71875,
+      "title": "ديوان الشريف الرضي",
+      "width": 375,
+      "scrollWidth": 375,
+      "searchBottom": 517.421875,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 297,
+          "height": 60,
+          "x": 39
+        },
+        {
+          "text": "ديوان",
+          "width": 83.421875,
+          "height": 60,
+          "x": 252.578125
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 214.4375,
+          "height": 60,
+          "x": 121.5625
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 275.96875,
+      "title": "ديوان الشريف الرضي",
+      "width": 547,
+      "scrollWidth": 547,
+      "searchBottom": 520.765625,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 457.25,
+          "height": 77,
+          "x": 44.875
+        },
+        {
+          "text": "ديوان",
+          "width": 105.734375,
+          "height": 77,
+          "x": 396.390625
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 271.8125,
+          "height": 77,
+          "x": 230.3125
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 310.46875,
+      "title": "ديوان الشريف الرضي",
+      "width": 768,
+      "scrollWidth": 768,
+      "searchBottom": 604.828125,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 644.5625,
+          "height": 86,
+          "x": 61.71875
+        },
+        {
+          "text": "ديوان",
+          "width": 118.953125,
+          "height": 86,
+          "x": 587.328125
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 305.796875,
+          "height": 86,
+          "x": 400.484375
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 238.421875,
+      "title": "ديوان الشريف الرضي",
+      "width": 1024,
+      "scrollWidth": 1024,
+      "searchBottom": 643.265625,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 325.28125,
+          "height": 66,
+          "x": 382.046875
+        },
+        {
+          "text": "ديوان",
+          "width": 91.34375,
+          "height": 66,
+          "x": 615.984375
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 234.828125,
+          "height": 66,
+          "x": 472.5
+        }
+      ]
+    },
+    {
+      "theme": "dark",
+      "decorativeWord": "ديـــــــــــــــــــوان",
+      "visibleWidth": 310.46875,
+      "title": "ديوان الشريف الرضي",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "searchBottom": 646.5625,
+      "texts": [
+        {
+          "text": "ديوان",
+          "width": 465.546875,
+          "height": 86,
+          "x": 583.453125
+        },
+        {
+          "text": "ديوان",
+          "width": 118.953125,
+          "height": 86,
+          "x": 930.046875
+        },
+        {
+          "text": "",
+          "width": 0,
+          "height": 0,
+          "x": 0
+        },
+        {
+          "text": "الشريف الرضي",
+          "width": 305.796875,
+          "height": 86,
+          "x": 743.203125
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

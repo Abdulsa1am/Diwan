@@ -51,7 +51,10 @@ const jsonLd = {
   <section class="hero" aria-labelledby="heroTitle">
     <div class="hero-copy">
       <div class="tag"><span></span> نصّ الديوان · فهارس · أدوات قراءة</div>
-      <h1 id="heroTitle"><span>ديوان</span> <span class="poet-name">الشريف الرضي</span></h1>
+      <h1 id="heroTitle" aria-label="ديوان الشريف الرضي">
+        <span class="diwan-title"><span class="diwan-plain">ديوان</span><span class="diwan-ornament" aria-hidden="true" data-kashida="ديـــــــــــــــــــــوان"></span></span>{' '}
+        <span class="poet-name">الشريف الرضي</span>
+      </h1>
       <p>قصائد الشريف الرضي، مع البحر والقافية وشروح الأبيات.</p>
       <div class="hero-actions">
         <a class="btn btn-primary" href="/diwan/">
@@ -117,6 +120,39 @@ const jsonLd = {
 <script>
   import { load, LAST_KEY } from '../scripts/shared';
   import type { PoemRef } from '../scripts/shared';
+
+  // Only the ي–و connection is elongated; the selectable heading stays plain text.
+  const title = document.getElementById('heroTitle')!;
+  const diwan = title.querySelector<HTMLElement>('.diwan-ornament')!;
+  const poet = title.querySelector<HTMLElement>('.poet-name')!;
+  const pen = document.createElement('canvas').getContext('2d');
+  let titleFrame = 0;
+  const fitKashida = () => {
+    titleFrame = 0;
+    if (!pen) return;
+    const font = getComputedStyle(title);
+    pen.font = `${font.fontWeight} ${font.fontSize} ${font.fontFamily}`;
+    pen.direction = 'rtl';
+    const range = document.createRange();
+    range.selectNodeContents(poet);
+    const target = Math.min(range.getBoundingClientRect().width, title.clientWidth);
+    if (!target) return;
+    let best = 'ديوان', error = Infinity;
+    for (let n = 0; n <= 64; n++) {
+      const word = `دي${'\u0640'.repeat(n)}وان`;
+      const width = pen.measureText(word).width;
+      if (width <= title.clientWidth && Math.abs(width - target) < error) {
+        best = word;
+        error = Math.abs(width - target);
+      }
+    }
+    diwan.dataset.kashida = best;
+  };
+  const scheduleTitle = () => { titleFrame ||= requestAnimationFrame(fitKashida); };
+  void document.fonts.ready.then(scheduleTitle);
+  document.fonts.addEventListener('loadingdone', scheduleTitle);
+  window.addEventListener('radi:fontchange', scheduleTitle);
+  new ResizeObserver(scheduleTitle).observe(title);
 
   const digits = new Intl.NumberFormat('ar-EG', { useGrouping: false });
 
@@ -217,6 +253,21 @@ const jsonLd = {
   }
   h1 span {
     display: block;
+  }
+  .diwan-title { position: relative; }
+  .diwan-plain { color: transparent; }
+  .diwan-ornament {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    white-space: nowrap;
+    user-select: none;
+    pointer-events: none;
+  }
+  .diwan-ornament::after { content: attr(data-kashida); }
+  @media (forced-colors: active) {
+    .diwan-plain { color: CanvasText; }
+    .diwan-title .diwan-ornament { display: none; }
   }
   .poet-name {
     white-space: nowrap;

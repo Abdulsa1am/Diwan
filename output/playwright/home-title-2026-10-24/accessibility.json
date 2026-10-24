@@ -1,0 +1,50 @@
+[
+  {
+    "width": 375,
+    "theme": "light",
+    "copied": "ديوان الشريف الرضي",
+    "amiri": {
+      "nameWidth": 248.515625,
+      "wordWidth": 248.375,
+      "scroll": 375,
+      "width": 375
+    },
+    "forcedColorsReadable": true
+  },
+  {
+    "width": 375,
+    "theme": "dark",
+    "copied": "ديوان الشريف الرضي",
+    "amiri": {
+      "nameWidth": 248.515625,
+      "wordWidth": 248.375,
+      "scroll": 375,
+      "width": 375
+    },
+    "forcedColorsReadable": true
+  },
+  {
+    "width": 1440,
+    "theme": "light",
+    "copied": "ديوان الشريف الرضي",
+    "amiri": {
+      "nameWidth": 354.390625,
+      "wordWidth": 354.171875,
+      "scroll": 1440,
+      "width": 1440
+    },
+    "forcedColorsReadable": true
+  },
+  {
+    "width": 1440,
+    "theme": "dark",
+    "copied": "ديوان الشريف الرضي",
+    "amiri": {
+      "nameWidth": 354.390625,
+      "wordWidth": 354.171875,
+      "scroll": 1440,
+      "width": 1440
+    },
+    "forcedColorsReadable": true
+  }
+]
