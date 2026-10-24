@@ -22,7 +22,10 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
       <input disabled name="t" type="search" placeholder="عنوان أو مطلع…" autocomplete="off" />
     </label>
     <details class="filter-options" id="filterOptions">
-      <summary id="filterSummary">تصفية</summary>
+      <summary id="filterSummary" aria-label="تصفية القصائد" title="تصفية القصائد">
+        <svg class="ui-icon" aria-hidden="true"><use href="#i-sliders"></use></svg>
+        <span class="filter-summary-text">تصفية</span>
+      </summary>
       <div class="filter-fields">
         <select disabled name="meter" aria-label="البحر">
           <option value="">البحور كلها</option>
@@ -45,7 +48,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     <span id="catalogueRestrictionText"></span>
     <button class="btn" type="button" id="clearFilters">إزالة القيود</button>
   </div>
-  <p class="count" id="count" aria-live="polite">في الديوان {ar(poems.length)} قصيدة</p>
+  <p class="count" id="count" aria-live="polite" tabindex="-1">في الديوان {ar(poems.length)} قصيدة</p>
   <nav class="rhyme-jump" id="rhymeJump" aria-label="انتقل إلى حرف القافية" hidden>
     {rhymes.map((r) => <button type="button" data-jump-rhyme={r} aria-label={`قافية ${r}`}>{r}</button>)}
   </nav>
@@ -53,9 +56,16 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     لا قصائد تطابق البحث. جرّب عنوانًا أو مطلعًا آخر، أو <a href="/search/">ابحث في الأبيات</a>.
   </p>
 
+  <nav class="catalogue-paging" data-catalogue-paging aria-label="صفحات القصائد" hidden>
+    <button type="button" data-page-step="-1">السابق</button>
+    <label>الصفحة <select data-page-select aria-label="انتقل إلى صفحة القصائد"></select></label>
+    <span data-page-status></span>
+    <button type="button" data-page-step="1">التالي</button>
+  </nav>
+
   <div class="cards">
     {
-      poems.map((p) => (
+      poems.map((p, index) => (
         <a
           class="poem-card glass"
           href={`/poem/${p.id}/`}
@@ -63,7 +73,10 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
           data-rhyme={p.rhyme}
           data-vol={p.volume}
         >
-          <h2>{p.title}</h2>
+          <div class="card-heading">
+            <span class="catalogue-number"><span class="visually-hidden">ترتيب الفهرس: </span>{ar(index + 1)}</span>
+            <h2>{p.title}</h2>
+          </div>
           <div class="meta">
             <span class="chip">{p.meter}</span>
             <span class="chip">{p.qafiya}</span>
@@ -88,6 +101,12 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
       ))
     }
   </div>
+  <nav class="catalogue-paging" data-catalogue-paging aria-label="صفحات القصائد، أسفل القائمة" hidden>
+    <button type="button" data-page-step="-1">السابق</button>
+    <label>الصفحة <select data-page-select aria-label="انتقل إلى صفحة القصائد، أسفل القائمة"></select></label>
+    <span data-page-status></span>
+    <button type="button" data-page-step="1">التالي</button>
+  </nav>
 </Base>
 
 <script>
@@ -104,36 +123,81 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   const restrictionText = document.getElementById('catalogueRestrictionText')!;
   const noMatch = document.getElementById('noMatch')!;
   const filterOptions = document.getElementById('filterOptions') as HTMLDetailsElement;
-  const filterSummary = document.getElementById('filterSummary')!;
   const jump = document.getElementById('rhymeJump')!;
   const jumpButtons = [...jump.querySelectorAll<HTMLButtonElement>('button')];
   const firstByRhyme = new Map<string, HTMLAnchorElement>();
+  const pagers = [...document.querySelectorAll<HTMLElement>('[data-catalogue-paging]')];
+  const pageSize = 50;
+  let page = 1;
+  let matched: HTMLAnchorElement[] = [];
   const phone = matchMedia('(max-width: 620px)');
   const syncDisclosure = () => { filterOptions.open = !phone.matches; };
   syncDisclosure();
   phone.addEventListener('change', syncDisclosure);
-  jump.hidden = false;
-  jump.addEventListener('click', (event) => {
-    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-jump-rhyme]');
-    if (!button || button.disabled) return;
-    const card = firstByRhyme.get(button.dataset.jumpRhyme!);
-    if (!card) return;
-    card.scrollIntoView({ block: 'start' });
-    card.focus({ preventScroll: true });
-  });
+  // Native details/summary supplies keyboard activation and its expanded state.
+
   const folded = new Map<HTMLElement, string>();
   const textOf = (card: HTMLElement) => {
     if (!folded.has(card)) folded.set(card, fold(card.querySelector('h2')!.textContent! + ' ' + card.querySelector('.preview-verse')!.textContent!).text);
     return folded.get(card)!;
   };
 
-  function apply() {
+  function writeUrl(mode: 'push' | 'replace') {
+    const url = new URL(location.href);
+    for (const name of ['t', 'meter', 'rhyme', 'vol']) {
+      const value = (form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement).value;
+      url.searchParams.delete(name);
+      if (value) url.searchParams.set(name, value);
+    }
+    url.searchParams.delete('page');
+    url.searchParams.set('page', String(page));
+    if (url.href !== location.href) {
+      if (mode === 'push') history.pushState(null, '', url);
+      else history.replaceState(null, '', url);
+    }
+  }
+
+  function focusResult(target: HTMLElement = count) {
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({ block: 'start' });
+  }
+
+  function renderPage(requested: number, mode: 'push' | 'replace', moveFocus = false) {
+    const totalPages = Math.max(1, Math.ceil(matched.length / pageSize));
+    page = Math.min(totalPages, Math.max(1, Number.isFinite(requested) ? Math.trunc(requested) : 1));
+    const start = (page - 1) * pageSize;
+    const visible = new Set(matched.slice(start, start + pageSize));
+    for (const card of cards) card.hidden = !visible.has(card);
+    const totalLabel = arCount(matched.length, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة']);
+    const matchedLabel = matched.length === cards.length ? totalLabel : `${totalLabel} من ${ar(cards.length)}`;
+    count.textContent = matchedLabel + (matched.length
+      ? `، عرض ${ar(start + 1)}–${ar(Math.min(start + pageSize, matched.length))}، الصفحة ${ar(page)} من ${ar(totalPages)}`
+      : '');
+    noMatch.hidden = matched.length > 0;
+    for (const pager of pagers) {
+      pager.hidden = totalPages <= 1;
+      const select = pager.querySelector<HTMLSelectElement>('[data-page-select]')!;
+      if (select.options.length !== totalPages) {
+        select.replaceChildren(...Array.from({ length: totalPages }, (_, index) => new Option(ar(index + 1), String(index + 1))));
+      }
+      select.value = String(page);
+      pager.querySelector('[data-page-status]')!.textContent = `من ${ar(totalPages)}`;
+      for (const button of pager.querySelectorAll<HTMLButtonElement>('[data-page-step]')) {
+        button.disabled = Number(button.dataset.pageStep) < 0 ? page === 1 : page === totalPages;
+      }
+    }
+    writeUrl(mode);
+    // Move away from paging controls before a last/first-page button can strand focus.
+    if (moveFocus) focusResult();
+  }
+
+  function apply(requested = 1) {
     const fd = new FormData(form);
     const t = fold(String(fd.get('t') ?? '')).text;
     const meter = String(fd.get('meter') ?? '');
     const rhyme = String(fd.get('rhyme') ?? '');
     const vol = String(fd.get('vol') ?? '');
-    let shown = 0;
+    matched = [];
     firstByRhyme.clear();
     for (const card of cards) {
       const ok =
@@ -141,47 +205,63 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
         (!rhyme || card.dataset.rhyme === rhyme) &&
         (!vol || card.dataset.vol === vol) &&
         (!t || textOf(card).includes(t));
-      card.hidden = !ok;
       if (ok) {
-        shown++;
+        matched.push(card);
         if (!firstByRhyme.has(card.dataset.rhyme!)) firstByRhyme.set(card.dataset.rhyme!, card);
       }
     }
     const labels = [meter && `البحر: ${meter}`, rhyme && `القافية: ${rhyme}`, vol && `الجزء ${vol === '1' ? 'الأول' : 'الثاني'}`].filter(Boolean);
-    filterSummary.textContent = 'تصفية';
     restrictionText.textContent = `القيود: ${labels.join('، ')}`;
     restrictions.hidden = !labels.length;
     for (const button of jumpButtons) button.disabled = !firstByRhyme.has(button.dataset.jumpRhyme!);
-    const filtered = t || meter || rhyme || vol;
-    count.textContent = filtered
-      ? `${arCount(shown, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة'])} من ${ar(cards.length)}`
-      : `في الديوان ${ar(cards.length)} قصيدة`;
-    noMatch.hidden = shown > 0;
-    const params = new URLSearchParams();
-    for (const [k, v] of fd) if (v) params.set(k, String(v));
-    history.replaceState(null, '', params.size ? `?${params}` : location.pathname);
+    renderPage(requested, 'replace');
   }
 
-  form.addEventListener('input', apply);
-  form.addEventListener('submit', (e) => e.preventDefault());
+  function restoreUrl() {
+    const params = new URLSearchParams(location.search);
+    for (const name of ['t', 'meter', 'rhyme', 'vol']) {
+      const control = form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement;
+      control.value = params.get(name) ?? (control instanceof HTMLInputElement ? control.defaultValue : [...control.options].find((option) => option.defaultSelected)?.value ?? '');
+      if (control instanceof HTMLSelectElement && control.selectedIndex < 0) control.value = '';
+    }
+    const rawPage = params.get('page') ?? '1';
+    apply(/^\d+$/.test(rawPage) ? Number(rawPage) : 1);
+  }
+
+  jump.addEventListener('click', (event) => {
+    const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button[data-jump-rhyme]');
+    if (!button || button.disabled) return;
+    const card = firstByRhyme.get(button.dataset.jumpRhyme!);
+    if (!card) return;
+    renderPage(Math.floor(matched.indexOf(card) / pageSize) + 1, 'push');
+    focusResult(card);
+  });
+  for (const pager of pagers) {
+    pager.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-page-step]');
+      if (button && !button.disabled) renderPage(page + Number(button.dataset.pageStep), 'push', true);
+    });
+    pager.querySelector<HTMLSelectElement>('[data-page-select]')!.addEventListener('change', (event) => {
+      renderPage(Number((event.target as HTMLSelectElement).value), 'push', true);
+    });
+  }
+  form.addEventListener('input', () => apply());
+  form.addEventListener('submit', (event) => event.preventDefault());
+  form.addEventListener('reset', () => queueMicrotask(() => apply()));
   document.getElementById('clearFilters')!.addEventListener('click', () => {
     for (const select of form.querySelectorAll('select')) select.value = '';
     apply();
     (form.elements.namedItem('t') as HTMLInputElement).focus();
   });
+  window.addEventListener('popstate', () => {
+    restoreUrl();
+    focusResult();
+  });
 
-  // Enable controls only once their handlers are ready (also covers a failed script download).
+  // Enable only when handlers are ready; failed downloads leave the full static catalogue.
   for (const control of form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select')) control.disabled = false;
-
-  // Restore filters from the URL (e.g. links from the indexes).
-  const params = new URLSearchParams(location.search);
-  if (params.size) {
-    for (const [k, v] of params) {
-      const el = form.elements.namedItem(k);
-      if (el instanceof HTMLInputElement || el instanceof HTMLSelectElement) el.value = v;
-    }
-  }
-  apply();
+  restoreUrl();
+  jump.hidden = false;
   document.getElementById('filterNotice')!.hidden = true;
 </script>
 
@@ -198,7 +278,13 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     min-width: 0;
   }
   .filter-options summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    list-style: none;
     width: fit-content;
+    min-width: 44px;
     min-height: 44px;
     align-content: center;
     padding: 6px 12px;
@@ -209,6 +295,8 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     font-size: 14px;
     cursor: pointer;
   }
+  .filter-options summary::-webkit-details-marker { display: none; }
+  .filter-options summary::marker { content: ""; }
   .filter-fields {
     display: flex;
     flex-wrap: wrap;
@@ -240,6 +328,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   .rhyme-jump button:disabled { opacity: .35; cursor: default; }
   .compact-meta { display: none; }
   .title-filter {
+    min-width: 0;
     flex: 1 1 220px;
     display: flex;
     align-items: center;
@@ -319,6 +408,33 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     font-size: 14px;
     margin: 24px 0 14px;
   }
+  .catalogue-paging {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  .catalogue-paging[hidden] { display: none; }
+  .catalogue-paging label { display: flex; align-items: center; gap: 6px; }
+  .catalogue-paging button, .catalogue-paging select {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 6px 10px;
+    border: 1px solid var(--line-dark);
+    border-radius: 10px;
+    color: var(--ink);
+    background: var(--paper-strong);
+    font: inherit;
+  }
+  .catalogue-paging button { cursor: pointer; }
+  .catalogue-paging button:disabled { opacity: .45; cursor: default; }
+  .count { scroll-margin-top: 100px; }
+  .card-heading { display: flex; align-items: baseline; gap: 10px; min-width: 0; }
+  .card-heading h2 { min-width: 0; }
+  .catalogue-number { flex: none; color: var(--muted); font: 500 14px/1.7 var(--ui-font); font-variant-numeric: tabular-nums; }
   .cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
@@ -370,9 +486,18 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     color: var(--muted);
   }
   @media (max-width: 620px) {
-    .filter-bar { gap: 6px; }
-    .title-filter { flex-basis: 100%; }
-    .filter-options { flex-basis: 100%; }
+    .filter-bar { display: block; position: relative; }
+    .title-filter { margin-inline-end: 50px; }
+    .filter-options summary {
+      position: absolute;
+      top: 10px;
+      inset-inline-end: 10px;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+    }
+    .filter-summary-text { display: none; }
+    .filter-options[open] summary { background: var(--paper); border-color: var(--accent); }
     .filter-fields select { min-width: 0; }
     .count { margin: 12px 0 4px; }
     .cards { grid-template-columns: minmax(0, 1fr); gap: 6px; }

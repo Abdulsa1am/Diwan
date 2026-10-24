@@ -1,0 +1,789 @@
+{
+  "results": [
+    {
+      "name": "320px light",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 17,
+          "y": 95,
+          "width": 286,
+          "height": 177.984375,
+          "cx": 160,
+          "bottom": 272.984375
+        },
+        "heading": {
+          "x": 72.640625,
+          "y": 148.390625,
+          "width": 174.734375,
+          "height": 94.59375,
+          "cx": 160.0078125,
+          "bottom": 242.984375
+        },
+        "poet": {
+          "x": 72.640625,
+          "y": 195.6875,
+          "width": 174.734375,
+          "height": 47.296875,
+          "cx": 160.0078125,
+          "bottom": 242.984375
+        },
+        "ornament": {
+          "x": 72.640625,
+          "y": 148.390625,
+          "width": 174.734375,
+          "height": 47.296875,
+          "cx": 160.0078125,
+          "bottom": 195.6875
+        },
+        "align": "center",
+        "tag": "center",
+        "actions": "center",
+        "search": "none",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 0
+          },
+          {
+            "height": 0
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "320px dark",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 17,
+          "y": 95,
+          "width": 286,
+          "height": 177.984375,
+          "cx": 160,
+          "bottom": 272.984375
+        },
+        "heading": {
+          "x": 72.640625,
+          "y": 148.390625,
+          "width": 174.734375,
+          "height": 94.59375,
+          "cx": 160.0078125,
+          "bottom": 242.984375
+        },
+        "poet": {
+          "x": 72.640625,
+          "y": 195.6875,
+          "width": 174.734375,
+          "height": 47.296875,
+          "cx": 160.0078125,
+          "bottom": 242.984375
+        },
+        "ornament": {
+          "x": 72.640625,
+          "y": 148.390625,
+          "width": 174.734375,
+          "height": 47.296875,
+          "cx": 160.0078125,
+          "bottom": 195.6875
+        },
+        "align": "center",
+        "tag": "center",
+        "actions": "center",
+        "search": "none",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 0
+          },
+          {
+            "height": 0
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "375px light",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 17,
+          "y": 95,
+          "width": 341,
+          "height": 199.484375,
+          "cx": 187.5,
+          "bottom": 294.484375
+        },
+        "heading": {
+          "x": 80.28125,
+          "y": 148.390625,
+          "width": 214.4375,
+          "height": 116.09375,
+          "cx": 187.5,
+          "bottom": 264.484375
+        },
+        "poet": {
+          "x": 80.28125,
+          "y": 206.4375,
+          "width": 214.4375,
+          "height": 58.046875,
+          "cx": 187.5,
+          "bottom": 264.484375
+        },
+        "ornament": {
+          "x": 80.28125,
+          "y": 148.390625,
+          "width": 214.4375,
+          "height": 58.046875,
+          "cx": 187.5,
+          "bottom": 206.4375
+        },
+        "align": "center",
+        "tag": "center",
+        "actions": "center",
+        "search": "none",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 0
+          },
+          {
+            "height": 0
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "375px dark",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 17,
+          "y": 95,
+          "width": 341,
+          "height": 199.484375,
+          "cx": 187.5,
+          "bottom": 294.484375
+        },
+        "heading": {
+          "x": 80.28125,
+          "y": 148.390625,
+          "width": 214.4375,
+          "height": 116.09375,
+          "cx": 187.5,
+          "bottom": 264.484375
+        },
+        "poet": {
+          "x": 80.28125,
+          "y": 206.4375,
+          "width": 214.4375,
+          "height": 58.046875,
+          "cx": 187.5,
+          "bottom": 264.484375
+        },
+        "ornament": {
+          "x": 80.28125,
+          "y": 148.390625,
+          "width": 214.4375,
+          "height": 58.046875,
+          "cx": 187.5,
+          "bottom": 206.4375
+        },
+        "align": "center",
+        "tag": "center",
+        "actions": "center",
+        "search": "none",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 0
+          },
+          {
+            "height": 0
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "430px light",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 18.1875,
+          "y": 95,
+          "width": 393.625,
+          "height": 220.078125,
+          "cx": 215,
+          "bottom": 315.078125
+        },
+        "heading": {
+          "x": 88.796875,
+          "y": 148.390625,
+          "width": 252.40625,
+          "height": 136.6875,
+          "cx": 215,
+          "bottom": 285.078125
+        },
+        "poet": {
+          "x": 88.796875,
+          "y": 216.734375,
+          "width": 252.40625,
+          "height": 68.34375,
+          "cx": 215,
+          "bottom": 285.078125
+        },
+        "ornament": {
+          "x": 88.796875,
+          "y": 148.390625,
+          "width": 252.40625,
+          "height": 68.34375,
+          "cx": 215,
+          "bottom": 216.734375
+        },
+        "align": "center",
+        "tag": "center",
+        "actions": "center",
+        "search": "none",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 0
+          },
+          {
+            "height": 0
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "430px dark",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 18.1875,
+          "y": 95,
+          "width": 393.625,
+          "height": 220.078125,
+          "cx": 215,
+          "bottom": 315.078125
+        },
+        "heading": {
+          "x": 88.796875,
+          "y": 148.390625,
+          "width": 252.40625,
+          "height": 136.6875,
+          "cx": 215,
+          "bottom": 285.078125
+        },
+        "poet": {
+          "x": 88.796875,
+          "y": 216.734375,
+          "width": 252.40625,
+          "height": 68.34375,
+          "cx": 215,
+          "bottom": 285.078125
+        },
+        "ornament": {
+          "x": 88.796875,
+          "y": 148.390625,
+          "width": 252.40625,
+          "height": 68.34375,
+          "cx": 215,
+          "bottom": 216.734375
+        },
+        "align": "center",
+        "tag": "center",
+        "actions": "center",
+        "search": "none",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 0
+          },
+          {
+            "height": 0
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "620px light",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 25.796875,
+          "y": 95,
+          "width": 568.40625,
+          "height": 230.578125,
+          "cx": 310,
+          "bottom": 325.578125
+        },
+        "heading": {
+          "x": 174.09375,
+          "y": 148.390625,
+          "width": 271.8125,
+          "height": 147.1875,
+          "cx": 310,
+          "bottom": 295.578125
+        },
+        "poet": {
+          "x": 174.09375,
+          "y": 221.984375,
+          "width": 271.8125,
+          "height": 73.59375,
+          "cx": 310,
+          "bottom": 295.578125
+        },
+        "ornament": {
+          "x": 174.09375,
+          "y": 148.390625,
+          "width": 271.8125,
+          "height": 73.59375,
+          "cx": 310,
+          "bottom": 221.984375
+        },
+        "align": "center",
+        "tag": "center",
+        "actions": "center",
+        "search": "none",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 0
+          },
+          {
+            "height": 0
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "620px dark",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 25.796875,
+          "y": 95,
+          "width": 568.40625,
+          "height": 230.578125,
+          "cx": 310,
+          "bottom": 325.578125
+        },
+        "heading": {
+          "x": 174.09375,
+          "y": 148.390625,
+          "width": 271.8125,
+          "height": 147.1875,
+          "cx": 310,
+          "bottom": 295.578125
+        },
+        "poet": {
+          "x": 174.09375,
+          "y": 221.984375,
+          "width": 271.8125,
+          "height": 73.59375,
+          "cx": 310,
+          "bottom": 295.578125
+        },
+        "ornament": {
+          "x": 174.09375,
+          "y": 148.390625,
+          "width": 271.8125,
+          "height": 73.59375,
+          "cx": 310,
+          "bottom": 221.984375
+        },
+        "align": "center",
+        "tag": "center",
+        "actions": "center",
+        "search": "none",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 0
+          },
+          {
+            "height": 0
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "800px light",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 33,
+          "y": 95,
+          "width": 734,
+          "height": 280.984375,
+          "cx": 400,
+          "bottom": 375.984375
+        },
+        "heading": {
+          "x": 247.109375,
+          "y": 164.390625,
+          "width": 305.796875,
+          "height": 165.59375,
+          "cx": 400.0078125,
+          "bottom": 329.984375
+        },
+        "poet": {
+          "x": 247.109375,
+          "y": 247.1875,
+          "width": 305.796875,
+          "height": 82.796875,
+          "cx": 400.0078125,
+          "bottom": 329.984375
+        },
+        "ornament": {
+          "x": 247.109375,
+          "y": 164.390625,
+          "width": 305.796875,
+          "height": 82.796875,
+          "cx": 400.0078125,
+          "bottom": 247.1875
+        },
+        "align": "center",
+        "tag": "center",
+        "actions": "center",
+        "search": "none",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 0
+          },
+          {
+            "height": 0
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "800px dark",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 33,
+          "y": 95,
+          "width": 734,
+          "height": 280.984375,
+          "cx": 400,
+          "bottom": 375.984375
+        },
+        "heading": {
+          "x": 247.109375,
+          "y": 164.390625,
+          "width": 305.796875,
+          "height": 165.59375,
+          "cx": 400.0078125,
+          "bottom": 329.984375
+        },
+        "poet": {
+          "x": 247.109375,
+          "y": 247.1875,
+          "width": 305.796875,
+          "height": 82.796875,
+          "cx": 400.0078125,
+          "bottom": 329.984375
+        },
+        "ornament": {
+          "x": 247.109375,
+          "y": 164.390625,
+          "width": 305.796875,
+          "height": 82.796875,
+          "cx": 400.0078125,
+          "bottom": 247.1875
+        },
+        "align": "center",
+        "tag": "center",
+        "actions": "center",
+        "search": "none",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 0
+          },
+          {
+            "height": 0
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "801px light",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 359.671875,
+          "y": 142,
+          "width": 408.296875,
+          "height": 431.84375,
+          "cx": 563.8203125,
+          "bottom": 573.84375
+        },
+        "heading": {
+          "x": 389.671875,
+          "y": 211.390625,
+          "width": 348.296875,
+          "height": 136.15625,
+          "cx": 563.8203125,
+          "bottom": 347.546875
+        },
+        "poet": {
+          "x": 389.671875,
+          "y": 279.46875,
+          "width": 348.296875,
+          "height": 68.078125,
+          "cx": 563.8203125,
+          "bottom": 347.546875
+        },
+        "ornament": {
+          "x": 482.640625,
+          "y": 211.390625,
+          "width": 255.328125,
+          "height": 68.078125,
+          "cx": 610.3046875,
+          "bottom": 279.46875
+        },
+        "align": "start",
+        "tag": "normal",
+        "actions": "normal",
+        "search": "flex",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 50
+          },
+          {
+            "height": 50
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "801px dark",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 359.671875,
+          "y": 142,
+          "width": 408.296875,
+          "height": 431.84375,
+          "cx": 563.8203125,
+          "bottom": 573.84375
+        },
+        "heading": {
+          "x": 389.671875,
+          "y": 211.390625,
+          "width": 348.296875,
+          "height": 136.15625,
+          "cx": 563.8203125,
+          "bottom": 347.546875
+        },
+        "poet": {
+          "x": 389.671875,
+          "y": 279.46875,
+          "width": 348.296875,
+          "height": 68.078125,
+          "cx": 563.8203125,
+          "bottom": 347.546875
+        },
+        "ornament": {
+          "x": 482.640625,
+          "y": 211.390625,
+          "width": 255.328125,
+          "height": 68.078125,
+          "cx": 610.3046875,
+          "bottom": 279.46875
+        },
+        "align": "start",
+        "tag": "normal",
+        "actions": "normal",
+        "search": "flex",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 50
+          },
+          {
+            "height": 50
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "1440px light",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 543.453125,
+          "y": 142,
+          "width": 545.546875,
+          "height": 425.171875,
+          "cx": 816.2265625,
+          "bottom": 567.171875
+        },
+        "heading": {
+          "x": 583.453125,
+          "y": 205.390625,
+          "width": 465.546875,
+          "height": 165.59375,
+          "cx": 816.2265625,
+          "bottom": 370.984375
+        },
+        "poet": {
+          "x": 583.453125,
+          "y": 288.1875,
+          "width": 465.546875,
+          "height": 82.796875,
+          "cx": 816.2265625,
+          "bottom": 370.984375
+        },
+        "ornament": {
+          "x": 738.53125,
+          "y": 205.390625,
+          "width": 310.46875,
+          "height": 82.796875,
+          "cx": 893.765625,
+          "bottom": 288.1875
+        },
+        "align": "start",
+        "tag": "normal",
+        "actions": "normal",
+        "search": "flex",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 50
+          },
+          {
+            "height": 50
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "1440px dark",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 543.453125,
+          "y": 142,
+          "width": 545.546875,
+          "height": 425.171875,
+          "cx": 816.2265625,
+          "bottom": 567.171875
+        },
+        "heading": {
+          "x": 583.453125,
+          "y": 205.390625,
+          "width": 465.546875,
+          "height": 165.59375,
+          "cx": 816.2265625,
+          "bottom": 370.984375
+        },
+        "poet": {
+          "x": 583.453125,
+          "y": 288.1875,
+          "width": 465.546875,
+          "height": 82.796875,
+          "cx": 816.2265625,
+          "bottom": 370.984375
+        },
+        "ornament": {
+          "x": 738.53125,
+          "y": 205.390625,
+          "width": 310.46875,
+          "height": 82.796875,
+          "cx": 893.765625,
+          "bottom": 288.1875
+        },
+        "align": "start",
+        "tag": "normal",
+        "actions": "normal",
+        "search": "flex",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 50
+          },
+          {
+            "height": 50
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "Mobile without JavaScript keeps centered title and native search shortcut",
+      "pass": true,
+      "detail": {
+        "hero": {
+          "x": 17,
+          "y": 95,
+          "width": 341,
+          "height": 199.484375,
+          "cx": 187.5,
+          "bottom": 294.484375
+        },
+        "heading": {
+          "x": 80.28125,
+          "y": 148.390625,
+          "width": 214.4375,
+          "height": 116.09375,
+          "cx": 187.5,
+          "bottom": 264.484375
+        },
+        "poet": {
+          "x": 80.28125,
+          "y": 206.4375,
+          "width": 214.4375,
+          "height": 58.046875,
+          "cx": 187.5,
+          "bottom": 264.484375
+        },
+        "ornament": {
+          "x": 80.28125,
+          "y": 148.390625,
+          "width": 214.4375,
+          "height": 58.046875,
+          "cx": 187.5,
+          "bottom": 206.4375
+        },
+        "align": "center",
+        "tag": "center",
+        "actions": "center",
+        "search": "none",
+        "overflow": false,
+        "buttons": [
+          {
+            "height": 0
+          },
+          {
+            "height": 0
+          }
+        ],
+        "plain": "ديوان الشريف الرضي"
+      }
+    },
+    {
+      "name": "Returning mobile reader has no search gap before continue reading",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

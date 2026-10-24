@@ -5,11 +5,11 @@ Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 
 ## Now
 - Friends' test deployment updated 2026-10-24: https://diwan-alradi-ce6.pages.dev (project `diwan-alradi`, `NOINDEX=1`, font lab retained). Published source: `36ea45a`; deployment: https://03631dae.diwan-alradi-ce6.pages.dev. GitHub has the 37 UX fixes, approved frequency rebuild, balanced title, straight dividers, map picking and release documentation. All 17 live HTTP/browser scenarios passed.
-- Current LOCAL review follow-up: simplify and center the mobile home card, keep its search icon instead of the separate field; add catalogue filter icon, 50-item pagination and index numbering. Owner explicitly requires stopping after local work for review: do not push or deploy these changes without further instruction.
+- LOCAL follow-up ready for owner review: centered/minimal mobile home card, separate search field hidden; catalogue filter icon alongside search, 50-item pages and stable index numbering. All checks passed. Owner explicitly requires stopping here: do not push or deploy these changes without further instruction.
 - Release changes are detailed in `CHANGELOG.md`, `reports/ux-fixes-2026-10-24.md` and `reports/map-picking-2026-10-24.md`; poetry text is unchanged.
 
 ## Next (suggestions)
-1. Finish the local mobile home/catalogue follow-up and wait for owner review before any push/deployment. Check keyboard/fixed-navigation behavior on a real iPhone and spoken screen-reader announcements; desktop browser emulation cannot confirm these.
+1. Wait for owner review of the local mobile home/catalogue follow-up before any push/deployment. Check keyboard/fixed-navigation behavior on a real iPhone and spoken screen-reader announcements; desktop browser emulation cannot confirm these.
 2. Gather friends' feedback on the test deployment and font lab. Keep `NOINDEX=1` until the owner approves public indexing; only then submit the sitemap to search engines.
 3. Text review: the postponed items below, then the friend's `_original/content-review/` lists.
 4. Error reporting ("نبّهنا إلى خطأ") needs a recipient/form service; verse image maker also remains unbuilt.
@@ -28,6 +28,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - [x] **M9 Final QA.** Broken-link check over the whole build, accessibility, performance, SEO, phone and desktop, light and dark.
 
 ## Open questions
+- Owner review pending: centered minimal mobile home card, catalogue filter icon, 50-item pages and catalogue numbering. Explicitly local only until the owner asks to continue.
 - Fonts: the TEMPORARY font lab («مختبر الخطوط», or the T button on phones) ships in the preview deployment on purpose: the owner's friends try fonts and vote. When the fonts are chosen: self-host them with @fontsource, delete `src/components/FontLab.astro`, `src/scripts/font-lab.ts` and every block marked `TEMPORARY font lab` (Base.astro, reader.ts), and redeploy.
 - Text: the 878 "likely"/"needs-review" rows in `reports/text-issues.csv` need the printed book (see `AGENTS.md`).
 - The old share image (`public/share.png`) shows empty boxes where the dots between words should be. Redraw it?
@@ -35,6 +36,7 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - Intros: 121 poems are cleaned using the friend's reviewed boundaries (M1). Other intros may still hold stray glosses. Part of the text review.
 
 ## Done
+- 2026-10-24 (LOCAL ONLY): CLI workers centered/minimized the mobile home card and hid its separate search field, then added an adjacent catalogue filter icon, 50-card pagination (14 pages, last 35), stable Arabic index numbers, URL/history restoration and cross-page rhyme jumps. Lead fixed no-JS ornament centering, removed a repeated total in count copy and normalized LF. Build, verify (1,168 pages; 32,342 verse halves), check and tests pass. Browser: 16 home scenarios and six catalogue scenarios pass; every page's 685-item sequence checked at phone/desktop in both themes, plus filters/history/jumps/no-JS/320px targets. No overflow, console or page errors. Evidence: `output/playwright/home-mobile-center-2026-10-24/` and `output/playwright/catalogue-paging-2026-10-24/`. Poetry/data unchanged. Stop for owner review; not pushed or deployed.
 - 2026-10-24: Added the dated README update section and Arabic `CHANGELOG.md`, checked 14 documentation links, committed and pushed through `36ea45a` to GitHub, then deployed the verified build to Cloudflare Pages (`03631dae-5276-4566-95ea-c83372dd4861`, 1,206 assets plus redirects). Preserved `NOINDEX=1` and the font lab. All 17 live scenarios passed: ten page routes with noindex/one h1, true 404, legacy verse 301 to #v3, correct sitemap/robots address, and home/divider/map interactions at 375/1440px in both themes. No console/page errors. Evidence: `output/playwright/release-2026-10-24/checks.json`. Subsequent mobile adjustments are local only.
 - 2026-10-24: Made overlapping map points selectable with a nearby-place dialog, preserving original coordinates, static links and the native scrollable large view. GPT-6.1 Sol Medium CLI worker implemented; lead corrected mobile click retargeting and kept the close button visible while choices scroll. All 28 centers within the map bounds checked in 16 view/theme/page combinations (448 selections); keyboard, no-JS, gesture cancellation, resize, forced colors and short-screen checks pass. Build, verify, check and tests pass; no poetry/data changes or deployment. Evidence: `reports/map-picking-2026-10-24.md`.
 - 2026-10-24: Straightened verse separators by removing the per-verse corner radius (owner's request). CLI worker made the one-rule change; lead reviewed and checked 375px/desktop, light/dark: straight 1px borders, rounded outer card and number buttons retained, no overflow or page errors. Build, verify, check and tests pass; no poetry/data changes or deployment.

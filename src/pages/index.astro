@@ -477,9 +477,31 @@ const jsonLd = {
   @media (max-width: 800px) {
     .hero {
       grid-template-columns: 1fr;
+      min-height: 0;
+    }
+    .hero-copy {
+      text-align: center;
+    }
+    .tag,
+    .hero-actions {
+      justify-content: center;
+    }
+    h1 {
+      width: fit-content;
+      max-width: 100%;
+      margin-inline: auto;
+    }
+    .diwan-ornament {
+      inset-inline: 0;
+    }
+    .hero-copy > p {
+      margin-inline: auto;
     }
     .hero-art,
-    .welcome {
+    .welcome,
+    .home-search,
+    .hero-actions,
+    .hero-copy > p {
       display: none;
     }
     .home-duo {
@@ -495,7 +517,7 @@ const jsonLd = {
       font-size: clamp(38px, 13vw, 64px);
       font-size: clamp(32px, 17cqi, 64px);
       line-height: 1.15;
-      margin: 10px 0;
+      margin: 10px auto;
     }
     .hero-copy {
       padding: 20px 22px;
