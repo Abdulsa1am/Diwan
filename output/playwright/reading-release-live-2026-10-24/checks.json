@@ -1,0 +1,152 @@
+{
+  "base": "https://diwan-alradi-ce6.pages.dev",
+  "results": [
+    {
+      "name": "HTTP /",
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "noindex": true
+      }
+    },
+    {
+      "name": "HTTP /diwan/",
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "noindex": true
+      }
+    },
+    {
+      "name": "HTTP /poem/r1-227/",
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "noindex": true
+      }
+    },
+    {
+      "name": "HTTP /search/",
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "noindex": true
+      }
+    },
+    {
+      "name": "HTTP /saved/",
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "noindex": true
+      }
+    },
+    {
+      "name": "HTTP /explore/atlas/",
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "noindex": true
+      }
+    },
+    {
+      "name": "HTTP /place/بغداد/",
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "noindex": true
+      }
+    },
+    {
+      "name": "HTTP /explore/words/",
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "noindex": true
+      }
+    },
+    {
+      "name": "HTTP /research/compare/",
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "noindex": true
+      }
+    },
+    {
+      "name": "HTTP /word/النقع/",
+      "pass": true,
+      "detail": {
+        "status": 200,
+        "noindex": true
+      }
+    },
+    {
+      "name": "Unknown route is a real 404",
+      "pass": true,
+      "detail": {
+        "status": 404
+      }
+    },
+    {
+      "name": "Legacy verse redirect retains anchor",
+      "pass": true,
+      "detail": {
+        "status": 301,
+        "location": "/poem/r1-227/#v3"
+      }
+    },
+    {
+      "name": "Sitemap and robots use assigned address",
+      "pass": true,
+      "detail": {
+        "sitemapUrls": 1166
+      }
+    },
+    {
+      "name": "375 light: live home resume, catalogue, verse actions and maps",
+      "pass": true,
+      "detail": {
+        "title": true,
+        "straightDividers": true,
+        "atlasSelection": true,
+        "profileSelection": true,
+        "noOverflow": true
+      }
+    },
+    {
+      "name": "375 dark: live home resume, catalogue, verse actions and maps",
+      "pass": true,
+      "detail": {
+        "title": true,
+        "straightDividers": true,
+        "atlasSelection": true,
+        "profileSelection": true,
+        "noOverflow": true
+      }
+    },
+    {
+      "name": "1440 light: live home resume, catalogue, verse actions and maps",
+      "pass": true,
+      "detail": {
+        "title": true,
+        "straightDividers": true,
+        "atlasSelection": true,
+        "profileSelection": true,
+        "noOverflow": true
+      }
+    },
+    {
+      "name": "1440 dark: live home resume, catalogue, verse actions and maps",
+      "pass": true,
+      "detail": {
+        "title": true,
+        "straightDividers": true,
+        "atlasSelection": true,
+        "profileSelection": true,
+        "noOverflow": true
+      }
+    }
+  ],
+  "errors": []
+}

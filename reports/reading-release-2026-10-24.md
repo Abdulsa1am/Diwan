@@ -21,4 +21,10 @@ Validation:
 
 Mobile Chrome emulation confirmed long-hold suppression; it did not expose native text-selection handles. Desktop native selection was observed. Native touch selection handles and spoken screen-reader output still need physical-device verification; the application leaves their native events untouched.
 
-Deployment status and the resulting URL/commit are recorded in `PROGRESS.md` after live verification. The friends' test retains `NOINDEX=1` and the font lab.
+## Publication and live verification
+
+Application source `afd31d7ae483e830c6f4b72ec5c96b70a4c52d6b` was pushed to GitHub before publication. Cloudflare deployment `4d4f8d46-3383-4d28-b688-619f152949df` succeeded at [the deployment address](https://4d4f8d46.diwan-alradi-ce6.pages.dev) and serves [the friends' test](https://diwan-alradi-ce6.pages.dev). Its manifest contains 1,206 assets plus the redirect configuration: 726 newly uploaded and 480 reused. No credentials were written to project files or printed.
+
+All [17 live checks](../output/playwright/reading-release-live-2026-10-24/checks.json) passed: ten page routes returned200 with one h1 and noindex; an unknown URL returned404; the legacy verse route returned301 to #v3; sitemap/robots used the assigned address. At375/1440px in light/dark, real-browser checks confirmed the home resume-entry URL, 100-card catalogue and one bottom pager, grouped poem metadata, text-tap verse actions and atlas/profile selection. No console/page errors or horizontal overflow were observed. The friends' test retains `NOINDEX=1` and the font lab.
+
+The final documentation-only commit records these results; application assets correspond to source `afd31d7`.
