@@ -1,0 +1,8 @@
+[
+  {
+    "level": "error",
+    "message": "TypeError: Cannot read properties of undefined (reading 'text')\n    at f (https://diwan-alradi-ce6.pages.dev/_astro/compare.astro_astro_type_script_index_0_lang.CQjCWhy3.js:1:1389)",
+    "timestamp": "2026-10-24T03:22:32.985Z",
+    "url": "https://diwan-alradi-ce6.pages.dev/_astro/compare.astro_astro_type_script_index_0_lang.CQjCWhy3.js"
+  }
+]

@@ -1,0 +1,32 @@
+[
+  {
+    "url": "https://diwan-alradi-ce6.pages.dev/",
+    "status": 200,
+    "location": ""
+  },
+  {
+    "url": "https://diwan-alradi-ce6.pages.dev/does-not-exist/",
+    "status": 404,
+    "location": ""
+  },
+  {
+    "url": "https://diwan-alradi-ce6.pages.dev/poem/r1-227/verse/3",
+    "status": 301,
+    "location": "/poem/r1-227/#v3"
+  },
+  {
+    "url": "https://diwan-alradi-ce6.pages.dev/explore/openings",
+    "status": 301,
+    "location": "/explore/matali/"
+  },
+  {
+    "url": "https://diwan-alradi-ce6.pages.dev/research/observatory",
+    "status": 301,
+    "location": "/explore/stats/"
+  },
+  {
+    "url": "https://diwan-alradi-ce6.pages.dev/relation/%D8%A7%D9%84%D8%AF%D9%87%D8%B1",
+    "status": 301,
+    "location": "/explore/relations/#%D8%A7%D9%84%D8%AF%D9%87%D8%B1"
+  }
+]
