@@ -4,6 +4,7 @@ Where the rebuild stands. Short and current: what's done, what's next, what's op
 Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 
 ## Now
+- Release preparation (2026-10-24): README has a dated update section and `CHANGELOG.md` records the full UX release plus title, dividers and map selection follow-ups. Owner requested GitHub push followed by Cloudflare deployment; publishing and live verification are in progress.
 - All nine milestones done. Friends' test deployment is live on Cloudflare Pages: https://diwan-alradi-ce6.pages.dev (project `diwan-alradi`, built with `NOINDEX=1`).
 - UX fixing phase implemented (2026-10-24): all 37 audit findings addressed by four GPT-6.1 Sol Medium CLI workers and lead review. Includes the owner's approved frequency rebuild (238 normalized entries); existing edition text/data unchanged. Results: `reports/ux-fixes-2026-10-24.md`. Changes are local and await redeployment; the live friends' test still has the earlier version.
 - Home title adjusted to the owner's feedback: «ديوان» uses natural kashida to balance the width of «الشريف الرضي». Local preview only; the plain heading remains available to search, copying and assistive technology.
