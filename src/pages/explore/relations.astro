@@ -33,7 +33,7 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
     </p>
   </PageHead>
 
-  <label class="find glass"><span>تصفية المداخل</span><input id="findRelations" type="search" placeholder="ابحث عن لفظة أو موضع…" autocomplete="off" /></label>
+  <label class="find glass"><span class="visually-hidden">تصفية المداخل</span><input id="findRelations" type="search" placeholder="ابحث عن لفظة أو موضع" autocomplete="off" /></label>
   <p id="relationsCount" role="status" aria-live="polite"></p>
   {
     groups.map((g) => (
@@ -110,7 +110,7 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
 
 <style>
   .find { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 14px; }
-  .find input { flex: 1 1 200px; min-width: 0; min-height: 44px; font: var(--fs-md) var(--ui-font); color: var(--ink); background: var(--paper-strong); border: 1px solid var(--glass-border); border-radius: 8px; padding: 6px 10px; }
+  .find input { flex: 1 1 100%; min-width: 0; min-height: 44px; font: var(--fs-md) var(--ui-font); color: var(--ink); background: var(--paper-strong); border: 1px solid var(--glass-border); border-radius: 8px; padding: 6px 10px; }
   #relationsCount { font-size: var(--fs-sm); color: var(--muted); }
   #relationsCount:empty { margin: 0; }
   .terms > li[hidden], .relation-group[hidden] { display: none; }

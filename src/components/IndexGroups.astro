@@ -143,13 +143,19 @@ const max = Astro.props.max ?? Math.max(...groups.map((g) => g.poems.length));
     padding: 8px 10px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
-    gap: 2px 12px;
+    gap: 0 12px;
+  }
+  .poems > li {
+    border-bottom: 1px solid var(--line-dark);
+  }
+  .poems > li:last-child {
+    border-bottom: 0;
   }
   .poems a {
     min-height: 44px;
     display: flex;
     flex-direction: column;
-    padding: 8px 10px;
+    padding: 10px;
     border-radius: 10px;
     text-decoration: none;
     color: var(--ink);
