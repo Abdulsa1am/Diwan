@@ -87,7 +87,8 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 ## Deployment
 - Cloudflare Pages project `diwan-alradi` in the owner's account: https://diwan-alradi-ce6.pages.dev (the old site keeps `diwan-alradi.pages.dev`, which belongs to the friend).
 - Current deployment is a **test for friends**: built with `NOINDEX=1` and the font lab on. Remove `NOINDEX` and the font lab only when the owner says the site is final.
-- Redeploy: `SITE_URL=https://diwan-alradi-ce6.pages.dev NOINDEX=1 npm run build`, `npm run verify`, then `npx wrangler pages deploy dist --project-name=diwan-alradi --branch=main` (or through the Codex Cloudflare plugin with `--approve-for-me`; without it MCP calls fail with "approval policy is never").
+- Cloudflare is driven through the **Wrangler CLI** (`npx wrangler`, installed in the project), not a Cloudflare plugin. It is signed in with the owner's account via OAuth (check with `npx wrangler whoami`; if signed out, the owner runs `npx wrangler login`). The token has wide write access, so run deploys or any account change only when the owner asks.
+- Redeploy: `SITE_URL=https://diwan-alradi-ce6.pages.dev NOINDEX=1 npm run build`, `npm run verify`, then `npx wrangler pages deploy dist --project-name=diwan-alradi --branch=main`. List past deployments with `npx wrangler pages deployment list --project-name=diwan-alradi`.
 - After every deploy, check the live site: pages 200, `/does-not-exist/` 404, `/poem/r1-227/verse/3` 301 to `#v3`, sitemap on the right address.
 
 ## Working with sub-agents (owner's decision)
