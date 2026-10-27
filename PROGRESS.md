@@ -10,6 +10,7 @@ Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 - Waiting on the owner: font lab removal, `share.png` redraw, and whether to merge the identity-samples branch (see Open questions).
 
 ## Next (suggestions)
+- Fix the QA sweep findings, High first (`reports/qa-sweep-2026-10-27.md`).
 0. Gather friends' feedback on the «وَرَق» identity (deployed 2026-10-27).
 1. Gather feedback on the published home/catalogue/reading update. Check native long-press selection and spoken screen-reader behavior on actual phones; desktop emulation cannot confirm platform selection handles.
 2. Gather friends' feedback on the test deployment and font lab. Keep `NOINDEX=1` until the owner approves public indexing; only then submit the sitemap to search engines.
@@ -39,6 +40,8 @@ UX problems to fix are listed with evidence in `reports/ux-audit.md`.
 - Intros: 121 poems are cleaned using the friend's reviewed boundaries (M1). Other intros may still hold stray glosses. Part of the text review.
 
 ## Done
+- 2026-10-27: QA sweep by five Sonnet testers (shell/home/saved, poem reader, catalogue/search, indexes/lexicon, tools) at 320–1280px in three themes; lead reproduced the top five. 3 High (phrase tree ignores Enter, `#vN` deep links land off-screen on long poems, split words across halves unsearchable), 13 Medium, ~30 Low. No console errors, overflow or broken links; text matches the edition for all 685 poems. Report: `reports/qa-sweep-2026-10-27.md`. Nothing fixed yet.
+- 2026-10-27: Deploys now documented through the Wrangler CLI (signed in with the owner's account) instead of the Codex Cloudflare plugin.
 - 2026-10-27: Mobile scroll felt heavy on card-heavy pages. Cause: a backdrop blur on every `.glass` card (50 at once on `/diwan`) plus a second, `background-attachment: fixed` copy of the background on `body`. Lead did it directly (owner stopped the Codex worker): `.glass` keeps surface/rim/sheen/shadows but no blur; new `.glass-float` adds the blur only on floating surfaces (verse menu, saved undo, sticky lexicon/matali search, about facts, font lab; bars and sidebar keep theirs); poem sheet blur removed; body background image removed, `.backdrop` on its own layer. `content-visibility` skipped (equal-height grid rows would jump). On `/diwan` at 375px only the two bars still blur. Checks pass; checked 375px/desktop, light/dark, no overflow or console errors. Not measured on a real phone. Deployed (see Now).
 - 2026-10-27: Owner's index-page review, done by the lead. Rhymes and lexicon letter bars are an equal-cell grid (7×4 on phones, 4×7 under 360px, 14×2 on desktop); the rhymes grid shows the letter itself with «قافية …» as its label. A line now separates poems inside every index group (rhymes, themes, meters, people and places). Stats totals smaller and centred. Relations filter label visually hidden so the placeholder fits. Checked 7 pages at 320/375/1280px: no overflow. Deployed (see Now).
 - 2026-10-27: Removed the mobile browsers' light-blue tap box (owner found it ugly): `-webkit-tap-highlight-color: transparent`; tiles, cards, buttons, chips and nav links shrink slightly while pressed (fade instead with reduced motion); keyboard focus rings unchanged. Deployed (see Now).
