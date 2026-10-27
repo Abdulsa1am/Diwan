@@ -4,7 +4,7 @@ Where the rebuild stands. Short and current: what's done, what's next, what's op
 Rules and lasting decisions live in `AGENTS.md`; this file is the running log.
 
 ## Now
-- Friends' test updated 2026-10-27 (fourth time): https://diwan-alradi-ce6.pages.dev (`diwan-alradi`, `NOINDEX=1`, font lab retained). Source `2043fc1` (tap highlight removed on top of `b550e18`), pushed to GitHub; deployment https://98cb4d40.diwan-alradi-ce6.pages.dev (1,201 files: 1,169 uploaded, 32 reused, plus redirects). Live: pages 200 with noindex, true 404, verse 301, new CSS served.
+- Friends' test updated 2026-10-27 (fifth time): https://diwan-alradi-ce6.pages.dev (`diwan-alradi`, `NOINDEX=1`, font lab retained). Source `f7acdc4` (index-page fixes), pushed to GitHub; deployment https://5a51a8df.diwan-alradi-ce6.pages.dev (40 files uploaded, 1,161 reused, plus redirects). Live: 8 pages 200 with noindex and one h1, true 404, verse 301, sitemap; 16 browser loads (4 index pages, 320/375px, light/navy): no overflow, full letter-grid rows, relations placeholder fits.
 - Live checks passed: 10 pages 200 with noindex, one h1 and the settings button; true 404; `/poem/r1-227/verse/3` 301 to `#v3`; sitemap/robots on the right address; 12 browser loads (home and three poems at 320/375/412px with enlarged text, in all three themes): no overflow, Mirza loaded, equal tiles without descriptions, no wrapped verse halves.
 - Waiting on the owner: font lab removal, `share.png` redraw, and whether to merge the identity-samples branch (see Open questions).
 
