@@ -47,9 +47,6 @@ const labels = dots.map((d, i) => {
 
 <figure class="atlas-map glass">
   <input class="map-size-toggle" id={sizeId} type="checkbox" />
-  <label class="map-size-label" for={sizeId}>خريطة كبيرة قابلة للتمرير</label>
-  <a class="list-link" href="/explore/atlas/#places-list">قائمة جميع المواضع</a>
-  <p class="map-help">فعّل العرض الكبير لقراءة الأسماء، ثم مرّر الخريطة أفقيًا وعموديًا. ويمكنك اختيار الموضع من القائمة.</p>
   <div class="map-viewport" tabindex="0" role="region" aria-label="الخريطة، قابلة للتمرير عند تكبيرها">
   <svg viewBox={mapViewBox} role="group" aria-label={label}>
     <g class="land">
@@ -83,7 +80,12 @@ const labels = dots.map((d, i) => {
     </g>
   </svg>
   </div>
-  <figcaption>حجم النقطة على قدر شواهد الموضع في الأبيات. المواضع بلا إحداثيات مذكورة في القائمة.</figcaption>
+  <div class="map-controls">
+    <label class="map-size-label" for={sizeId}>تكبير الخريطة</label>
+    {focus && <a class="list-link" href="/explore/atlas/#places-list">قائمة المواضع</a>}
+  </div>
+  <p class="map-help">مرّر الخريطة أفقيًا وعموديًا.</p>
+  <figcaption>حجم النقطة على قدر شواهد الموضع.</figcaption>
   <dialog class="map-picker" aria-labelledby={`${instanceId}-title`} aria-describedby={`${instanceId}-description`}>
     <h2 id={`${instanceId}-title`}>مواضع متقاربة</h2>
     <p id={`${instanceId}-description`}>اختر الموضع</p>
@@ -114,11 +116,16 @@ const labels = dots.map((d, i) => {
     --map-river: color-mix(in srgb, var(--accent) 80%, #111d2b);
   }
   .map-size-toggle {
-    width: 20px;
-    height: 20px;
-    vertical-align: middle;
-    margin: 8px;
-    accent-color: var(--accent);
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+  .map-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 8px;
   }
   .map-size-label, .list-link {
     display: inline-flex;
@@ -127,14 +134,34 @@ const labels = dots.map((d, i) => {
     padding: 4px 8px;
     font-size: 14px;
   }
-  .map-size-label {
-    cursor: pointer;
+  .map-size-label { cursor: pointer; }
+  .map-size-label::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    margin-inline-end: 8px;
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+  }
+  .map-size-toggle:checked ~ .map-controls .map-size-label::before {
+    content: '\2713';
+    display: grid;
+    place-items: center;
+    background: var(--accent);
+    color: var(--bg);
+    line-height: 1;
+  }
+  .map-size-toggle:focus-visible ~ .map-controls .map-size-label {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
   .map-help {
-    margin: 0 8px 8px;
+    display: none;
+    margin: 0 8px;
     font-size: 13px;
     color: var(--muted);
   }
+  .map-size-toggle:checked ~ .map-help { display: block; }
   .map-viewport {
     overflow: auto;
     max-height: 70vh;

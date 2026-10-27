@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { poems, ar, SITE_NAME } from '../lib/diwan';
+import { poems, SITE_NAME } from '../lib/diwan';
 
 const meters = [...new Set(poems.map((p) => p.meter))].sort((a, b) => a.localeCompare(b, 'ar'));
 const rhymes = [...new Set(poems.map((p) => p.rhyme))];
@@ -13,7 +13,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
 >
   <header class="page-head">
     <h1>البحث في الديوان</h1>
-    <p>ابحث بلفظة أو شطر من بيت. لا يضر اختلاف التشكيل أو صور الهمزة.</p>
+    <p>لا يضر اختلاف التشكيل أو صور الهمزة.</p>
   </header>
 
   <form class="search-box glass" id="searchForm" role="search" action="/search/" method="get">
@@ -69,9 +69,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     <span id="searchRestrictionText"></span>
     <button class="btn" type="button" id="clearRestrictions">إزالة القيود</button>
   </div>
-  <div class="status" id="searchStatus" role="status" aria-live="polite">
-    اكتب لفظة للبحث في {ar(poems.length)} قصيدة.
-  </div>
+  <div class="status" id="searchStatus" role="status" aria-live="polite"></div>
   <button class="btn" id="retrySearch" type="button" hidden>إعادة المحاولة</button>
   <ol class="results" id="results"></ol>
   <button class="btn more" id="more" type="button" hidden>عرض المزيد</button>
@@ -224,7 +222,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     const terms = queryTerms(s.q, s.mode === 'exact');
     if (!terms.length) {
       tips.hidden = false;
-      statusEl.textContent = 'اكتب لفظة للبحث في الديوان.';
+      statusEl.textContent = '';
       return;
     }
     tips.hidden = true;

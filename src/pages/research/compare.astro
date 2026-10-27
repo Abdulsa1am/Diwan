@@ -13,11 +13,10 @@ import { SITE_NAME, poems } from '../../lib/diwan';
 >
   <PageHead
     title="مقارنة قصيدتين"
-    lede="اختر قصيدتين لترى البحر والقافية والطول والمطلع، والألفاظ التي تشتركان فيها."
     parent={{ label: 'الفهارس', href: '/explore/' }}
   />
 
-  <form class="pickers glass" id="compareForm">
+  <form class="pickers" id="compareForm">
     <label>
       <span>القصيدة الأولى</span>
       <select name="a" data-poem-select></select>
@@ -204,7 +203,6 @@ import { SITE_NAME, poems } from '../../lib/diwan';
     grid-template-columns: 1fr auto 1fr;
     align-items: end;
     gap: 10px;
-    padding: 12px;
     margin-bottom: 10px;
   }
   .pickers label {

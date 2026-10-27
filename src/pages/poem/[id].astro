@@ -64,10 +64,13 @@ const jsonLd = {
     data-first={opening.sadr}
     data-citation={citation}
   >
-    <a class="back" href="/diwan/">
-      <svg class="ui-icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
-      العودة إلى الديوان
-    </a>
+    <div class="reader-top">
+      <a class="back" href="/diwan/" aria-label="العودة إلى الديوان">
+        <svg class="ui-icon" aria-hidden="true"><use href="#i-arrow-right"></use></svg>
+        الديوان
+      </a>
+      <span class="citation-line">الجزء {ar(poem.volume)}، ص {pages}</span>
+    </div>
 
     <header class="reader-head" id="readerHead">
       <h1>{poem.title}</h1>
@@ -75,10 +78,7 @@ const jsonLd = {
         <span class="chip">{poem.meter}</span>
         <span class="chip">روي {poem.rhyme}</span>
         <span class="chip">{versesLabel(count)}</span>
-        <span class="chip">الجزء {ar(poem.volume)}</span>
-        <span class="chip">ص {pages}</span>
-        {poem.linkedNoteCount > 0 && <span class="chip">شروح الأبيات {ar(poem.linkedNoteCount)}</span>}
-        {poem.notes.length > 0 && <a class="chip residual-shortcut" href="#residualNotes">{poem.linkedNoteCount > 0 ? 'حواشٍ أخرى' : 'الحواشي'} ({ar(poem.notes.length)})</a>}
+        {poem.notes.length > 0 && <a class="residual-shortcut" href="#residualNotes">{poem.linkedNoteCount > 0 ? 'حواشٍ أخرى' : 'الحواشي'} ({ar(poem.notes.length)})</a>}
       </div>
       <div class="poem-actions" role="toolbar" aria-label="أدوات القصيدة">
         <button class="btn" type="button" data-action="save" aria-pressed="false" aria-label="حفظ القصيدة في محفوظاتي">
@@ -257,15 +257,26 @@ const jsonLd = {
     font-size: 14px;
     color: var(--muted);
     text-decoration: none;
-    min-height: 40px;
+    min-height: 44px;
   }
   .back:hover {
     color: var(--accent);
   }
+  .reader-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .citation-line {
+    color: var(--muted);
+    font-size: 13px;
+    white-space: nowrap;
+  }
 
   .reader-head {
     text-align: center;
-    padding: 8px 0 18px;
+    padding: 0 0 12px;
   }
   h1 {
     font-size: clamp(38px, 6vw, 52px);
@@ -275,19 +286,26 @@ const jsonLd = {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
     gap: 6px;
   }
   .residual-shortcut {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
+    padding: 0 4px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .residual-shortcut:hover {
+    color: var(--accent);
   }
   .poem-actions {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px;
-    margin-top: 14px;
+    margin-top: 8px;
   }
   .poem-actions .btn {
     padding: 7px 14px;

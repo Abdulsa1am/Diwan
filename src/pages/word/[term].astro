@@ -42,11 +42,9 @@ const description = `${word.headword}: ${first.meaning} وردت في قصيدة
             الجزء {ar(g.poem.volume)}، ص {ar(g.page)}
             {g.source && (
               <>
-                {' '}
-                ،{' '}
-                <a href={g.source} rel="noopener" target="_blank">
-                  الصفحة في النسخة الرقمية
-                </a>
+                {' ('}
+                <a href={g.source} rel="noopener" target="_blank">النسخة الرقمية</a>
+                {')'}
               </>
             )}
           </p>

@@ -26,7 +26,7 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
 <Base title={title} description={description} section="indexes">
   <PageHead
     title="شبكة العلاقات"
-    lede={`لكل لفظة أو موضع: أكثر ما يجتمع معه في القصائد نفسها. ${ar(terms.length)} مدخلًا.`}
+    lede="الألفاظ والمواضع التي تجتمع في القصائد؛ الأرقام عدد القصائد المشتركة."
     parent={{ label: 'الفهارس', href: '/explore/' }}
   >
     <p class="caveat">
@@ -34,21 +34,22 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
     </p>
   </PageHead>
 
+  <label class="find glass"><span>تصفية المداخل</span><input id="findRelations" type="search" placeholder="ابحث عن لفظة أو موضع…" autocomplete="off" /></label>
+  <p id="relationsCount" role="status" aria-live="polite"></p>
   {
     groups.map((g) => (
-      <section aria-labelledby={`g-${g.type}`}>
+      <section class="relation-group" aria-labelledby={`g-${g.type}`}>
         <h2 class="group-title" id={`g-${g.type}`}>
           {g.title}
         </h2>
         <ul class="terms">
           {g.terms.map((t) => (
-            <li id={t.label}>
+            <li id={t.label} data-term={t.label}>
               <details>
                 <summary>
                   <span class="disclosure" aria-hidden="true">⌄</span><b>{t.label}</b>
                   <small>{arCount(t.poems, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة'])}</small>
                 </summary>
-                <p class="with">يجتمع في القصائد مع (الأرقام عدد القصائد المشتركة):</p>
                 <ul class="related">
                   {t.related.slice(0, 12).map((r) => (
                     <li>
@@ -75,11 +76,31 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
 </Base>
 
 <script>
+  import { fold } from '../../scripts/arabic-search';
+  import { arCount } from '../../scripts/shared';
+  const input = document.getElementById('findRelations') as HTMLInputElement;
+  const status = document.getElementById('relationsCount')!;
+  const items = [...document.querySelectorAll<HTMLLIElement>('.terms > li')].map((li) => ({ li, term: fold(li.dataset.term ?? '').text }));
+  const filter = () => {
+    const q = fold(input.value).text;
+    let shown = 0;
+    for (const { li, term } of items) {
+      li.hidden = Boolean(q) && !term.includes(q);
+      if (!li.hidden) shown++;
+    }
+    for (const group of document.querySelectorAll<HTMLElement>('.relation-group')) {
+      group.hidden = !group.querySelector('.terms > li:not([hidden])');
+    }
+    status.textContent = q ? arCount(shown, ['مدخل واحد', 'مدخلان', 'مداخل', 'مدخلًا']) : '';
+  };
+  input.addEventListener('input', filter);
+  input.addEventListener('search', filter);
   // Opening a #term link unfolds that entry.
   function openTarget() {
     const id = decodeURIComponent(location.hash.slice(1));
     const el = id && document.getElementById(id);
     if (el) {
+      if (el.hidden) { input.value = ''; filter(); }
       el.querySelector('details')?.setAttribute('open', '');
       el.scrollIntoView({ block: 'start' });
     }
@@ -89,6 +110,11 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
 </script>
 
 <style>
+  .find { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 14px; }
+  .find input { flex: 1 1 200px; min-width: 0; min-height: 44px; font: 16px var(--ui-font); color: var(--ink); background: var(--paper-strong); border: 1px solid var(--glass-border); border-radius: 8px; padding: 6px 10px; }
+  #relationsCount { font-size: 14px; color: var(--muted); }
+  #relationsCount:empty { margin: 0; }
+  .terms > li[hidden], .relation-group[hidden] { display: none; }
   .caveat {
     font-size: 13px;
     color: var(--muted);
@@ -142,11 +168,6 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
   .related small {
     font-size: 13px;
     color: var(--muted);
-  }
-  .with {
-    font-size: 13px;
-    color: var(--muted);
-    margin: 0 14px 4px;
   }
   .related {
     list-style: none;

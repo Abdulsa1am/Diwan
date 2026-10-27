@@ -11,7 +11,7 @@ const description = `معجم لـ${ar(lexicon.length)} لفظة من ألفاظ
 <Base title={title} description={description} section="lexicon">
   <PageHead
     title="معجم الألفاظ"
-    lede={`${ar(lexicon.length)} لفظة شُرحت في حواشي الديوان، مع البيت الذي شُرحت فيه. افتح اللفظة لترى مواضعها الأخرى.`}
+    lede={`${ar(lexicon.length)} لفظة شُرحت في حواشي الديوان، مع البيت الذي شُرحت فيه.`}
     parent={{ label: 'الفهارس', href: '/explore/' }}
   />
 
@@ -152,13 +152,14 @@ const description = `معجم لـ${ar(lexicon.length)} لفظة من ألفاظ
   .words a {
     display: flex;
     flex-direction: column;
-    padding: 10px 14px;
+    padding: 6px 12px;
+    min-height: 44px;
     border-radius: 14px;
     background: var(--paper);
     border: 1px solid var(--glass-border);
     text-decoration: none;
     color: var(--ink);
-    line-height: 1.6;
+    line-height: 1.4;
     height: 100%;
   }
   .words a:hover {
@@ -166,7 +167,7 @@ const description = `معجم لـ${ar(lexicon.length)} لفظة من ألفاظ
   }
   .words b {
     font-family: var(--poem-font);
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 400;
   }
   .words span {

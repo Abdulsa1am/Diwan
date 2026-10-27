@@ -33,7 +33,7 @@ const description = `توزيع قصائد الشريف الرضي على حرو
 <Base title={title} description={description} section="indexes">
   <PageHead
     title="عجلة القوافي"
-    lede="كل قطاع حرف روي، وطوله على قدر قصائده في الديوان. اختر قطاعًا أو حرفًا من القائمة لتنتقل إلى قصائده؛ القائمة أسهل للحروف ذات القطاعات الضيقة."
+    lede="يمثل كل قطاع حرف روي، وطوله على قدر قصائده."
     parent={{ label: 'الفهارس', href: '/explore/' }}
   />
 
@@ -59,7 +59,6 @@ const description = `توزيع قصائد الشريف الرضي على حرو
   </div>
 
   <h2 id="legendTitle" tabindex="-1">اختر حرف الروي</h2>
-  <p class="legend-note">كل الحروف متاحة هنا، بما فيها الحروف قليلة القصائد.</p>
   <ul class="legend" aria-labelledby="legendTitle">
     {
       rhymeGroups.map((g) => (

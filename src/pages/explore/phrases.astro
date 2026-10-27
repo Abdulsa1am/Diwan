@@ -11,7 +11,7 @@ import { SITE_NAME } from '../../lib/diwan';
 >
   <PageHead
     title="شجرة العبارة"
-    lede="اكتب لفظة لترى ما يسبقها وما يليها في أبيات الديوان. اختر كلمة لتمدّ العبارة بها."
+    lede="اكتب لفظة لترى ما يسبقها وما يليها في الأبيات."
     parent={{ label: 'الفهارس', href: '/explore/' }}
   />
 
@@ -21,7 +21,11 @@ import { SITE_NAME } from '../../lib/diwan';
     <button class="btn btn-primary" type="submit">ابنِ الشجرة</button>
   </form>
 
-  <p class="status" id="phraseStatus" role="status" aria-live="polite">جرّب: الدهر، الزمان، الشيب، بغداد.</p>
+  <div class="examples" aria-label="جرّب">
+    <span>جرّب:</span>
+    {['الدهر', 'الزمان', 'الشيب', 'بغداد'].map((word) => <a href={`/explore/phrases/?q=${word}`}>{word}</a>)}
+  </div>
+  <p class="status" id="phraseStatus" role="status" aria-live="polite"></p>
 
   <button class="btn" id="phraseRetry" type="button" hidden>أعد المحاولة</button>
 
@@ -60,7 +64,6 @@ import { SITE_NAME } from '../../lib/diwan';
   const retry = document.getElementById('phraseRetry') as HTMLButtonElement;
   const digits = new Intl.NumberFormat('ar-EG');
   let generation = 0;
-  const prompt = 'جرّب: الدهر، الزمان، الشيب، بغداد.';
 
   function queryURL(query: string) {
     const url = new URL(location.href);
@@ -76,7 +79,7 @@ import { SITE_NAME } from '../../lib/diwan';
     document.getElementById('before')!.replaceChildren();
     document.getElementById('after')!.replaceChildren();
     phraseEl.textContent = '';
-    statusEl.textContent = prompt;
+    statusEl.textContent = '';
     queryURL('');
   }
   // Speculative loading must never create an unhandled rejection.
@@ -228,6 +231,9 @@ import { SITE_NAME } from '../../lib/diwan';
   .phrase-form input:focus {
     outline: none;
   }
+  .examples { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; }
+  .examples a { display: inline-flex; align-items: center; min-height: 44px; padding: 4px 10px; border-radius: 10px; background: var(--paper); border: 1px solid var(--glass-border); color: var(--ink); font-family: var(--poem-font); font-size: 18px; text-decoration: none; }
+  .status:empty { display: none; }
   .status {
     color: var(--muted);
     font-size: 14px;

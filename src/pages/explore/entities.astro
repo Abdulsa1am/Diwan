@@ -17,7 +17,7 @@ const description = `الأعلام والمواضع التي وردت في أب
     lede="أسماء الناس والأماكن التي وردت في الأبيات، والقصائد التي ذُكرت فيها."
     parent={{ label: 'الفهارس', href: '/explore/' }}
   >
-    <p class="caveat">الحصر بمطابقة الاسم في النص؛ قد يدخل فيه من يوافق اسمه اسمًا آخر.</p>
+    <small class="caveat">الحصر بمطابقة الاسم في النص؛ قد يدخل فيه من يوافق اسمه اسمًا آخر.</small>
   </PageHead>
 
   <nav class="section-jumps" aria-label="أقسام الفهرس">
@@ -48,6 +48,7 @@ const description = `الأعلام والمواضع التي وردت في أب
     text-decoration: none;
   }
   .caveat {
+    display: block;
     font-size: 13px;
     color: var(--muted);
     margin: 6px 0 0;

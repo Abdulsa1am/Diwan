@@ -7,10 +7,16 @@ import { places, placeHref, KIND_LABELS } from '../../lib/atlas';
 import { arCount } from '../../scripts/shared';
 
 const withVerses = places.filter((p) => p.verses.length > 0);
-const groups = Object.entries(KIND_LABELS)
-  .map(([kind, label]) => ({ kind, label, places: places.filter((p) => p.kind === kind) }))
-  .filter((g) => g.places.length)
-  .sort((a, b) => b.places.length - a.places.length);
+const groups = [
+  { id: 'mapped', label: 'مواضع على الخريطة', places: places.filter((p) => p.lat !== undefined && p.lon !== undefined) },
+  { id: 'unmapped', label: 'مواضع بلا إحداثيات', places: places.filter((p) => p.lat === undefined || p.lon === undefined) },
+].map((group) => ({
+  ...group,
+  kinds: Object.entries(KIND_LABELS)
+    .map(([kind, label]) => ({ kind, label, places: group.places.filter((p) => p.kind === kind) }))
+    .filter((g) => g.places.length)
+    .sort((a, b) => b.places.length - a.places.length),
+}));
 
 const title = `أطلس المواضع في شعر الشريف الرضي | ${SITE_NAME}`;
 const description = `خريطة المواضع التي ذكرها الشريف الرضي في شعره: ${places
@@ -28,44 +34,48 @@ const description = `خريطة المواضع التي ذكرها الشريف 
 
   <AtlasMap label="خريطة المواضع التي ذكرها الشريف الرضي في العراق والجزيرة العربية والشام" />
 
-  <h2 id="places-list" class="list-heading">قائمة المواضع</h2>
 
   {
-    groups.map((g) => (
-      <section class="kind" aria-labelledby={`k-${g.kind}`}>
-        <h2 id={`k-${g.kind}`}>
-          {g.label} <small>{ar(g.places.length)}</small>
-        </h2>
-        <ul class="place-list">
-          {g.places.map((p) => (
-            <li>
-              <a href={placeHref(p)}>
-                <b>{p.name}</b>
-                <span>
-                  {p.verses.length
-                    ? arCount(p.verses.length, ['شاهد واحد', 'شاهدان', 'شواهد', 'شاهدًا'])
-                    : 'في الحواشي'}
-                  {p.lat === undefined && '، بلا إحداثيات'}
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
+    groups.map((group) => (
+      <section class="place-group" id={group.id === 'mapped' ? 'places-list' : undefined} aria-labelledby={group.id}>
+        <h2 id={group.id} class="group-heading">{group.label}</h2>
+        {group.kinds.map((g) => (
+          <section class="kind" aria-labelledby={`${group.id}-${g.kind}`}>
+            <h3 id={`${group.id}-${g.kind}`}>
+              {g.label} <small>{ar(g.places.length)}</small>
+            </h3>
+            <ul class="place-list">
+              {g.places.map((p) => (
+                <li>
+                  <a href={placeHref(p)}>
+                    <b>{p.name}</b>
+                    <span>{p.verses.length
+                      ? arCount(p.verses.length, ['شاهد واحد', 'شاهدان', 'شواهد', 'شاهدًا'])
+                      : 'في الحواشي'}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
       </section>
     ))
   }
 </Base>
 
 <style>
-  .list-heading {
-    font-size: 30px;
+  .place-group {
     scroll-margin-top: 90px;
   }
-  .kind h2 {
-    font-size: 28px;
+  .group-heading {
+    font-size: 30px;
+    margin: 20px 0 0;
+  }
+  .kind h3 {
+    font-size: 21px;
     margin: 16px 0 6px;
   }
-  .kind h2 small {
+  .kind h3 small {
     font-family: var(--ui-font);
     font-size: 13px;
     color: var(--muted);
@@ -75,19 +85,21 @@ const description = `خريطة المواضع التي ذكرها الشريف 
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
   .place-list a {
     display: flex;
     flex-direction: column;
-    padding: 10px 14px;
+    padding: 6px 10px;
+    min-height: 44px;
+    overflow-wrap: anywhere;
     border-radius: 14px;
     background: var(--paper);
     border: 1px solid var(--glass-border);
     text-decoration: none;
     color: var(--ink);
-    line-height: 1.6;
+    line-height: 1.35;
     height: 100%;
   }
   .place-list a:hover {
@@ -101,5 +113,8 @@ const description = `خريطة المواضع التي ذكرها الشريف 
   .place-list span {
     font-size: 13px;
     color: var(--muted);
+  }
+  @media (min-width: 700px) {
+    .place-list { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
   }
 </style>

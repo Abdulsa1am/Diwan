@@ -27,7 +27,7 @@ const description = `أرقام ديوان الشريف الرضي: ${ar(poems.l
 ---
 
 <Base title={title} description={description} section="indexes">
-  <PageHead title="إحصاءات الديوان" lede="أرقام الديوان كما في هذه النسخة." parent={{ label: 'الفهارس', href: '/explore/' }} />
+  <PageHead title="إحصاءات الديوان" parent={{ label: 'الفهارس', href: '/explore/' }} />
 
   <dl class="totals">
     <div class="glass"><dt>القصائد</dt><dd>{ar(poems.length)}</dd></div>
@@ -102,9 +102,12 @@ const description = `أرقام ديوان الشريف الرضي: ${ar(poems.l
 <style>
   .totals {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     margin: 0;
+  }
+  @media (min-width: 900px) {
+    .totals { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   }
   .totals div {
     padding: 14px 18px;

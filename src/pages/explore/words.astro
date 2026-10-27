@@ -20,14 +20,16 @@ const description = `أكثر الألفاظ ورودًا في ديوان الش
     title="فهرس الألفاظ"
     lede={`${ar(words.length)} لفظة من أكثر ألفاظ الديوان ورودًا. اختر لفظة لتبحث عنها في الأبيات.`}
     parent={{ label: 'الفهارس', href: '/explore/' }}
-  >
-    <p class="caveat" id="word-count-method">نعدّ كل ورود للكلمة كاملةً في شعر الرضي، مع إهمال التشكيل وتوحيد صور الحروف كما في البحث؛ وتبقى «والزمان» مستقلةً عن «الزمان». لا تدخل الأبيات المنقولة في مقدمات القصائد في العدّ. فتح البطاقة ينقلك إلى البحث، الذي يعدّ الأبيات المطابقة ويجد اللفظة داخل كلمات أطول؛ لذلك قد تختلف نتائجه عن مرات الورود هنا.</p>
-  </PageHead>
+  />
 
   <label class="find glass">
     <span>تصفية الألفاظ</span>
     <input id="findFrequency" type="search" placeholder="ابحث عن لفظة في هذه القائمة…" autocomplete="off" aria-describedby="word-count-method" />
   </label>
+  <details class="method">
+    <summary>طريقة العدّ</summary>
+    <p class="caveat" id="word-count-method">نعدّ كل ورود للكلمة كاملةً في شعر الرضي، مع إهمال التشكيل وتوحيد صور الحروف كما في البحث؛ وتبقى «والزمان» مستقلةً عن «الزمان». لا تدخل الأبيات المنقولة في مقدمات القصائد في العدّ. فتح البطاقة ينقلك إلى البحث، الذي يعدّ الأبيات المطابقة ويجد اللفظة داخل كلمات أطول؛ لذلك قد تختلف نتائجه عن مرات الورود هنا.</p>
+  </details>
   <p id="frequencyCount" role="status" aria-live="polite"></p>
 
   <ol class="words">
@@ -97,6 +99,7 @@ const description = `أكثر الألفاظ ورودًا في ديوان الش
     display: none;
   }
 
+  .method summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: var(--muted); font-size: 14px; }
   .caveat {
     font-size: 13px;
     color: var(--muted);

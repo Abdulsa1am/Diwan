@@ -14,13 +14,14 @@ const description = `قصائد الشريف الرضي على أغراض الش
     title="أغراض الشعر"
     lede={`${ar(themeGroups.length)} غرضًا تغطي ${ar(themedPoemCount)} قصيدة من ${ar(poems.length)}. قد تدخل القصيدة الواحدة في أكثر من غرض.`}
   >
-    <p class="caveat">التصنيف أوّلي مأخوذ من أخبار القصائد وألفاظها، ولم يُراجع كله بعد.</p>
+    <small class="caveat">التصنيف أوّلي مأخوذ من أخبار القصائد وألفاظها، ولم يُراجع كله بعد.</small>
   </PageHead>
   <IndexGroups groups={themeGroups} />
 </Base>
 
 <style>
   .caveat {
+    display: block;
     font-size: 13px;
     color: var(--muted);
     margin: 6px 0 0;
