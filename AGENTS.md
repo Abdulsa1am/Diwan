@@ -20,6 +20,7 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 - **Stack**: Astro, building static pages. JavaScript only where a page needs interaction.
 - **Identity «وَرَق» (Waraq)** (owner's decision, 2026-10-27; replaces the old blue-grey look). Parchment and walnut brown with Liquid Glass surfaces. Reference: sample A on branch `claude/identity-samples-38540b` (`design-samples/home/a-waraq.html`, report `reports/identity-samples-2026-10-27.md`).
   - Colours: light `#f3ebdf` background, ink `#3a2819`, accent `#835230`; dark `#1b1410` background, ink `#f3e7d6`, accent `#e2b383`. All tokens (light and dark) are in `src/styles/global.css`; text keeps WCAG AA (4.5:1) on glass.
+  - Three themes (owner's decision, 2026-10-27), picked from the settings (gear) button in the top bar: «فاتح» (Waraq light), «داكن» (Waraq dark) and «كحلي» (the old site's navy dark). `radi-theme` stores `light`, `dark` or `navy`. Navy sets `data-theme="dark"` plus `data-palette="navy"`, so every dark rule applies and only the palette tokens change; a page with its own fixed dark colours needs a `[data-palette='navy']` override.
   - Glass: `.glass` = translucent surface + blur, gradient rim (`::before`), top sheen (`::after`), warm shadow, over a backdrop of warm glows and a faint star lattice. Solid fallbacks for no `backdrop-filter`, reduced transparency, more contrast and forced colours.
   - Font: **one family, Mirza** (400 and 600), self-hosted via @fontsource, Arabic subset only, for headings, interface and poetry. `--display-font`, `--ui-font` and `--poem-font` all point to `--font`. Don't add font families. Mirza is drawn small: use the type tokens `--fs-xs` (16px), `--fs-sm` (17px), `--fs-md` (19px, body) instead of smaller px sizes.
   - Shell: sidebar on screens over 1000px, top bar with action buttons, bottom nav on smaller screens. Nav items for sections not built yet are shown dimmed and not linked.
@@ -67,7 +68,7 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 - `src/pages/` — one file per route; dynamic routes: `poem/[id]`, `word/[term]`, `place/[name]`. `search-index.json.ts` and `search-notes.json.ts` build the search data.
 - `src/scripts/` — browser code: `reader.ts` (poem page), `arabic-search.ts` (matching rules, tested by `npm test`), `corpus.ts` (loads the verse index for tools), `shared.ts` (storage, toast, copy, Arabic counts).
 - `src/components/` — `Icons` (the old site's icon sprite), `PageHead`, `IndexGroups`, `VerseList`, `AtlasMap`, `NavLink`.
-- Browser storage keys: `radi-theme`, `radi-reading` (font size, layout), `radi-saved`, `radi-last` (continue reading).
+- Browser storage keys: `radi-theme` (`light`/`dark`/`navy`), `radi-reading` (font size, layout), `radi-saved`, `radi-last` (continue reading).
 
 ## Arabic writing rules in the UI
 - Use Arabic-Indic digits (`ar()` in `src/lib/diwan.ts`).

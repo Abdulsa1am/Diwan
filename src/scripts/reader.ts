@@ -22,7 +22,11 @@ const sheet = document.getElementById('poemSheet')!;
 const hemistichs = [...sheet.querySelectorAll<HTMLElement>('.hemistich')];
 const firstBody = sheet.querySelector<HTMLElement>('.verse-body')!;
 const paired = hemistichs.map((h) => !h.closest('.verse.single'));
+const hemistichVerse = hemistichs.map((h) => h.closest<HTMLElement>('.verse')!);
 const MEASURE_SIZE = 30;
+// How far one long verse may shrink below the poem's size before it wraps.
+const VERSE_MIN_RATIO = 0.72;
+const VERSE_MIN_PX = 17;
 let naturalWidths: number[] | undefined;
 let fitFrame = 0;
 
@@ -74,11 +78,28 @@ function fitPoem() {
   if (side && widths.some((width, i) => width * size > (paired[i] ? pairWidth : fullWidth) - 1.5)) {
     side = false;
   }
+  // A verse that is longer than the rest gets its own, slightly smaller size so it
+  // stays on one line like its neighbours; only beyond that limit does it wrap.
+  const room = (i: number) => (side && paired[i] ? pairWidth : fullWidth) - 2;
+  const verseSize = new Map<HTMLElement, number>();
+  hemistichs.forEach((_, i) => {
+    if (widths[i] <= 0 || widths[i] * size <= room(i)) return;
+    const li = hemistichVerse[i];
+    verseSize.set(li, Math.min(verseSize.get(li) ?? size, room(i) / widths[i]));
+  });
+  const verseMin = Math.max(VERSE_MIN_PX, size * VERSE_MIN_RATIO);
   // All geometry reads are above; these writes never trigger another width read.
   sheet.dataset.fittedLayout = side ? 'side' : 'stacked';
   sheet.style.setProperty('--poem-fitted-size', `${size}px`);
+  for (const li of verses) {
+    const own = verseSize.get(li);
+    if (own === undefined) li.style.removeProperty('--verse-fitted-size');
+    else li.style.setProperty('--verse-fitted-size', `${Math.max(verseMin, own)}px`);
+  }
   hemistichs.forEach((h, i) => {
-    h.classList.toggle('can-wrap', !side && widths[i] * size > fullWidth - 2);
+    const own = verseSize.get(hemistichVerse[i]);
+    const actual = own === undefined ? size : Math.max(verseMin, own);
+    h.classList.toggle('can-wrap', widths[i] * actual > room(i) + 0.5);
   });
   sheet.classList.add('is-fitted');
 }

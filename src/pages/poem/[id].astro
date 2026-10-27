@@ -525,7 +525,7 @@ const jsonLd = {
     grid-template-columns: minmax(0, 1fr) !important;
   }
   .poem-sheet.is-fitted .hemistich {
-    font-size: var(--poem-fitted-size);
+    font-size: var(--verse-fitted-size, var(--poem-fitted-size));
     white-space: nowrap;
     text-wrap: nowrap;
   }

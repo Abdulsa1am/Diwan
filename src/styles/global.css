@@ -78,6 +78,37 @@
     radial-gradient(50vmax 45vmax at 70% 104%, var(--blob-3), transparent 70%);
 }
 :root[data-theme='dark'] { --accent-deep: var(--accent); }
+/* Navy: the old site's dark look (before Waraq), kept as a third theme. It is a dark
+   theme (data-theme="dark"), so only the palette tokens change. */
+:root[data-theme='dark'][data-palette='navy'] {
+  --bg: #111d2b;
+  --blob-1: rgba(48, 90, 117, 0.37);
+  --blob-2: rgba(66, 66, 111, 0.27);
+  --blob-3: rgba(40, 80, 110, 0.2);
+  --pattern: rgba(200, 228, 248, 0.05);
+  --surface: rgba(35, 50, 68, 0.66);
+  --surface-strong: rgba(47, 65, 84, 0.84);
+  --surface-solid: #1d2d40;
+  --ink: #eef5fa;
+  --muted: #b6c6d3;
+  --accent: #a6d2ed;
+  --fill: #9ccbe8;
+  --fill-2: #86b9d8;
+  --on-fill: #0f1c29;
+  --line: rgba(214, 230, 242, 0.15);
+  --line-strong: rgba(204, 230, 248, 0.3);
+  --rim-hi: rgba(234, 247, 255, 0.2);
+  --rim-lo: rgba(0, 0, 0, 0.3);
+  --sheen: rgba(220, 240, 255, 0.06);
+  --shadow: 0 16px 36px -14px rgba(0, 0, 0, 0.55);
+  --menu-bg: #22344a;
+}
+:root[data-theme='dark'][data-palette='navy'] .atlas-map {
+  --map-sea: #142334;
+  --map-land: #2c4259;
+  --map-border: #7f9bb4;
+  --map-river: #8fbad8;
+}
 :root:not([data-theme='dark']) {
   --bg-image: radial-gradient(75vmax 65vmax at 92% 4%, var(--blob-1), transparent 72%),
     radial-gradient(70vmax 70vmax at 0% 58%, var(--blob-2), transparent 72%),
@@ -404,13 +435,74 @@ h3 {
 .iconbtn:hover {
   color: var(--accent);
 }
-.theme-dark-icon,
-:root[data-theme='dark'] .theme-light-icon {
+/* Settings menu in the top bar: theme picker. */
+.settings {
+  position: relative;
+}
+.settings-panel {
+  position: absolute;
+  inset-block-start: calc(100% + 8px);
+  inset-inline-end: 0;
+  z-index: 30;
+  min-width: 200px;
+  padding: 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--menu-bg);
+  box-shadow: var(--shadow);
+}
+.settings-panel[hidden] {
   display: none;
 }
-:root[data-theme='dark'] .theme-dark-icon {
-  display: block;
+.theme-choice {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  display: grid;
+  gap: 4px;
 }
+.theme-choice legend {
+  padding: 0 6px 4px;
+  font-size: var(--fs-sm);
+  color: var(--muted);
+}
+.theme-choice label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: var(--fs-md);
+}
+.theme-choice input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.theme-choice label:has(input:checked) {
+  background: var(--chip-bg);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  font-weight: 600;
+}
+.theme-choice label:has(input:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.swatch {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+}
+.swatch-light { background: linear-gradient(135deg, #f3ebdf 50%, #835230 50%); }
+.swatch-dark { background: linear-gradient(135deg, #1b1410 50%, #e2b383 50%); }
+.swatch-navy { background: linear-gradient(135deg, #111d2b 50%, #a6d2ed 50%); }
 
 .main {
   max-width: 1080px;

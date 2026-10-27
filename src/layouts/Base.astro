@@ -64,8 +64,16 @@ const shareImage = new URL('/share.png', Astro.site);
           t = localStorage.getItem('radi-theme');
           r = JSON.parse(localStorage.getItem('radi-reading') || 'null');
         } catch (e) {}
-        if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        root.dataset.theme = t;
+        // Themes: 'light' and 'dark' (Waraq) and 'navy' (the old site's dark look). The navy
+        // theme is dark, so it keeps data-theme="dark" and only swaps the palette tokens.
+        var picked = t === 'light' || t === 'dark' || t === 'navy';
+        if (!picked) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        root.dataset.theme = t === 'light' ? 'light' : 'dark';
+        if (t === 'navy') root.dataset.palette = 'navy';
+        if (picked) {
+          var bg = { light: '#f3ebdf', dark: '#1b1410', navy: '#111d2b' }[t];
+          document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.content = bg; });
+        }
         if (r && typeof r === 'object' && !Array.isArray(r)) {
           if ([0.85, 0.92, 1, 1.1, 1.2, 1.32].includes(r.scale)) root.style.setProperty('--poem-scale', String(r.scale));
           if (r.layout === 'side' || r.layout === 'stacked') root.dataset.verseLayout = r.layout;
@@ -139,10 +147,20 @@ const shareImage = new URL('/share.png', Astro.site);
             >
               <svg class="ui-icon" aria-hidden="true"><use href="#i-shuffle"></use></svg>
             </button>
-            <button class="iconbtn" type="button" id="themeToggle" aria-label="الوضع الليلي" aria-pressed="false" title="الوضع الليلي">
-              <svg class="ui-icon theme-light-icon" aria-hidden="true"><use href="#i-moon"></use></svg>
-              <svg class="ui-icon theme-dark-icon" aria-hidden="true"><use href="#i-sun"></use></svg>
-            </button>
+            <div class="settings">
+              <button class="iconbtn" type="button" id="settingsToggle" aria-expanded="false" aria-controls="settingsPanel"
+                aria-label="الإعدادات" title="الإعدادات">
+                <svg class="ui-icon" aria-hidden="true"><use href="#i-gear"></use></svg>
+              </button>
+              <div class="settings-panel" id="settingsPanel" hidden>
+                <fieldset class="theme-choice">
+                  <legend>السمة</legend>
+                  <label><input type="radio" name="siteTheme" value="light" /><span class="swatch swatch-light" aria-hidden="true"></span>فاتح</label>
+                  <label><input type="radio" name="siteTheme" value="dark" /><span class="swatch swatch-dark" aria-hidden="true"></span>داكن</label>
+                  <label><input type="radio" name="siteTheme" value="navy" /><span class="swatch swatch-navy" aria-hidden="true"></span>كحلي</label>
+                </fieldset>
+              </div>
+            </div>
           </div>
         </div>
         {reading && <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>}
@@ -164,16 +182,41 @@ const shareImage = new URL('/share.png', Astro.site);
     <script is:inline>
       (function () {
         var root = document.documentElement;
-        var themeToggle = document.getElementById('themeToggle');
-        function syncThemeToggle() {
-          themeToggle.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
+        // Settings: the theme picker (light / dark / navy).
+        var settingsToggle = document.getElementById('settingsToggle');
+        var settingsPanel = document.getElementById('settingsPanel');
+        var themeBg = { light: '#f3ebdf', dark: '#1b1410', navy: '#111d2b' };
+        function currentTheme() {
+          return root.dataset.palette === 'navy' ? 'navy' : root.dataset.theme === 'dark' ? 'dark' : 'light';
         }
-        syncThemeToggle();
-        themeToggle.addEventListener('click', function () {
-          var next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-          root.dataset.theme = next;
-          syncThemeToggle();
-          try { localStorage.setItem('radi-theme', next); } catch (e) {}
+        function applyTheme(t) {
+          root.dataset.theme = t === 'light' ? 'light' : 'dark';
+          if (t === 'navy') root.dataset.palette = 'navy';
+          else delete root.dataset.palette;
+          document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.content = themeBg[t]; });
+          try { localStorage.setItem('radi-theme', t); } catch (e) {}
+        }
+        function setPanel(open) {
+          settingsPanel.hidden = !open;
+          settingsToggle.setAttribute('aria-expanded', String(open));
+          if (open) {
+            var checked = settingsPanel.querySelector('input[value="' + currentTheme() + '"]');
+            checked.checked = true;
+            checked.focus({ preventScroll: true });
+          }
+        }
+        settingsToggle.addEventListener('click', function () { setPanel(settingsPanel.hidden); });
+        settingsPanel.addEventListener('change', function (e) {
+          if (e.target.name === 'siteTheme') applyTheme(e.target.value);
+        });
+        document.addEventListener('click', function (e) {
+          if (!settingsPanel.hidden && !e.target.closest('.settings')) setPanel(false);
+        });
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && !settingsPanel.hidden) {
+            setPanel(false);
+            settingsToggle.focus();
+          }
         });
         var random = document.getElementById('randomPoem');
         random.addEventListener('click', function () {
