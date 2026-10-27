@@ -152,9 +152,9 @@ select {
 body {
   margin: 0;
   min-height: 100vh;
+  /* The glows and lattice are painted once by the fixed .backdrop layer. A fixed body
+     background would make Android repaint the whole screen on every scroll. */
   background-color: var(--bg);
-  background-image: var(--bg-image);
-  background-attachment: fixed;
   color: var(--ink);
   font-family: var(--ui-font);
   font-size: var(--fs-md);
@@ -210,6 +210,8 @@ h3 {
   z-index: -1;
   pointer-events: none;
   background: var(--bg-image), var(--bg);
+  /* Its own compositor layer: drawn once, then only moved, never repainted while scrolling. */
+  transform: translateZ(0);
 }
 /* Faint eight-point-star lattice, so the glass has something to bend. Colour comes from --pattern. */
 .backdrop::after {
@@ -230,8 +232,13 @@ h3 {
   border: 1px solid transparent;
   border-radius: var(--radius);
   box-shadow: var(--shadow), inset 0 1px 0 var(--rim-hi), inset 0 -1px 0 var(--rim-lo);
-  -webkit-backdrop-filter: blur(var(--blur)) saturate(var(--sat));
-  backdrop-filter: blur(var(--blur)) saturate(var(--sat));
+}
+/* Real blur only on surfaces that float over scrolling content (fixed, sticky, menus).
+   A blur on every in-flow card is re-sampled each scroll frame and makes phones stutter;
+   over the calm backdrop it is barely visible anyway. */
+.glass-float {
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
 }
 .glass::before {
   content: '';
@@ -630,7 +637,8 @@ h3 {
   .sidebar,
   .topbar,
   .mobile-nav,
-  .glass {
+  .glass,
+  .glass-float {
     background: var(--surface-solid);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;

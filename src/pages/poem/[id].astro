@@ -231,7 +231,7 @@ const jsonLd = {
     </nav>
   </article>
 
-  <div class="verse-menu glass" id="verseMenu" role="menu" aria-labelledby="verseMenuTitle" hidden>
+  <div class="verse-menu glass glass-float" id="verseMenu" role="menu" aria-labelledby="verseMenuTitle" hidden>
     <b class="verse-menu-title" id="verseMenuTitle" data-menu-title></b>
     <button type="button" role="menuitem" data-verse-action="notes" hidden>شرح البيت</button>
     <button type="button" role="menuitem" data-verse-action="copy">نسخ البيت</button>
@@ -438,9 +438,9 @@ const jsonLd = {
     background: var(--paper-strong);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
+    /* No backdrop blur: the sheet is a full-screen-tall in-flow surface and the blur was
+       re-sampled on every scroll frame. --paper-strong is nearly opaque, so it looks the same. */
     box-shadow: var(--glass-shadow-soft), var(--glass-inset);
-    -webkit-backdrop-filter: var(--glass-filter);
-    backdrop-filter: var(--glass-filter);
   }
   .verse {
     position: relative;
