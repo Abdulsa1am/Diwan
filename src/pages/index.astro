@@ -48,7 +48,7 @@ const jsonLd = {
     <span class="edition">ديوانٌ من القرن الرابع الهجري</span>
   </div>
 
-  <section class="hero" aria-labelledby="heroTitle">
+  <section class="hero glass" aria-labelledby="heroTitle">
     <div class="hero-copy">
       <h1 id="heroTitle" aria-label="ديوان الشريف الرضي">
         <span class="diwan-title"><span class="diwan-plain">ديوان</span><span class="diwan-ornament" aria-hidden="true" data-kashida="ديـــــــــــــــــــــوان"></span></span>{' '}
@@ -185,7 +185,7 @@ const jsonLd = {
     margin-bottom: 20px;
   }
   .overline {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
   }
   .welcome h2 {
@@ -194,7 +194,7 @@ const jsonLd = {
     line-height: 1.5;
   }
   .edition {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--accent);
   }
 
@@ -204,7 +204,7 @@ const jsonLd = {
     grid-template-columns: 1.25fr 1fr;
     overflow: hidden;
     min-height: 345px;
-    background: linear-gradient(124deg, rgba(255, 255, 255, 0.76), rgba(244, 249, 254, 0.35) 72%);
+    background: linear-gradient(124deg, rgba(255, 252, 246, 0.74), rgba(250, 240, 226, 0.36) 72%);
     border: 1px solid var(--glass-border);
     border-radius: 26px;
     box-shadow: var(--glass-shadow);
@@ -213,7 +213,7 @@ const jsonLd = {
     margin-bottom: 18px;
   }
   :global([data-theme='dark']) .hero {
-    background: linear-gradient(128deg, rgba(69, 88, 111, 0.52), rgba(29, 47, 68, 0.42));
+    background: linear-gradient(128deg, rgba(86, 64, 46, 0.55), rgba(44, 32, 24, 0.45));
   }
   .hero-copy {
     position: relative;
@@ -224,8 +224,8 @@ const jsonLd = {
   }
   h1 {
     font-size: clamp(44px, 6vw, 72px);
-    font-size: clamp(32px, 17cqi, 72px);
-    line-height: 1.15;
+    font-size: clamp(32px, 15cqi, 72px);
+    line-height: 1.45;
     margin: 12px 0;
   }
   h1 span {
@@ -263,11 +263,11 @@ const jsonLd = {
     gap: 12px;
   }
   .hero-actions .btn {
-    font-size: 15px;
+    font-size: var(--fs-md);
     padding: 12px 22px;
   }
   .hero-copy > .hero-count {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     margin: 22px 0 0;
   }
 
@@ -276,7 +276,7 @@ const jsonLd = {
     position: relative;
     min-height: 330px;
     isolation: isolate;
-    background: radial-gradient(rgba(176, 209, 233, 0.34), transparent 67%);
+    background: radial-gradient(rgba(214, 178, 130, 0.3), transparent 67%);
   }
   .hero-art::before,
   .hero-art::after {
@@ -286,26 +286,26 @@ const jsonLd = {
     height: 255px;
     border-radius: 21px;
     border: 1px solid rgba(255, 255, 255, 0.79);
-    box-shadow: 16px 24px 42px rgba(42, 79, 112, 0.12), inset 2px 2px 1px rgba(255, 255, 255, 0.64);
+    box-shadow: 16px 24px 42px rgba(90, 60, 30, 0.18), inset 2px 2px 1px rgba(255, 255, 255, 0.64);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
   }
   .hero-art::before {
     right: calc(50% - 92px);
     top: calc(50% - 138px);
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.66), rgba(186, 214, 237, 0.27));
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.66), rgba(222, 192, 150, 0.25));
     transform: rotate(-12deg);
   }
   .hero-art::after {
     right: calc(50% - 110px);
     top: calc(50% - 124px);
-    background: linear-gradient(140deg, rgba(255, 255, 255, 0.39), rgba(145, 185, 217, 0.18));
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.39), rgba(196, 150, 100, 0.16));
     transform: rotate(9deg);
   }
   :global([data-theme='dark']) .hero-art::before,
   :global([data-theme='dark']) .hero-art::after {
-    background: linear-gradient(140deg, rgba(204, 233, 252, 0.21), rgba(112, 150, 188, 0.08));
-    border-color: rgba(234, 247, 255, 0.26);
+    background: linear-gradient(140deg, rgba(255, 226, 190, 0.16), rgba(160, 110, 60, 0.06));
+    border-color: rgba(255, 236, 210, 0.2);
   }
 
   .home-search {
@@ -349,14 +349,14 @@ const jsonLd = {
     justify-content: center;
   }
   .daily h2 {
-    font-size: 26px;
+    font-size: 27px;
     color: var(--accent);
     margin: 0 0 6px;
   }
   .daily blockquote {
     margin: 0 0 12px;
     font-family: var(--poem-font);
-    font-size: clamp(22px, 3.2vw, 28px);
+    font-size: clamp(25px, 3.4vw, 31px);
     line-height: 2;
   }
   .daily blockquote p {
@@ -367,7 +367,7 @@ const jsonLd = {
     align-items: center;
     justify-content: center;
     min-height: 44px;
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
   }
   .entries {
@@ -399,10 +399,11 @@ const jsonLd = {
     line-height: 1.5;
   }
   .entry b {
-    font-size: 16px;
+    font-weight: 600;
+    font-size: var(--fs-md);
   }
   .entry small {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
   }
   .entry:hover {
@@ -465,8 +466,8 @@ const jsonLd = {
     }
     h1 {
       font-size: clamp(38px, 13vw, 64px);
-      font-size: clamp(32px, 17cqi, 64px);
-      line-height: 1.15;
+      font-size: clamp(32px, 15cqi, 64px);
+      line-height: 1.45;
       margin: 10px auto;
     }
     .hero-copy {
@@ -486,4 +487,6 @@ const jsonLd = {
       margin-top: 12px;
     }
   }
+  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) { .hero { background: var(--surface-solid); } }
+  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) { .hero { background: var(--surface-solid); backdrop-filter: none; } }
 </style>

@@ -32,7 +32,7 @@ const { title, lede, parent } = Astro.props;
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 14px;
+    font-size: var(--fs-sm);
     color: var(--muted);
     text-decoration: none;
     min-height: 44px;
@@ -42,7 +42,7 @@ const { title, lede, parent } = Astro.props;
     height: 18px;
   }
   h1 {
-    font-size: clamp(36px, 6vw, 48px);
+    font-size: clamp(40px, 6vw, 54px);
     color: var(--accent-deep);
     margin: 0;
   }
@@ -52,7 +52,7 @@ const { title, lede, parent } = Astro.props;
   p {
     color: var(--muted);
     margin: 0;
-    font-size: 15px;
+    font-size: var(--fs-md);
     max-width: 640px;
   }
 </style>

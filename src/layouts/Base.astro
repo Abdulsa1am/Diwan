@@ -1,12 +1,8 @@
 ---
-import '@fontsource/amiri/arabic-400.css';
-import '@fontsource/katibeh/arabic-400.css';
-import '@fontsource/tajawal/arabic-400.css';
-import '@fontsource/tajawal/arabic-500.css';
-import '@fontsource/tajawal/arabic-700.css';
+import '@fontsource/mirza/arabic-400.css';
+import '@fontsource/mirza/arabic-600.css';
 import '../styles/global.css';
-import amiriRegular from '@fontsource/amiri/files/amiri-arabic-400-normal.woff2?url';
-import katibeh from '@fontsource/katibeh/files/katibeh-arabic-400-normal.woff2?url';
+import mirzaRegular from '@fontsource/mirza/files/mirza-arabic-400-normal.woff2?url';
 import Icons from '../components/Icons.astro';
 import NavLink from '../components/NavLink.astro';
 // TEMPORARY font lab
@@ -48,9 +44,9 @@ const shareImage = new URL('/share.png', Astro.site);
     {hideFromSearch && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href={amiriRegular} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={katibeh} as="font" type="font/woff2" crossorigin />
-    <meta name="theme-color" content="#eaf0f7" />
+    <link rel="preload" href={mirzaRegular} as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#f3ebdf" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1b1410" media="(prefers-color-scheme: dark)" />
     <meta property="og:type" content={type} />
     <meta property="og:locale" content="ar_AR" />
     <meta property="og:site_name" content={SITE_NAME} />
@@ -78,10 +74,11 @@ const shareImage = new URL('/share.png', Astro.site);
     </script>
   </head>
   <body data-reading-page={reading ? "true" : undefined}>
+    <div class="backdrop" aria-hidden="true"></div>
     <Icons />
     <a class="skip" href="#main">انتقل إلى المحتوى</a>
     <div class="shell">
-      <aside class="sidebar" aria-label="القائمة الرئيسية">
+      <aside class="sidebar glass" aria-label="القائمة الرئيسية">
         <a class="brand" href="/" aria-label="الرَّضي، الرئيسية">
           <span class="brand-name">الرَّضِي</span>
           <span>ديوان الشريف الرضي</span>
@@ -107,7 +104,7 @@ const shareImage = new URL('/share.png', Astro.site);
         </div>
       </aside>
 
-      <header class="topbar" id="topbar">
+      <header class="topbar glass" id="topbar">
         <div class="topbar-inner">
           <a class="top-brand" href="/" aria-label="الرَّضي، الرئيسية">الرَّضِي</a>
           <div class="breadcrumb"><span class="breadcrumb-dot"></span><span>{SITE_NAME}</span></div>
@@ -156,7 +153,7 @@ const shareImage = new URL('/share.png', Astro.site);
         <footer class="site-footer">نصّ الديوان وفهارسه · شعر الشريف محمد بن الحسين الرضي (٣٥٩–٤٠٦ هـ)</footer>
       </main>
 
-      <nav class="mobile-nav" id="mobileNav" aria-label="التنقل على الهاتف">
+      <nav class="mobile-nav glass" id="mobileNav" aria-label="التنقل على الهاتف">
         {mobileMenu.map((item) => <NavLink item={item} current={section} />)}
       </nav>
     </div>

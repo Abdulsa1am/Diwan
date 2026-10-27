@@ -18,9 +18,10 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 
 ## Decisions
 - **Stack**: Astro, building static pages. JavaScript only where a page needs interaction.
-- **Keep the old site's identity** (owner's decision). Don't redesign; rebuild the old look, lighter. Reference: the live old site (`diwan-alradi.pages.dev`) and `_original/assets/styles/`.
-  - Colours: the "glass" layer (v24.2) — light `#eaf0f7` background, ink `#1c3043`, accent `#486c88`; dark navy `#111d2b`. All tokens are in `src/styles/global.css`.
-  - Fonts (self-hosted via @fontsource, Arabic subset only): Katibeh for headings and the sidebar brand, Tajawal (400/500/700) for the interface and the top-bar logo, Amiri 400 for the poetry. Don't add font families.
+- **Identity «وَرَق» (Waraq)** (owner's decision, 2026-10-27; replaces the old blue-grey look). Parchment and walnut brown with Liquid Glass surfaces. Reference: sample A on branch `claude/identity-samples-38540b` (`design-samples/home/a-waraq.html`, report `reports/identity-samples-2026-10-27.md`).
+  - Colours: light `#f3ebdf` background, ink `#3a2819`, accent `#835230`; dark `#1b1410` background, ink `#f3e7d6`, accent `#e2b383`. All tokens (light and dark) are in `src/styles/global.css`; text keeps WCAG AA (4.5:1) on glass.
+  - Glass: `.glass` = translucent surface + blur, gradient rim (`::before`), top sheen (`::after`), warm shadow, over a backdrop of warm glows and a faint star lattice. Solid fallbacks for no `backdrop-filter`, reduced transparency, more contrast and forced colours.
+  - Font: **one family, Mirza** (400 and 600), self-hosted via @fontsource, Arabic subset only, for headings, interface and poetry. `--display-font`, `--ui-font` and `--poem-font` all point to `--font`. Don't add font families. Mirza is drawn small: use the type tokens `--fs-xs` (16px), `--fs-sm` (17px), `--fs-md` (19px, body) instead of smaller px sizes.
   - Shell: sidebar on screens over 1000px, top bar with action buttons, bottom nav on smaller screens. Nav items for sections not built yet are shown dimmed and not linked.
 - **URLs stay as the old site had them** (owner's decision). Never rename one. From the old `cleanPathForRoute`:
   - Poem: `/poem/r1-227/` (r1 = volume 1, poem 227). One verse: `/poem/r1-227/verse/3` (send to the poem page at anchor `#v3`).

@@ -14,6 +14,7 @@
   "dependencies": {
     "@fontsource/amiri": "^5.3.0",
     "@fontsource/katibeh": "^5.3.0",
+    "@fontsource/mirza": "^5.3.0",
     "@fontsource/tajawal": "^5.3.0",
     "astro": "^7.4.2"
   },

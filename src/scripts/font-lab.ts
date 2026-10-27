@@ -3,20 +3,20 @@ type Font = { name: string; arabic: string; weights: number[] };
 const font = (name: string, arabic: string, weights = [400]): Font => ({ name, arabic, weights });
 export const fontGroups = {
   poem: { label: 'خط الأبيات', variable: '--poem-font', fallback: 'serif', fonts: [
-    font('Amiri', 'أميري'), font('Scheherazade New', 'شهرزاد الجديد'),
+    font('Mirza', 'ميرزا', [400, 600]), font('Amiri', 'أميري'), font('Scheherazade New', 'شهرزاد الجديد'),
     font('Noto Naskh Arabic', 'نوتو نسخ عربي'), font('Lateef', 'لطيف'),
     font('Markazi Text', 'مركزي'), font('Amiri Quran', 'أميري قرآن'),
     font('Aref Ruqaa', 'عارف رقعة'), font('Gulzar', 'گلزار'),
   ] },
   display: { label: 'خط العناوين', variable: '--display-font', fallback: 'serif', fonts: [
-    font('Katibeh', 'كتيبة'), font('Aref Ruqaa', 'عارف رقعة', [400, 700]),
+    font('Mirza', 'ميرزا', [400, 600]), font('Katibeh', 'كتيبة'), font('Aref Ruqaa', 'عارف رقعة', [400, 700]),
     font('Reem Kufi', 'ريم كوفي', [400, 500, 600, 700]),
     font('El Messiri', 'المسيري', [400, 500, 600, 700]), font('Lalezar', 'لاله زار'),
     font('Marhey', 'مرحي', [400, 500, 600, 700]), font('Rakkas', 'رقّاص'),
     font('Noto Kufi Arabic', 'نوتو كوفي عربي', [400, 500, 600, 700]), font('Amiri', 'أميري', [400, 700]),
   ] },
   ui: { label: 'خط الواجهة', variable: '--ui-font', fallback: 'sans-serif', fonts: [
-    font('Tajawal', 'تجوال', [400, 500, 700]), font('IBM Plex Sans Arabic', 'آي بي إم بلكس عربي', [400, 500, 700]),
+    font('Mirza', 'ميرزا', [400, 600]), font('Tajawal', 'تجوال', [400, 500, 700]), font('IBM Plex Sans Arabic', 'آي بي إم بلكس عربي', [400, 500, 700]),
     font('Noto Sans Arabic', 'نوتو سانس عربي', [400, 500, 700]), font('Cairo', 'القاهرة', [400, 500, 700]),
     font('Readex Pro', 'ريدكس برو', [400, 500, 700]), font('Almarai', 'المراعي', [400, 700]),
     font('Alexandria', 'الإسكندرية', [400, 500, 700]), font('Vazirmatn', 'وزيرمتن', [400, 500, 700]),
@@ -25,7 +25,7 @@ export const fontGroups = {
 type Role = keyof typeof fontGroups;
 type Choice = Record<Role, string> & { weight: number };
 const roles = Object.keys(fontGroups) as Role[];
-const defaults: Choice = { poem: 'Amiri', display: 'Katibeh', ui: 'Tajawal', weight: 400 };
+const defaults: Choice = { poem: 'Mirza', display: 'Mirza', ui: 'Mirza', weight: 600 };
 const key = 'radi-fontlab';
 const sample = 'الشريف الرضي، سطر للمعاينة';
 
@@ -45,8 +45,7 @@ export function initFontLab() {
   // Only a requested/previewed family and its required weights are fetched. Local faces stay local.
   async function loadFont(f: Font, weights: number[]) {
     const remote = weights.filter((w) => !(
-      (f.name === 'Amiri' || f.name === 'Katibeh') && w === 400 ||
-      f.name === 'Tajawal' && [400, 500, 700].includes(w)
+      f.name === 'Mirza' && [400, 600].includes(w)
     ));
     const requestKey = `${f.name}:${weights.join(';')}`;
     if (!requests.has(requestKey)) {
@@ -140,7 +139,7 @@ export function initFontLab() {
       paint(choice);
       if (!persist) {
         originalStyles();
-        await document.fonts.load('400 24px "Amiri"', sample).catch(() => []);
+        await document.fonts.load('400 24px "Mirza"', sample).catch(() => []);
         if (current !== revision) return;
         window.dispatchEvent(new Event('radi:fontchange'));
       }
@@ -241,7 +240,7 @@ export function initFontLab() {
     copy.disabled = false;
     let stored = true;
     try { localStorage.removeItem(key); } catch { stored = false; }
-    await document.fonts.load('400 24px "Amiri"', sample).catch(() => []);
+    await document.fonts.load('400 24px "Mirza"', sample).catch(() => []);
     if (current !== revision) return;
     window.dispatchEvent(new Event('radi:fontchange'));
     say(stored ? 'أُعيدت الخطوط الأصلية.' : 'أُعيدت الخطوط، وتعذّر مسح الاختيار المحفوظ.');

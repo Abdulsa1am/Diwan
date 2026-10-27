@@ -268,7 +268,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     border-radius: 12px;
     background: var(--paper-strong);
     color: var(--ink);
-    font-size: 14px;
+    font-size: var(--fs-sm);
     cursor: pointer;
   }
   .filter-options summary::-webkit-details-marker { display: none; }
@@ -298,13 +298,13 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     border-radius: 10px;
     background: var(--paper);
     color: var(--ink);
-    font: 500 18px/1.5 var(--ui-font);
+    font: 500 21px/1.5 var(--ui-font);
     cursor: pointer;
   }
   .rhyme-jump button:disabled { opacity: .35; cursor: default; }
   .compact-meta {
     color: var(--muted);
-    font-size: 14px;
+    font-size: var(--fs-sm);
     line-height: 1.7;
     margin-top: 6px;
   }
@@ -336,7 +336,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     width: 100%;
     border: 0;
     background: none;
-    font: 400 16px/1.6 var(--ui-font);
+    font: 400 var(--fs-md)/1.6 var(--ui-font);
     color: var(--ink);
   }
   .title-filter input:focus {
@@ -344,7 +344,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   }
   .filter-bar select {
     flex: 1 1 120px;
-    font: 400 14px/1.6 var(--ui-font);
+    font: 400 var(--fs-sm)/1.6 var(--ui-font);
     color: var(--ink);
     background: var(--paper-strong);
     border: 1px solid var(--line-dark);
@@ -373,7 +373,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     padding: 8px 0 4px;
   }
   .page-head h1 {
-    font-size: clamp(36px, 6vw, 48px);
+    font-size: clamp(40px, 6vw, 54px);
     color: var(--accent-deep);
     margin: 0;
   }
@@ -383,11 +383,11 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   .page-head p {
     color: var(--muted);
     margin: 0;
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
   .count {
     color: var(--muted);
-    font-size: 14px;
+    font-size: var(--fs-sm);
     margin: 24px 0 14px;
   }
   .catalogue-paging {
@@ -397,7 +397,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     flex-wrap: wrap;
     gap: 8px;
     margin: 12px 0;
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
   .catalogue-paging[hidden] { display: none; }
   .catalogue-paging label { display: flex; align-items: center; gap: 6px; }
@@ -425,7 +425,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     border-radius: 4px;
     background: var(--paper-strong);
     color: var(--ink);
-    font: 500 14px/1.4 var(--ui-font);
+    font: 500 var(--fs-sm)/1.4 var(--ui-font);
     font-variant-numeric: tabular-nums;
   }
   .cards {
@@ -450,7 +450,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   .poem-card h2 {
     font-family: var(--display-font);
     overflow-wrap: anywhere;
-    font-size: 26px;
+    font-size: 30px;
     margin: 0 0 6px;
     line-height: 1.5;
   }
@@ -473,10 +473,10 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     .catalogue-number { inset-inline-start: 10px; }
     .poem-card { padding: 10px; }
     .poem-card h2 {
-      font-size: 24px;
+      font-size: 28px;
       line-height: 1.5;
       margin: 0;
     }
-    .compact-meta { font-size: 13px; }
+    .compact-meta { font-size: var(--fs-xs); }
   }
 </style>

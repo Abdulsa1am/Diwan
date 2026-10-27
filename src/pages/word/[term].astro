@@ -94,7 +94,7 @@ const description = `${word.headword}: ${first.meaning} وردت في قصيدة
   }
   .meaning {
     font-family: var(--poem-font);
-    font-size: 24px;
+    font-size: 28px;
     line-height: 1.8;
     margin: 0 0 12px;
   }
@@ -104,7 +104,7 @@ const description = `${word.headword}: ${first.meaning} وردت في قصيدة
     display: grid;
     text-align: center;
     font-family: var(--poem-font);
-    font-size: 22px;
+    font-size: 25px;
     line-height: 1.9;
     padding: 12px;
     border-radius: 14px;
@@ -115,7 +115,7 @@ const description = `${word.headword}: ${first.meaning} وردت في قصيدة
   .verse small,
   .occ small {
     font-family: var(--ui-font);
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
   }
   .note {
@@ -125,19 +125,19 @@ const description = `${word.headword}: ${first.meaning} وردت في قصيدة
     min-height: 44px;
     align-content: center;
     cursor: pointer;
-    font-size: 14px;
+    font-size: var(--fs-sm);
     color: var(--accent);
   }
   .note p {
     font-family: var(--poem-font);
-    font-size: 17px;
+    font-size: 20px;
     line-height: 1.9;
     color: var(--muted);
     margin: 6px 0 0;
   }
   .note .source {
     font-family: var(--ui-font);
-    font-size: 13px;
+    font-size: var(--fs-xs);
   }
   .source a {
     display: inline-flex;
@@ -148,12 +148,12 @@ const description = `${word.headword}: ${first.meaning} وردت في قصيدة
     min-height: 44px;
   }
   .elsewhere h2 {
-    font-size: 28px;
+    font-size: 32px;
     margin: 22px 0 4px;
   }
   .muted {
     color: var(--muted);
-    font-size: 14px;
+    font-size: var(--fs-sm);
     margin: 0 0 10px;
   }
   .occ {
@@ -165,7 +165,7 @@ const description = `${word.headword}: ${first.meaning} وردت في قصيدة
     gap: 8px;
   }
   .occ a {
-    font-size: 20px;
+    font-size: 23px;
     background: var(--paper);
     border: 1px solid var(--glass-border);
   }

@@ -111,17 +111,17 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
 
 <style>
   .find { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 14px; }
-  .find input { flex: 1 1 200px; min-width: 0; min-height: 44px; font: 16px var(--ui-font); color: var(--ink); background: var(--paper-strong); border: 1px solid var(--glass-border); border-radius: 8px; padding: 6px 10px; }
-  #relationsCount { font-size: 14px; color: var(--muted); }
+  .find input { flex: 1 1 200px; min-width: 0; min-height: 44px; font: var(--fs-md) var(--ui-font); color: var(--ink); background: var(--paper-strong); border: 1px solid var(--glass-border); border-radius: 8px; padding: 6px 10px; }
+  #relationsCount { font-size: var(--fs-sm); color: var(--muted); }
   #relationsCount:empty { margin: 0; }
   .terms > li[hidden], .relation-group[hidden] { display: none; }
   .caveat {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
     margin: 6px 0 0;
   }
   .group-title {
-    font-size: 30px;
+    font-size: 34px;
     margin: 16px 0 8px;
   }
   .terms {
@@ -162,11 +162,11 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
   summary b {
     font-family: var(--poem-font);
     font-weight: 400;
-    font-size: 21px;
+    font-size: 24px;
   }
   summary small,
   .related small {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
   }
   .related {
@@ -181,7 +181,7 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
     border-radius: 8px;
     background: var(--chip-bg);
     font-family: var(--poem-font);
-    font-size: 16px;
+    font-size: var(--fs-md);
   }
   .related a {
     text-decoration: none;
@@ -204,7 +204,7 @@ const description = 'الألفاظ والمواضع التي تجتمع في ق
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-    font-size: 13px;
+    font-size: var(--fs-xs);
     margin: 10px 14px 12px;
   }
 </style>

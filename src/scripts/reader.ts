@@ -27,7 +27,7 @@ let naturalWidths: number[] | undefined;
 let fitFrame = 0;
 
 function measureHemistichs() {
-  // Keep the actual Amiri shaping/features and Astro-scoped styles. Insert all
+  // Keep the actual font shaping/features and Astro-scoped styles. Insert all
   // probes together, read their natural widths together, then remove them. There
   // is one layout pass, not a write/read loop over hundreds of hemistichs.
   const probes = hemistichs.map((h) => {

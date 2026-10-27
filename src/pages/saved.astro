@@ -107,7 +107,7 @@ import { SITE_NAME } from '../lib/diwan';
 
 <style>
   .page-head h1 {
-    font-size: clamp(36px, 6vw, 48px);
+    font-size: clamp(40px, 6vw, 54px);
     color: var(--accent-deep);
     margin: 0;
   }
@@ -117,7 +117,7 @@ import { SITE_NAME } from '../lib/diwan';
   .page-head p {
     color: var(--muted);
     margin: 0 0 20px;
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
   .saved-list {
     display: grid;
@@ -137,19 +137,19 @@ import { SITE_NAME } from '../lib/diwan';
     text-decoration: none;
   }
   .saved-list :global(.saved-title) {
-    font-size: 26px;
+    font-size: 30px;
     margin: 0;
   }
   .saved-list :global(.saved-first) {
     font-family: var(--poem-font);
-    font-size: 19px;
+    font-size: 22px;
     color: var(--muted);
     margin: 4px 0 0;
   }
   .saved-list :global(.saved-remove) {
     min-height: 44px;
     padding: 6px 10px;
-    font-size: 13px;
+    font-size: var(--fs-xs);
   }
   .saved-undo {
     position: sticky;
@@ -183,7 +183,7 @@ import { SITE_NAME } from '../lib/diwan';
     color: var(--accent);
   }
   .empty h2 {
-    font-size: 30px;
+    font-size: 34px;
     margin: 6px 0 2px;
   }
   .empty p {

@@ -24,7 +24,7 @@ const allowed = Object.fromEntries(Object.entries(fontGroups).map(([role, group]
           const group = allowed[role], name = saved[role];
           root.style.setProperty(group.variable, '"' + name + '", ' + group.fallback);
           const weights = role === 'display' ? [weight] : role === 'ui' ? group.fonts[name] : [400];
-          const remote = weights.filter(w => !((name === 'Amiri' || name === 'Katibeh') && w === 400 || name === 'Tajawal'));
+          const remote = weights.filter(w => !(name === 'Mirza' && [400, 600].includes(w)));
           if (remote.length) {
             const family = name + ':wght@' + remote.join(';');
             if (!Array.from(document.querySelectorAll('link[data-fontlab-family]')).some(link => link.dataset.fontlabFamily === family)) {
@@ -112,7 +112,7 @@ const allowed = Object.fromEntries(Object.entries(fontGroups).map(([role, group]
   :global(.menu button[data-fontlab-open]) {
     display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 0;
     border-radius: 12px; color: var(--ink); background: transparent; cursor: pointer;
-    font: inherit; font-size: 14px; text-align: start;
+    font: inherit; font-size: var(--fs-sm); text-align: start;
   }
   :global(.menu button[data-fontlab-open]:hover) { background: var(--paper-strong); }
   #fontLab {
@@ -125,7 +125,7 @@ const allowed = Object.fromEntries(Object.entries(fontGroups).map(([role, group]
   .fontlab-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .fontlab-header h2 { font: 500 18px/1.8 var(--ui-font); margin: 0; }
   .fontlab-header button { flex-shrink: 0; font-size: 24px; }
-  .fontlab-hint, .fontlab-status { font-size: 13px; color: var(--muted); margin: 8px 0; }
+  .fontlab-hint, .fontlab-status { font-size: var(--fs-xs); color: var(--muted); margin: 8px 0; }
   .fontlab-field { margin-block: 12px; }
   .fontlab-select { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 8px; }
   .fontlab-select, select {
@@ -147,7 +147,7 @@ const allowed = Object.fromEntries(Object.entries(fontGroups).map(([role, group]
   .fontlab-weight { display: flex; align-items: center; gap: 12px; }
   .fontlab-weight select { width: 90px; }
   .fontlab-preview { margin-block: 14px; }
-  .fontlab-preview > span { font-size: 13px; color: var(--muted); }
+  .fontlab-preview > span { font-size: var(--fs-xs); color: var(--muted); }
   .fontlab-preview p { font: 400 25px/2.2 var(--poem-font); margin: 4px 0; overflow-wrap: anywhere; }
   .fontlab-preview p span { display: block; }
   .fontlab-actions { display: flex; gap: 8px; flex-wrap: wrap; }

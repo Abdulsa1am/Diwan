@@ -81,7 +81,7 @@ const description = `أكثر الألفاظ ورودًا في ديوان الش
     min-width: 0;
     width: 100%;
     min-height: 44px;
-    font: 16px var(--ui-font);
+    font: var(--fs-md) var(--ui-font);
     color: var(--ink);
     background: var(--paper-strong);
     border: 1px solid var(--glass-border);
@@ -89,7 +89,7 @@ const description = `أكثر الألفاظ ورودًا في ديوان الش
     padding: 6px 10px;
   }
   #frequencyCount {
-    font-size: 14px;
+    font-size: var(--fs-sm);
     color: var(--muted);
   }
   #frequencyCount:empty {
@@ -99,9 +99,9 @@ const description = `أكثر الألفاظ ورودًا في ديوان الش
     display: none;
   }
 
-  .method summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: var(--muted); font-size: 14px; }
+  .method summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: var(--muted); font-size: var(--fs-sm); }
   .caveat {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
     margin: 6px 0 0;
   }
@@ -144,10 +144,10 @@ const description = `أكثر الألفاظ ورودًا في ديوان الش
   .words b {
     font-family: var(--poem-font);
     font-weight: 400;
-    font-size: 21px;
+    font-size: 24px;
   }
   .words span {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
     text-align: end;
   }

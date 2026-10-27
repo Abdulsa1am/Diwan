@@ -231,12 +231,12 @@ import { SITE_NAME } from '../../lib/diwan';
   .phrase-form input:focus {
     outline: none;
   }
-  .examples { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--muted); font-size: 14px; }
-  .examples a { display: inline-flex; align-items: center; min-height: 44px; padding: 4px 10px; border-radius: 10px; background: var(--paper); border: 1px solid var(--glass-border); color: var(--ink); font-family: var(--poem-font); font-size: 18px; text-decoration: none; }
+  .examples { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--muted); font-size: var(--fs-sm); }
+  .examples a { display: inline-flex; align-items: center; min-height: 44px; padding: 4px 10px; border-radius: 10px; background: var(--paper); border: 1px solid var(--glass-border); color: var(--ink); font-family: var(--poem-font); font-size: 20px; text-decoration: none; }
   .status:empty { display: none; }
   .status {
     color: var(--muted);
-    font-size: 14px;
+    font-size: var(--fs-sm);
     margin: 6px 4px 14px;
   }
   .tree {
@@ -255,7 +255,7 @@ import { SITE_NAME } from '../../lib/diwan';
     overflow-wrap: anywhere;
     align-self: center;
     font-family: var(--poem-font);
-    font-size: 30px;
+    font-size: 34px;
     padding: 10px 18px;
     border-radius: 16px;
     background: var(--primary-bg);
@@ -267,7 +267,7 @@ import { SITE_NAME } from '../../lib/diwan';
     padding: 12px 14px;
   }
   .branch h2 {
-    font-size: 22px;
+    font-size: 25px;
     margin: 0 0 6px;
   }
   .branch ol {
@@ -295,18 +295,18 @@ import { SITE_NAME } from '../../lib/diwan';
   .branch :global(button b) {
     font-family: var(--poem-font);
     font-weight: 400;
-    font-size: 18px;
+    font-size: 20px;
   }
   .branch :global(button small) {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
   }
   .branch :global(.empty) {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
   }
   .samples h2 {
-    font-size: 26px;
+    font-size: 29px;
     margin: 18px 0 8px;
   }
   .samples ol {
@@ -330,11 +330,11 @@ import { SITE_NAME } from '../../lib/diwan';
   .samples :global(.v) {
     display: grid;
     font-family: var(--poem-font);
-    font-size: 20px;
+    font-size: 23px;
     line-height: 1.9;
   }
   .samples :global(small) {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
   }
   .samples :global(mark) {
@@ -342,7 +342,7 @@ import { SITE_NAME } from '../../lib/diwan';
     color: inherit;
     border-radius: 4px;
   }
-  .branch :global(.more-row), .samples :global(.more-row) { grid-column: 1 / -1; width: 100%; font-size: 14px; color: var(--muted); }
+  .branch :global(.more-row), .samples :global(.more-row) { grid-column: 1 / -1; width: 100%; font-size: var(--fs-sm); color: var(--muted); }
   .branch :global(.more-row p), .samples :global(.more-row p) { margin: 8px 0; }
   .branch :global(.more-row button), .samples :global(.more-row button) { min-height: 44px; }
   .phrase:focus { outline: 2px solid var(--accent); outline-offset: 3px; }

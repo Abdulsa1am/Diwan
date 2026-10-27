@@ -30,8 +30,8 @@ const dots = mapped
 // important; smaller places' dots may sit under it (their names show on hover and in the list).
 const placedLabels: Box[] = [];
 const labels = dots.map((d, i) => {
-  const w = d.p.name.length * 8 + 6;
-  const h = 18;
+  const w = d.p.name.length * 10 + 8;
+  const h = 23;
   const options = [
     { x: d.x - d.r - 3, y: d.y + 5, anchor: 'end', box: { x1: d.x - d.r - 3 - w, y1: d.y - h / 2, x2: d.x - d.r - 3, y2: d.y + h / 2 } },
     { x: d.x + d.r + 3, y: d.y + 5, anchor: 'start', box: { x1: d.x + d.r + 3, y1: d.y - h / 2, x2: d.x + d.r + 3 + w, y2: d.y + h / 2 } },
@@ -101,19 +101,19 @@ const labels = dots.map((d, i) => {
 <style>
   /* Same palette as the site, with more separation between land, borders and rivers. */
   .atlas-map {
-    --map-sea: color-mix(in srgb, var(--accent) 6%, #ffffff);
-    --map-land: color-mix(in srgb, var(--accent) 20%, #ffffff);
-    --map-border: color-mix(in srgb, var(--accent-deep) 55%, transparent);
-    --map-river: color-mix(in srgb, var(--accent) 85%, #ffffff);
+    --map-sea: #f6eddf;
+    --map-land: #dfc6a3;
+    --map-border: #a78059;
+    --map-river: #98724e;
     margin: 0 0 18px;
     padding: 8px;
     overflow: hidden;
   }
   :global([data-theme='dark']) .atlas-map {
-    --map-sea: #142334;
-    --map-land: color-mix(in srgb, var(--accent) 22%, #1a2b3e);
-    --map-border: color-mix(in srgb, var(--accent) 50%, transparent);
-    --map-river: color-mix(in srgb, var(--accent) 80%, #111d2b);
+    --map-sea: #211813;
+    --map-land: #493526;
+    --map-border: #997552;
+    --map-river: #bd9870;
   }
   .map-size-toggle {
     position: absolute;
@@ -132,7 +132,7 @@ const labels = dots.map((d, i) => {
     align-items: center;
     min-height: 44px;
     padding: 4px 8px;
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
   .map-size-label { cursor: pointer; }
   .map-size-label::before {
@@ -158,7 +158,7 @@ const labels = dots.map((d, i) => {
   .map-help {
     display: none;
     margin: 0 8px;
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
   }
   .map-size-toggle:checked ~ .map-help { display: block; }
@@ -210,17 +210,19 @@ const labels = dots.map((d, i) => {
   }
   .place text {
     font-family: var(--ui-font);
-    font-size: 15px;
+    font-size: var(--fs-md);
     fill: var(--ink);
     paint-order: stroke;
-    stroke: var(--bg);
+    stroke: var(--map-sea);
     stroke-width: 4px;
     stroke-linejoin: round;
   }
   .place:hover .place-dot,
   .place:focus-visible .place-dot,
   .place.focus .place-dot {
-    fill-opacity: 0.9;
+    fill-opacity: 1;
+    stroke: var(--ink);
+    stroke-width: 2.5;
   }
   .place:focus-visible {
     outline: none;
@@ -292,10 +294,10 @@ const labels = dots.map((d, i) => {
   }
   .place.focus text {
     font-weight: 700;
-    font-size: 18px;
+    font-size: 21px;
   }
   figcaption {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
     padding: 6px 8px 2px;
   }

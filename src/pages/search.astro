@@ -360,7 +360,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
 
 <style>
   .page-head h1 {
-    font-size: clamp(36px, 6vw, 48px);
+    font-size: clamp(40px, 6vw, 54px);
     color: var(--accent-deep);
     margin: 0;
   }
@@ -370,7 +370,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   .page-head p {
     color: var(--muted);
     margin: 0 0 18px;
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
   .search-box {
     padding: 14px;
@@ -398,7 +398,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     width: 100%;
     border: 0;
     background: none;
-    font: 400 20px/1.6 var(--poem-font);
+    font: 400 23px/1.6 var(--poem-font);
     color: var(--ink);
     padding: 6px 0;
   }
@@ -425,7 +425,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     border-radius: 12px;
     background: var(--paper-strong);
     color: var(--ink);
-    font-size: 14px;
+    font-size: var(--fs-sm);
     cursor: pointer;
   }
   .search-options[open] .filters { padding-top: 10px; }
@@ -452,7 +452,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     display: block;
     padding: 7px 12px;
     border-radius: 9px;
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
   }
   .segmented input:checked + span {
@@ -466,11 +466,11 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   .field {
     display: grid;
     gap: 2px;
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
   }
   .field select {
-    font: 400 14px/1.6 var(--ui-font);
+    font: 400 var(--fs-sm)/1.6 var(--ui-font);
     color: var(--ink);
     background: var(--paper-strong);
     border: 1px solid var(--line-dark);
@@ -480,7 +480,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   }
   .status {
     color: var(--muted);
-    font-size: 14px;
+    font-size: var(--fs-sm);
     margin: 6px 4px 12px;
   }
   .results {
@@ -502,18 +502,18 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   }
   .results :global(.result-verse) {
     font-family: var(--poem-font);
-    font-size: 22px;
+    font-size: 25px;
     line-height: 1.9;
     text-align: center;
     display: grid;
   }
   .results :global(.result-title) {
     font-family: var(--display-font);
-    font-size: 26px;
+    font-size: 30px;
   }
   .results :global(.result-note) {
     font-family: var(--poem-font);
-    font-size: 18px;
+    font-size: 21px;
     line-height: 1.9;
   }
   .results :global(mark) {
@@ -523,7 +523,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     padding: 0 2px;
   }
   .results :global(.result-meta) {
-    font-size: 13px;
+    font-size: var(--fs-xs);
     color: var(--muted);
     margin-top: 4px;
   }
@@ -542,7 +542,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     display: none;
   }
   .tips h2 {
-    font-size: 22px;
+    font-size: 25px;
     margin: 0 0 6px;
   }
   .tips ul {
@@ -556,7 +556,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   .tips a {
     display: inline-block;
     font-family: var(--poem-font);
-    font-size: 18px;
+    font-size: 21px;
     padding: 4px 14px;
     border-radius: 10px;
     background: var(--chip-bg);
@@ -567,7 +567,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     .query-row { gap: 6px; padding-inline-start: 8px; }
     .query-row .btn { min-height: 44px; flex-shrink: 0; }
     .filters { align-items: stretch; }
-    .field { flex: 1 1 110px; min-width: 0; font-size: 13px; }
+    .field { flex: 1 1 110px; min-width: 0; font-size: var(--fs-xs); }
     .field select { min-width: 0; min-height: 44px; }
     .segmented span { min-height: 44px; align-content: center; }
   }

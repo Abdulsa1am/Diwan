@@ -22,7 +22,7 @@ const arcs = rhymeGroups.map((g, i) => {
   const d = `M ${point(outer, a0)} A ${outer} ${outer} 0 ${large} 1 ${point(outer, a1)} L ${point(inner, a1)} A ${inner} ${inner} 0 ${large} 0 ${point(inner, a0)} Z`;
   const mid = (a0 + a1) / 2;
   const label = point((outer + inner) / 2, mid).split(' ').map(Number);
-  return { g, d, label, showLabel: sweep > 0.09, shade: i % 2 };
+  return { g, d, label, showLabel: sweep > 0.12, shade: i % 2 };
 });
 const top = [...rhymeGroups].sort((a, b) => b.poems.length - a.poems.length).slice(0, 3);
 
@@ -85,23 +85,23 @@ const description = `توزيع قصائد الشريف الرضي على حرو
     direction: ltr;
   }
   .arc path {
-    fill: color-mix(in srgb, var(--accent) 55%, var(--paper-strong));
+    fill: color-mix(in srgb, var(--accent) 24%, var(--surface-solid));
     stroke: var(--bg);
     stroke-width: 1.5;
   }
   .arc.alt path {
-    fill: color-mix(in srgb, var(--accent) 35%, var(--paper-strong));
+    fill: color-mix(in srgb, var(--accent) 38%, var(--surface-solid));
   }
   .arc:hover path,
   .arc:focus-visible path {
-    fill: var(--accent);
+    fill: color-mix(in srgb, var(--accent) 45%, var(--surface-solid));
   }
   .arc:focus-visible {
     outline: none;
   }
   .arc text {
     font-family: var(--poem-font);
-    font-size: 17px;
+    font-size: 19px;
     text-anchor: middle;
     fill: var(--ink);
     pointer-events: none;
@@ -114,13 +114,13 @@ const description = `توزيع قصائد الشريف الرضي على حرو
   }
   .center-sub {
     font-family: var(--ui-font);
-    font-size: 14px;
+    font-size: var(--fs-sm);
     text-anchor: middle;
     fill: var(--muted);
   }
   .legend-jump { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 8px; }
   #legendTitle { scroll-margin-top: 90px; font-size: 26px; margin: 8px 0 0; }
-  .legend-note { color: var(--muted); font-size: 14px; margin: 0 0 10px; }
+  .legend-note { color: var(--muted); font-size: var(--fs-sm); margin: 0 0 10px; }
   .legend {
     list-style: none;
     margin: 0;
@@ -140,7 +140,7 @@ const description = `توزيع قصائد الشريف الرضي على حرو
     border: 1px solid var(--glass-border);
     text-decoration: none;
     color: var(--ink);
-    font-size: 14px;
+    font-size: var(--fs-sm);
   }
   .legend span {
     color: var(--muted);
