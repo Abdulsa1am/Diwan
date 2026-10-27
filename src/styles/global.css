@@ -125,6 +125,28 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* No blue box on tap (mobile browsers); pressed controls shrink a little instead. */
+  -webkit-tap-highlight-color: transparent;
+}
+a,
+button,
+summary,
+label,
+select {
+  touch-action: manipulation;
+}
+@media (prefers-reduced-motion: no-preference) {
+  :is(a, button, summary, .theme-choice label) {
+    transition: transform 0.12s ease;
+  }
+  :is(.btn, .iconbtn, .chip, a.glass, button.glass, .mobile-nav a, .menu a, .theme-choice label, summary):active {
+    transform: scale(0.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(.btn, .iconbtn, .chip, a.glass, button.glass, .mobile-nav a, .menu a, .theme-choice label, summary):active {
+    opacity: 0.75;
+  }
 }
 
 body {
