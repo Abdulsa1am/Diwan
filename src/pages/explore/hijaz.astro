@@ -16,10 +16,9 @@ const description = `حجازيات الشريف الرضي: ${ar(hijaz.length)}
 <Base title={title} description={description} section="indexes">
   <PageHead
     title="الحجازيات"
-    lede={`${ar(hijaz.length)} قصيدة يرد فيها أحد أسماء الحجاز ومواضعه:`}
     parent={{ label: 'الفهارس', href: '/explore/' }}
   >
-    <ul class="terms">
+    <ul class="terms" aria-label="أسماء الحجاز ومواضعه">
       {
         terms.map((t) => (
           <li>{placeNames.has(t) ? <a href={placeHref(t)}>{t}</a> : <span>{t}</span>}</li>
@@ -53,6 +52,7 @@ const description = `حجازيات الشريف الرضي: ${ar(hijaz.length)}
     list-style: none;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     gap: 6px;
     margin: 10px 0 0;
     padding: 0;
@@ -61,6 +61,9 @@ const description = `حجازيات الشريف الرضي: ${ar(hijaz.length)}
   .terms span {
     font-family: var(--poem-font);
     font-size: 19px;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     padding: 2px 12px;
     border-radius: 8px;
     background: var(--chip-bg);

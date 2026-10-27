@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
-import { SITE_NAME, ar } from '../../lib/diwan';
+import { SITE_NAME } from '../../lib/diwan';
 import frequencies from '../../../data/edition/word-frequencies.json';
 import { arCount } from '../../scripts/shared';
 
@@ -18,7 +18,6 @@ const description = `أكثر الألفاظ ورودًا في ديوان الش
 <Base title={title} description={description} section="indexes">
   <PageHead
     title="فهرس الألفاظ"
-    lede={`${ar(words.length)} لفظة من أكثر ألفاظ الديوان ورودًا. اختر لفظة لتبحث عنها في الأبيات.`}
     parent={{ label: 'الفهارس', href: '/explore/' }}
   />
 

@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
 import { SITE_NAME } from '../lib/diwan';
 ---
 
@@ -9,21 +10,20 @@ import { SITE_NAME } from '../lib/diwan';
   section="saved"
   noindex
 >
-  <header class="page-head">
-    <h1>محفوظاتي</h1>
-    <p>محفوظاتك على هذا الجهاز والمتصفح فقط.</p>
-  </header>
+  <PageHead title="محفوظاتي" />
 
   <div class="saved-undo glass" id="savedUndo" hidden>
     <span role="status" id="savedUndoMessage"></span>
     <button class="btn" type="button" id="undoRemove">تراجع عن الإزالة</button>
   </div>
   <div class="saved-list" id="savedList" aria-live="polite"></div>
+  <p class="privacy-note">محفوظاتك على هذا الجهاز والمتصفح فقط.</p>
 
   <section class="empty glass" id="savedEmpty" hidden>
     <svg class="ui-icon" aria-hidden="true"><use href="#i-bookmark"></use></svg>
     <h2>لم تحفظ قصيدة بعد</h2>
     <p>افتح أي قصيدة واضغط «احفظ» لتجدها هنا.</p>
+    <p class="privacy-note">محفوظاتك على هذا الجهاز والمتصفح فقط.</p>
     <a class="btn btn-primary" href="/diwan/">افتح الديوان</a>
   </section>
 
@@ -106,19 +106,13 @@ import { SITE_NAME } from '../lib/diwan';
 </script>
 
 <style>
-  .page-head h1 {
-    font-size: clamp(40px, 6vw, 54px);
-    color: var(--accent-deep);
-    margin: 0;
-  }
-  :global([data-theme='dark']) .page-head h1 {
-    color: var(--ink);
-  }
-  .page-head p {
-    color: var(--muted);
-    margin: 0 0 20px;
+  .privacy-note {
     font-size: var(--fs-sm);
+    color: var(--muted);
+    margin: 12px 0;
+    text-align: center;
   }
+  .saved-list:empty + .privacy-note { display: none; }
   .saved-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));

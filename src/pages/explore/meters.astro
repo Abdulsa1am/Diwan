@@ -13,7 +13,6 @@ const description = `فهرس قصائد الشريف الرضي على بحور
 <Base title={title} description={description} section="indexes">
   <PageHead
     title="البحور"
-    lede={`قصائد الديوان على ${ar(meterGroups.length)} وزنًا، مرتبة من الأكثر استعمالًا.`}
     parent={{ label: 'الفهارس', href: '/explore/' }}
   />
   <IndexGroups groups={meterGroups} filterLink={(g) => `/diwan/?meter=${encodeURIComponent(g.key)}`} />

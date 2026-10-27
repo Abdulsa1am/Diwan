@@ -14,15 +14,15 @@
   --topbar-h: 62px;
   color-scheme: light;
   --bg: #f3ebdf;
-  --blob-1: rgba(226, 199, 160, 0.55);
-  --blob-2: rgba(250, 240, 224, 0.9);
-  --blob-3: rgba(214, 182, 140, 0.4);
-  --pattern: rgba(140, 100, 60, 0.07);
-  --surface: rgba(255, 250, 242, 0.56);
-  --surface-strong: rgba(255, 251, 245, 0.84);
+  --blob-1: rgba(198, 148, 86, 0.62);
+  --blob-2: rgba(191, 132, 120, 0.32);
+  --blob-3: rgba(211, 174, 99, 0.52);
+  --pattern: rgba(140, 100, 60, 0.11);
+  --surface: rgba(255, 250, 242, 0.42);
+  --surface-strong: rgba(255, 251, 245, 0.76);
   --surface-solid: #fbf6ee;
   --ink: #3a2819;
-  --muted: #6b5442;
+  --muted: #5c4635;
   --accent: #835230;
   --fill: #7e4f2b;
   --fill-2: #66401f;
@@ -30,15 +30,17 @@
   --line: rgba(255, 255, 255, 0.55);
   --line-strong: rgba(110, 80, 50, 0.4);
   --rim-hi: rgba(255, 255, 255, 0.95);
-  --rim-lo: rgba(140, 100, 60, 0.18);
-  --sheen: rgba(255, 255, 255, 0.45);
-  --shadow: 0 14px 34px -14px rgba(90, 60, 30, 0.24);
-  --blur: 18px;
-  --sat: 140%;
+  --rim-lo: rgba(120, 78, 40, 0.32);
+  --sheen: rgba(255, 255, 255, 0.52);
+  --shadow: 0 3px 7px -3px rgba(90, 60, 30, 0.19), 0 18px 42px -18px rgba(90, 60, 30, 0.29);
+  --blur: 20px;
+  --sat: 180%;
   --radius: 22px;
   --radius-sm: 14px;
 }
 :root[data-theme='dark'] {
+  --blur: 18px;
+  --sat: 140%;
   --bg: #1b1410;
   --blob-1: rgba(122, 82, 46, 0.42);
   --blob-2: rgba(70, 48, 32, 0.6);
@@ -76,6 +78,13 @@
     radial-gradient(50vmax 45vmax at 70% 104%, var(--blob-3), transparent 70%);
 }
 :root[data-theme='dark'] { --accent-deep: var(--accent); }
+:root:not([data-theme='dark']) {
+  --bg-image: radial-gradient(75vmax 65vmax at 92% 4%, var(--blob-1), transparent 72%),
+    radial-gradient(70vmax 70vmax at 0% 58%, var(--blob-2), transparent 72%),
+    radial-gradient(65vmax 60vmax at 70% 104%, var(--blob-3), transparent 72%);
+  --glass-inset: inset 0 1px 0 var(--rim-hi), inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    inset 0 -8px 14px -12px rgba(120, 78, 40, 0.04);
+}
 *,
 *::before,
 *::after {
@@ -147,11 +156,7 @@ h3 {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(60vmax 50vmax at 92% 4%, var(--blob-1), transparent 70%),
-    radial-gradient(55vmax 55vmax at 0% 58%, var(--blob-2), transparent 70%),
-    radial-gradient(50vmax 45vmax at 70% 104%, var(--blob-3), transparent 70%),
-    var(--bg);
+  background: var(--bg-image), var(--bg);
 }
 /* Faint eight-point-star lattice, so the glass has something to bend. Colour comes from --pattern. */
 .backdrop::after {
@@ -482,6 +487,31 @@ h3 {
 }
 
 
+/* Light material only. :where keeps the solid accessibility fallbacks below authoritative.
+   These are the same filtered surfaces as before; controls borrow the wash without another blur. */
+:where(:root:not([data-theme='dark'])) .glass {
+  background: linear-gradient(180deg, rgba(255, 253, 248, 0.62), rgba(255, 250, 242, 0.34));
+  box-shadow: var(--shadow), var(--glass-inset), inset 0 -1px 0 var(--rim-lo);
+}
+:where(:root:not([data-theme='dark'])) .glass::before {
+  background: linear-gradient(170deg, var(--rim-hi), var(--line) 30%, var(--rim-lo) 85%, var(--rim-lo));
+}
+:where(:root:not([data-theme='dark'])) .glass::after {
+  background: linear-gradient(125deg, var(--sheen), transparent 32%, transparent 75%, rgba(255, 255, 255, 0.1));
+}
+:where(:root:not([data-theme='dark'])) :is(.sidebar, .topbar, .mobile-nav) {
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+}
+:where(:root:not([data-theme='dark'])) .btn:not(.btn-primary),
+:where(:root:not([data-theme='dark'])) .iconbtn,
+:where(:root:not([data-theme='dark'])) .chip,
+:where(:root:not([data-theme='dark'])) .menu a[aria-current='page'],
+:where(:root:not([data-theme='dark'])) .mobile-nav a[aria-current='page'] {
+  background: linear-gradient(180deg, rgba(255, 253, 248, 0.78), rgba(255, 250, 242, 0.5));
+  box-shadow: var(--glass-inset);
+}
+
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
   .sidebar,
   .topbar,
@@ -491,6 +521,10 @@ h3 {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
     border-color: var(--line-dark);
+  }
+  .btn:not(.btn-primary), .iconbtn, .chip,
+  .menu a[aria-current='page'], .mobile-nav a[aria-current='page'] {
+    background: var(--surface-solid);
   }
 }
 
@@ -630,6 +664,8 @@ html.is-reading .breadcrumb {
 
 @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
   .glass, .sidebar, .topbar, .mobile-nav { background: var(--surface-solid); border-color: var(--line-strong); }
+  .btn:not(.btn-primary), .iconbtn, .chip,
+  .menu a[aria-current='page'], .mobile-nav a[aria-current='page'] { background: var(--surface-solid); }
   .glass::after { display: none; }
 }
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
@@ -637,6 +673,7 @@ html.is-reading .breadcrumb {
 }
 @media (forced-colors: active) {
   .backdrop, .glass::before, .glass::after { display: none; }
-  .glass, .sidebar, .topbar, .mobile-nav, .btn, .iconbtn { background: Canvas; color: CanvasText; border: 1px solid CanvasText; backdrop-filter: none; }
+  .glass, .sidebar, .topbar, .mobile-nav, .btn, .iconbtn, .chip { background: Canvas; color: CanvasText; border: 1px solid CanvasText; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .btn:not(.btn-primary), .menu a[aria-current='page'], .mobile-nav a[aria-current='page'] { background: Canvas; }
   .menu a[aria-current='page'], .mobile-nav a[aria-current='page'] { outline: 2px solid Highlight; }
 }

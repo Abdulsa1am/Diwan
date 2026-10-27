@@ -95,8 +95,7 @@ const jsonLd = {
             </svg>
             <span>
               <b data-resume-label={item.key === 'reading' ? '' : undefined}>{item.label}</b>
-              <small data-resume-title={item.key === 'reading' ? '' : undefined}>{text}</small>
-              {item.key === 'reading' && <small data-resume-pos></small>}
+              <small title={text} data-resume-title={item.key === 'reading' ? '' : undefined}>{text}</small>
             </span>
           </a>
         ))
@@ -152,9 +151,13 @@ const jsonLd = {
   if (last?.id) {
     resume.href = `/poem/${last.id}/${last.verse && last.verse > 1 ? `#v${last.verse}` : ''}`;
     resume.querySelector('[data-resume-label]')!.textContent = 'تابع القراءة';
-    resume.querySelector('[data-resume-title]')!.textContent = last.title;
-    resume.querySelector('[data-resume-pos]')!.textContent =
-      last.verse && last.total ? `البيت ${digits.format(last.verse)} من ${digits.format(last.total)}` : '';
+    const subtitle = resume.querySelector<HTMLElement>('[data-resume-title]')!;
+    subtitle.textContent = last.title;
+    subtitle.title = last.title;
+    resume.title = last.verse && last.total
+      ? `${last.title}، البيت ${digits.format(last.verse)} من ${digits.format(last.total)}`
+      : last.title;
+    resume.setAttribute('aria-label', `تابع القراءة، ${resume.title}`);
   }
 
   // Verse of the day: same verse for everyone on the same day.
@@ -372,11 +375,14 @@ const jsonLd = {
   }
   .entries {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
     gap: 10px;
     align-content: start;
   }
   .entry {
-    display: flex;
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
     align-items: center;
     gap: 14px;
     padding: 14px 18px;
@@ -401,10 +407,18 @@ const jsonLd = {
   .entry b {
     font-weight: 600;
     font-size: var(--fs-md);
+    white-space: nowrap;
   }
   .entry small {
     font-size: var(--fs-xs);
     color: var(--muted);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    block-size: 3em;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .entry:hover {
     background: var(--paper-strong);
@@ -458,8 +472,6 @@ const jsonLd = {
   @media (max-width: 620px) {
     .entries { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
     .entry { gap: 8px; padding: 10px 12px; }
-    .entry.primary { grid-column: 1 / -1; }
-    .entry:not(.primary) small { display: none; }
     .hero {
       min-height: 0;
       margin-bottom: 12px;

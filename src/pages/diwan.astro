@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
 import { poems, ar, versesLabel, SITE_NAME } from '../lib/diwan';
 
 const meters = [...new Set(poems.map((p) => p.meter))].sort((a, b) => a.localeCompare(b, 'ar'));
@@ -9,12 +10,9 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
 ---
 
 <Base title={title} description={description} section="library">
-  <header class="page-head">
-    <h1>الديوان</h1>
-    <p>قصائد الديوان كلها مرتبة على حروف القافية في جزأين.</p>
-  </header>
+  <PageHead title="الديوان" />
 
-  <p class="count" id="filterNotice">تظهر قائمة القصائد كاملة. التصفية تحتاج إلى JavaScript وتبقى معطّلة حتى يكتمل تحميلها.</p>
+  <noscript><p class="count" id="filterNotice">تظهر قائمة القصائد كاملة. التصفية تحتاج إلى JavaScript وتبقى معطّلة حتى يكتمل تحميلها.</p></noscript>
   <form class="filter-bar glass" id="filters" role="search" aria-label="تصفية القصائد">
     <label class="title-filter">
       <svg class="ui-icon" aria-hidden="true"><use href="#i-search"></use></svg>
@@ -51,7 +49,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     <span id="catalogueRestrictionText"></span>
     <button class="btn" type="button" id="clearFilters">إزالة القيود</button>
   </div>
-  <p class="count" id="count" aria-live="polite" tabindex="-1">في الديوان {ar(poems.length)} قصيدة</p>
+  <p class="count" id="count" aria-live="polite" tabindex="-1"></p>
   <p class="no-match glass" id="noMatch" hidden>
     لا قصائد تطابق البحث. جرّب عنوانًا أو مطلعًا آخر، أو <a href="/search/">ابحث في الأبيات</a>.
   </p>
@@ -62,6 +60,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
         <a
           class="poem-card glass"
           href={`/poem/${p.id}/`}
+          title={p.title}
           data-meter={p.meter}
           data-rhyme={p.rhyme}
           data-vol={p.volume}
@@ -102,8 +101,9 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   const jumpButtons = [...jump.querySelectorAll<HTMLButtonElement>('button')];
   const firstByRhyme = new Map<string, HTMLAnchorElement>();
   const pagers = [...document.querySelectorAll<HTMLElement>('[data-catalogue-paging]')];
-  const pageSize = 100;
+  const pageSize = 50;
   let page = 1;
+  let hasFilter = false;
   let matched: HTMLAnchorElement[] = [];
   const phone = matchMedia('(max-width: 620px)');
   const syncDisclosure = () => { filterOptions.open = !phone.matches; };
@@ -132,7 +132,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     }
   }
 
-  function focusResult(target: HTMLElement = count) {
+  function focusResult(target: HTMLElement = hasFilter ? count : matched[(page - 1) * pageSize] ?? count) {
     target.focus({ preventScroll: true });
     target.scrollIntoView({ block: 'start' });
   }
@@ -144,10 +144,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     const visible = new Set(matched.slice(start, start + pageSize));
     for (const card of cards) card.hidden = !visible.has(card);
     const totalLabel = arCount(matched.length, ['قصيدة واحدة', 'قصيدتان', 'قصائد', 'قصيدة']);
-    const matchedLabel = matched.length === cards.length ? totalLabel : `${totalLabel} من ${ar(cards.length)}`;
-    count.textContent = matchedLabel + (matched.length
-      ? `، عرض ${ar(start + 1)}–${ar(Math.min(start + pageSize, matched.length))}، الصفحة ${ar(page)} من ${ar(totalPages)}`
-      : '');
+    count.textContent = hasFilter ? totalLabel : '';
     noMatch.hidden = matched.length > 0;
     for (const pager of pagers) {
       pager.hidden = totalPages <= 1;
@@ -172,6 +169,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     const meter = String(fd.get('meter') ?? '');
     const rhyme = String(fd.get('rhyme') ?? '');
     const vol = String(fd.get('vol') ?? '');
+    hasFilter = Boolean(t || meter || rhyme || vol);
     matched = [];
     firstByRhyme.clear();
     for (const card of cards) {
@@ -238,7 +236,6 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   for (const control of form.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select')) control.disabled = false;
   restoreUrl();
   jump.hidden = false;
-  document.getElementById('filterNotice')!.hidden = true;
 </script>
 
 <style>
@@ -247,7 +244,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     flex-wrap: wrap;
     gap: 8px;
     padding: 10px;
-    margin-top: 16px;
+    margin: 0 0 12px;
   }
   .filter-options {
     flex: 3 1 380px;
@@ -307,6 +304,9 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     font-size: var(--fs-sm);
     line-height: 1.7;
     margin-top: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .title-filter {
     align-self: flex-start;
@@ -369,27 +369,12 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
     cursor: pointer;
     padding: 0;
   }
-  .page-head {
-    padding: 8px 0 4px;
-  }
-  .page-head h1 {
-    font-size: clamp(40px, 6vw, 54px);
-    color: var(--accent-deep);
-    margin: 0;
-  }
-  :global([data-theme='dark']) .page-head h1 {
-    color: var(--ink);
-  }
-  .page-head p {
-    color: var(--muted);
-    margin: 0;
-    font-size: var(--fs-sm);
-  }
   .count {
     color: var(--muted);
     font-size: var(--fs-sm);
-    margin: 24px 0 14px;
+    margin: 8px 0;
   }
+  .count:empty { display: none; }
   .catalogue-paging {
     display: flex;
     align-items: center;
@@ -431,6 +416,7 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   .cards {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
     gap: 20px 16px;
     padding-block-start: 10px;
   }
@@ -449,7 +435,9 @@ const description = `فهرس قصائد ديوان الشريف الرضي (${a
   }
   .poem-card h2 {
     font-family: var(--display-font);
-    overflow-wrap: anywhere;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-size: 30px;
     margin: 0 0 6px;
     line-height: 1.5;

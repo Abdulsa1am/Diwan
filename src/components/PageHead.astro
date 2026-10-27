@@ -1,11 +1,10 @@
 ---
 interface Props {
   title: string;
-  lede?: string;
   /** Small line above the title, e.g. the parent section. */
   parent?: { label: string; href: string };
 }
-const { title, lede, parent } = Astro.props;
+const { title, parent } = Astro.props;
 ---
 
 <header class="page-head">
@@ -20,39 +19,82 @@ const { title, lede, parent } = Astro.props;
     )
   }
   <h1>{title}</h1>
-  {lede && <p>{lede}</p>}
+  <div class="ornament" aria-hidden="true">
+    <svg viewBox="0 0 24 24" focusable="false">
+      <path d="m12 1 3 7 7-3-3 7 3 7-7-3-3 7-3-7-7 3 3-7-3-7 7 3Z" />
+    </svg>
+  </div>
   <slot />
 </header>
 
 <style>
   .page-head {
-    padding: 4px 0 18px;
+    padding: 0 0 16px;
+    min-width: 0;
   }
   .parent {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 6px;
     font-size: var(--fs-sm);
     color: var(--muted);
     text-decoration: none;
     min-height: 44px;
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+    justify-content: center;
+    line-height: 1.3;
   }
   .parent .ui-icon {
     width: 18px;
     height: 18px;
   }
   h1 {
-    font-size: clamp(40px, 6vw, 54px);
+    font-size: clamp(30px, 7.5vw, 42px);
+    font-weight: 600;
+    text-align: center;
+    text-wrap: balance;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
     color: var(--accent-deep);
     margin: 0;
   }
   :global([data-theme='dark']) h1 {
     color: var(--ink);
   }
-  p {
-    color: var(--muted);
-    margin: 0;
-    font-size: var(--fs-md);
-    max-width: 640px;
+  .ornament {
+    direction: ltr;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 12px;
+    margin-top: 6px;
+    margin-bottom: 16px;
+    color: var(--accent);
+  }
+  .ornament::before,
+  .ornament::after {
+    content: '';
+    width: clamp(48px, 12vw, 72px);
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent));
+  }
+  .ornament::after {
+    transform: rotate(180deg);
+  }
+  .ornament svg {
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+    flex: none;
+  }
+  .ornament:last-child {
+    margin-bottom: 0;
+  }
+  @media (forced-colors: active) {
+    .ornament { color: CanvasText; }
+    .ornament::before, .ornament::after { background: CanvasText; }
   }
 </style>

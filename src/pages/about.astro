@@ -41,10 +41,11 @@ const jsonLd = {
 ---
 
 <Base title={title} description={description} section="about" jsonLd={jsonLd}>
-  <PageHead title="الشريف الرضي" lede="الشاعر والنقيب: أبو الحسن محمد بن الحسين الموسوي (٣٥٩–٤٠٦ هـ)." />
+  <PageHead title="الشريف الرضي" />
 
   <div class="layout">
     <article class="bio glass">
+      <p class="byline">الشاعر والنقيب: أبو الحسن محمد بن الحسين الموسوي (٣٥٩–٤٠٦ هـ).</p>
       <p class="lead">
         محمد بن الحسين الموسوي؛ أبدع أبناء زمانه، وأشعر الطالبيين من مضى منهم ومن غبر، بل قيل: أشعر قريش. جمع شعره إلى
         السلاسة متانةً، وإلى السهولة رصانةً، وكان من أعيان بغداد علمًا وأدبًا ونسبًا.
@@ -184,6 +185,11 @@ const jsonLd = {
     font-size: 22px;
     line-height: 2;
     margin: 0 0 12px;
+  }
+  .bio .byline {
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    margin-bottom: 6px;
   }
   .bio .lead {
     font-size: 25px;

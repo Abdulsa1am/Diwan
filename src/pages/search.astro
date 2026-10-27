@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
 import { poems, SITE_NAME } from '../lib/diwan';
 
 const meters = [...new Set(poems.map((p) => p.meter))].sort((a, b) => a.localeCompare(b, 'ar'));
@@ -11,20 +12,22 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   description="ابحث في أبيات ديوان الشريف الرضي وعناوين قصائده وحواشيه، بلفظة أو شطر، مع تقييد البحر والقافية."
   section="search"
 >
-  <header class="page-head">
-    <h1>البحث في الديوان</h1>
-    <p>لا يضر اختلاف التشكيل أو صور الهمزة.</p>
-  </header>
+  <PageHead title="البحث في الديوان" />
 
   <form class="search-box glass" id="searchForm" role="search" action="/search/" method="get">
     <div class="query-row">
-      <svg class="ui-icon" aria-hidden="true"><use href="#i-search"></use></svg>
       <label class="visually-hidden" for="q">لفظة أو شطر من بيت</label>
-      <input id="q" name="q" type="search" placeholder="أدخل لفظًا، أو شطرًا من بيت…" autocomplete="off" enterkeyhint="search" />
-      <button class="btn btn-primary" type="submit">ابحث</button>
+      <input id="q" name="q" type="search" placeholder="لفظة أو شطر من بيت" autocomplete="off" enterkeyhint="search" />
+      <button class="btn query-action" id="optionsToggle" type="button" aria-label="خيارات البحث" title="خيارات البحث" aria-expanded="false" aria-controls="searchOptions">
+        <svg class="ui-icon" aria-hidden="true"><use href="#i-sliders"></use></svg>
+        <span class="option-marker" id="optionMarker" hidden aria-hidden="true"></span>
+        <span class="visually-hidden" id="optionState"></span>
+      </button>
+      <button class="btn btn-primary query-action" type="submit" aria-label="ابحث" title="ابحث">
+        <svg class="ui-icon" aria-hidden="true"><use href="#i-search"></use></svg>
+      </button>
     </div>
-    <details class="search-options" id="searchOptions">
-      <summary id="optionsSummary">خيارات البحث</summary>
+    <div class="search-options" id="searchOptions" hidden>
       <div class="filters">
         <div class="segmented" role="radiogroup" aria-label="طريقة المطابقة">
           <label><input type="radio" name="mode" value="any" checked /> <span>كل الألفاظ</span></label>
@@ -62,7 +65,7 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
           </select>
         </label>
       </div>
-    </details>
+    </div>
   </form>
 
   <div class="filter-restrictions" id="searchRestrictions" hidden>
@@ -109,12 +112,22 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   const retry = document.getElementById('retrySearch') as HTMLButtonElement;
   const restrictions = document.getElementById('searchRestrictions')!;
   const restrictionText = document.getElementById('searchRestrictionText')!;
-  const options = document.getElementById('searchOptions') as HTMLDetailsElement;
-  const optionsSummary = document.getElementById('optionsSummary')!;
-  const phone = matchMedia('(max-width: 620px)');
-  const syncDisclosure = () => { options.open = !phone.matches; };
-  syncDisclosure();
-  phone.addEventListener('change', syncDisclosure);
+  const options = document.getElementById('searchOptions')!;
+  const optionsToggle = document.getElementById('optionsToggle') as HTMLButtonElement;
+  const optionMarker = document.getElementById('optionMarker')!;
+  const optionState = document.getElementById('optionState')!;
+  optionsToggle.setAttribute('aria-describedby', 'optionState');
+  optionsToggle.addEventListener('click', () => {
+    options.hidden = !options.hidden;
+    optionsToggle.setAttribute('aria-expanded', String(!options.hidden));
+  });
+  options.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    event.preventDefault();
+    options.hidden = true;
+    optionsToggle.setAttribute('aria-expanded', 'false');
+    optionsToggle.focus({ preventScroll: true });
+  });
   const digits = new Intl.NumberFormat('ar-EG');
   const PAGE = 40;
 
@@ -195,7 +208,8 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
       s.rhyme && `القافية: ${s.rhyme}`,
       s.vol && `الجزء ${s.vol === '1' ? 'الأول' : 'الثاني'}`,
     ].filter(Boolean);
-    optionsSummary.textContent = 'خيارات البحث';
+    optionMarker.hidden = !labels.length;
+    optionState.textContent = labels.length ? 'خيارات مفعّلة' : '';
     restrictionText.textContent = `القيود: ${labels.join('، ')}`;
     restrictions.hidden = !labels.length;
   }
@@ -359,98 +373,97 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
 </script>
 
 <style>
-  .page-head h1 {
-    font-size: clamp(40px, 6vw, 54px);
-    color: var(--accent-deep);
-    margin: 0;
-  }
-  :global([data-theme='dark']) .page-head h1 {
-    color: var(--ink);
-  }
-  .page-head p {
-    color: var(--muted);
-    margin: 0 0 18px;
-    font-size: var(--fs-sm);
-  }
   .search-box {
-    padding: 14px;
+    padding: 8px;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
     margin-bottom: 14px;
   }
   .query-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 44px 44px;
     align-items: center;
-    gap: 10px;
-    background: var(--paper-strong);
-    border: 1px solid var(--line-dark);
-    border-radius: 16px;
-    padding: 6px 6px 6px 8px;
-    padding-inline-start: 14px;
-  }
-  .query-row .ui-icon {
-    color: var(--muted);
+    gap: 4px;
   }
   .query-row input {
-    flex: 1;
     min-width: 0;
     width: 100%;
-    border: 0;
-    background: none;
-    font: 400 23px/1.6 var(--poem-font);
-    color: var(--ink);
-    padding: 6px 0;
-  }
-  .query-row input:focus {
-    outline: none;
-  }
-  .query-row:focus-within {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-  .filters {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: end;
-    gap: 10px;
-  }
-  .search-options { min-width: 0; }
-  .search-options summary {
-    width: fit-content;
-    min-height: 44px;
-    align-content: center;
-    padding: 6px 12px;
+    min-height: 52px;
     border: 1px solid var(--line-dark);
     border-radius: 12px;
     background: var(--paper-strong);
+    font: 400 var(--fs-md)/2 var(--poem-font);
     color: var(--ink);
-    font-size: var(--fs-sm);
-    cursor: pointer;
+    padding: 6px 10px;
   }
-  .search-options[open] .filters { padding-top: 10px; }
-  @media (min-width: 621px) {
-    .search-options[open] summary { display: none; }
-    .search-options[open] .filters { padding-top: 0; }
+  .query-row input::placeholder {
+    color: var(--muted);
+    opacity: 1;
+  }
+  .query-row input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .query-action {
+    position: relative;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+  .option-marker {
+    position: absolute;
+    inset-block-start: 5px;
+    inset-inline-end: 5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 2px var(--paper-strong);
+  }
+  .filters {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .search-options {
+    min-width: 0;
+    padding: 0 4px 4px;
+    overflow-anchor: none;
+  }
+  .search-options[hidden], .option-marker[hidden] {
+    display: none;
   }
   .segmented {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-column: 1 / -1;
     background: var(--chip-bg);
     border-radius: 12px;
     padding: 3px;
   }
   .segmented label {
     position: relative;
+    min-width: 0;
   }
   .segmented input {
     position: absolute;
     opacity: 0;
     inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
     cursor: pointer;
   }
   .segmented span {
     display: block;
-    padding: 7px 12px;
+    min-height: 44px;
+    align-content: center;
+    padding: 7px 6px;
+    text-align: center;
     border-radius: 9px;
     font-size: var(--fs-xs);
     color: var(--muted);
@@ -465,18 +478,21 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
   }
   .field {
     display: grid;
+    min-width: 0;
     gap: 2px;
     font-size: var(--fs-xs);
     color: var(--muted);
   }
   .field select {
+    width: 100%;
+    min-width: 0;
     font: 400 var(--fs-sm)/1.6 var(--ui-font);
     color: var(--ink);
     background: var(--paper-strong);
     border: 1px solid var(--line-dark);
     border-radius: 10px;
-    padding: 6px 10px;
-    min-height: 40px;
+    padding: 8px 12px;
+    min-height: 48px;
   }
   .status {
     color: var(--muted);
@@ -562,13 +578,9 @@ const rhymes = [...new Set(poems.map((p) => p.rhyme))];
     background: var(--chip-bg);
     text-decoration: none;
   }
-  @media (max-width: 620px) {
-    .search-box { padding: 10px; gap: 6px; }
-    .query-row { gap: 6px; padding-inline-start: 8px; }
-    .query-row .btn { min-height: 44px; flex-shrink: 0; }
-    .filters { align-items: stretch; }
-    .field { flex: 1 1 110px; min-width: 0; font-size: var(--fs-xs); }
-    .field select { min-width: 0; min-height: 44px; }
-    .segmented span { min-height: 44px; align-content: center; }
+  @media (min-width: 700px) {
+    .search-box { padding: 14px; }
+    .query-row { gap: 8px; }
+    .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>

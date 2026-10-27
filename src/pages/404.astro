@@ -1,12 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
 import { SITE_NAME } from '../lib/diwan';
 ---
 
 <Base title={`الصفحة غير موجودة | ${SITE_NAME}`} description="الرابط المطلوب غير موجود في الديوان.">
   <section class="missing glass">
-    <h1>هذه الصفحة غير موجودة</h1>
-    <p>ربما تغيّر الرابط أو كُتب خطأ.</p>
+    <PageHead title="هذه الصفحة غير موجودة" />
     <a class="btn btn-primary" href="/diwan/">افتح الديوان</a>
   </section>
 </Base>
@@ -17,13 +17,5 @@ import { SITE_NAME } from '../lib/diwan';
     padding: 48px 24px;
     max-width: 560px;
     margin: 24px auto;
-  }
-  h1 {
-    font-size: 40px;
-    margin: 0 0 4px;
-  }
-  p {
-    color: var(--muted);
-    margin: 0 0 20px;
   }
 </style>

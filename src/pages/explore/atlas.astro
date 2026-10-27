@@ -6,7 +6,6 @@ import { SITE_NAME, ar } from '../../lib/diwan';
 import { places, placeHref, KIND_LABELS } from '../../lib/atlas';
 import { arCount } from '../../scripts/shared';
 
-const withVerses = places.filter((p) => p.verses.length > 0);
 const groups = [
   { id: 'mapped', label: 'مواضع على الخريطة', places: places.filter((p) => p.lat !== undefined && p.lon !== undefined) },
   { id: 'unmapped', label: 'مواضع بلا إحداثيات', places: places.filter((p) => p.lat === undefined || p.lon === undefined) },
@@ -28,7 +27,6 @@ const description = `خريطة المواضع التي ذكرها الشريف 
 <Base title={title} description={description} section="atlas">
   <PageHead
     title="أطلس المواضع"
-    lede={`${ar(places.length)} موضعًا ورد ذكرها في الديوان، منها ${ar(withVerses.length)} لها شواهد في الأبيات رُوجعت في سياقها.`}
     parent={{ label: 'الفهارس', href: '/explore/' }}
   />
 
