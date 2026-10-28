@@ -8,7 +8,8 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 The owner writes in Arabic (often Gulf dialect) to save effort; agents work in English to avoid the extra token cost of Arabic. This applies to every model and agent on this project: the lead agent, any workers or subagents, and any other tool.
 - **Input:** read and understand the owner's Arabic directly. Don't translate it back or ask them to write in English.
 - **Work in English:** all thinking, planning, reasoning, notes, worker briefs, messages between agents, code comments, commit messages, `PROGRESS.md`, `AGENTS.md`, reports and other documents.
-- **Reply in Arabic only to the owner:** the final result of a task, and any question you must ask them, are written in Arabic: clear and simple, without jargon. Keep any in-progress note to the owner short.
+- **In-progress messages in English:** on multi-step work, every message before the end (status updates, feedback on a step, what you are doing next, notes on findings) is written in English, even though the owner reads it.
+- **Only the final reply in Arabic:** the last message of a turn, that is the final result or a question you must ask before you can continue, is written in Arabic: clear and simple, without jargon.
 - **Arabic content stays Arabic:** poetry, notes, titles, UI strings and any other Arabic text in the site, data or code is never translated. Quote it as it is. File names, commands, paths and code identifiers stay as they are.
 - **Any worker or subagent** gets an English brief and writes its summary in English (it reports to the lead, not to the owner). The lead turns the result into the Arabic reply.
 
