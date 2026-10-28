@@ -4,6 +4,14 @@
 A website presenting the diwan (collected poems) of al-Sharif al-Radi (الشريف الرضي).
 This is a rebuild of an existing site made by a friend. The old site works but needs a lot of improvement.
 
+## Language (owner's decision, 2026-10-28)
+The owner writes in Arabic (often Gulf dialect) to save effort; agents work in English to avoid the extra token cost of Arabic. This applies to every model and agent on this project: the lead agent, Codex workers, subagents and any other tool.
+- **Input:** read and understand the owner's Arabic directly. Don't translate it back or ask them to write in English.
+- **Work in English:** all thinking, planning, reasoning, notes, worker briefs, messages between agents, code comments, commit messages, `PROGRESS.md`, `AGENTS.md`, reports and other documents.
+- **Reply in Arabic only to the owner:** the final result of a task, and any question you must ask them, are written in Arabic: clear and simple, without jargon. Keep any in-progress note to the owner short.
+- **Arabic content stays Arabic:** poetry, notes, titles, UI strings and any other Arabic text in the site, data or code is never translated. Quote it as it is. File names, commands, paths and code identifiers stay as they are.
+- **Workers and subagents** get English briefs and write their summaries in English (they report to the lead, not to the owner). The lead turns the result into the Arabic reply.
+
 ## Goals
 - **Correct**: no bugs, no broken pages, and the poetry text stays exactly as the edition data has it.
 - **Light**: fast loads, small pages, few dependencies. Don't add a library without a clear reason.
@@ -95,7 +103,7 @@ This is a rebuild of an existing site made by a friend. The old site works but n
 - Implementation work is delegated to **Codex CLI workers**: model `gpt-6.1-sol`, reasoning effort **medium**. The lead agent plans, writes the briefs, reviews, tests and commits; workers only implement.
 - Command (Codex is not on PATH here; the app ships it at `%LOCALAPPDATA%\OpenAI\Codex\bin\<hash>\codex.exe`):
   `codex exec -m gpt-6.1-sol -c model_reasoning_effort="medium" -s workspace-write -C <project> -o <result.md> - < <brief.md>`
-- Every brief says: the goal, the exact files the worker may change (and which are off limits), the checks to pass (`npm run build`, `npm run verify`, `npm run check`, `npm test`), and to end with a short summary.
+- Every brief is in English (see Language) and says: the goal, the exact files the worker may change (and which are off limits), the checks to pass (`npm run build`, `npm run verify`, `npm run check`, `npm test`), and to end with a short summary.
 - Workers running at the same time never share files. Warn them that parallel builds can collide in `dist/` and to retry.
 - Before committing a worker's change: read the whole diff, rerun all checks, and test in the browser at ~375px and desktop, light and dark (workers can't open the browser). Fix what they missed; say in the commit message that a worker did it and what was changed in review.
 - Text and data: workers only propose (report + dry-run script). Nothing in `data/` changes without the owner's approval.
