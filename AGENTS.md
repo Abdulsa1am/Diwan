@@ -5,12 +5,12 @@ A website presenting the diwan (collected poems) of al-Sharif al-Radi (الشر�
 This is a rebuild of an existing site made by a friend. The old site works but needs a lot of improvement.
 
 ## Language (owner's decision, 2026-10-28)
-The owner writes in Arabic (often Gulf dialect) to save effort; agents work in English to avoid the extra token cost of Arabic. This applies to every model and agent on this project: the lead agent, Codex workers, subagents and any other tool.
+The owner writes in Arabic (often Gulf dialect) to save effort; agents work in English to avoid the extra token cost of Arabic. This applies to every model and agent on this project: the lead agent, any workers or subagents, and any other tool.
 - **Input:** read and understand the owner's Arabic directly. Don't translate it back or ask them to write in English.
 - **Work in English:** all thinking, planning, reasoning, notes, worker briefs, messages between agents, code comments, commit messages, `PROGRESS.md`, `AGENTS.md`, reports and other documents.
 - **Reply in Arabic only to the owner:** the final result of a task, and any question you must ask them, are written in Arabic: clear and simple, without jargon. Keep any in-progress note to the owner short.
 - **Arabic content stays Arabic:** poetry, notes, titles, UI strings and any other Arabic text in the site, data or code is never translated. Quote it as it is. File names, commands, paths and code identifiers stay as they are.
-- **Workers and subagents** get English briefs and write their summaries in English (they report to the lead, not to the owner). The lead turns the result into the Arabic reply.
+- **Any worker or subagent** gets an English brief and writes its summary in English (it reports to the lead, not to the owner). The lead turns the result into the Arabic reply.
 
 ## Goals
 - **Correct**: no bugs, no broken pages, and the poetry text stays exactly as the edition data has it.
@@ -43,6 +43,7 @@ The owner writes in Arabic (often Gulf dialect) to save effort; agents work in E
 - **Certain spacing fixes applied** (approved 2026-10-23): 361 edits from the text review; see Data.
 
 ## Data
+- Nothing in `data/` changes without the owner's approval: propose changes as a report plus a dry-run script first.
 - `data/source/` — the old site's data blocks, extracted unchanged by `tools/extract-legacy-data.mjs`. Never edit by hand.
 - `data/edition/` — what the site uses. Edition text is built from `data/source/` in two approved steps that only touch spaces and stop if any letter would change; a third step rebuilds derived word counts:
   1. `tools/fix-detached-waw.mjs` — joins the detached waw (log: `reports/waw-changes.csv`).
@@ -98,16 +99,6 @@ The owner writes in Arabic (often Gulf dialect) to save effort; agents work in E
 - Cloudflare is driven through the **Wrangler CLI** (`npx wrangler`, installed in the project), not a Cloudflare plugin. It is signed in with the owner's account via OAuth (check with `npx wrangler whoami`; if signed out, the owner runs `npx wrangler login`). The token has wide write access, so run deploys or any account change only when the owner asks.
 - Redeploy: `SITE_URL=https://diwan-alradi-ce6.pages.dev NOINDEX=1 npm run build`, `npm run verify`, then `npx wrangler pages deploy dist --project-name=diwan-alradi --branch=main`. List past deployments with `npx wrangler pages deployment list --project-name=diwan-alradi`.
 - After every deploy, check the live site: pages 200, `/does-not-exist/` 404, `/poem/r1-227/verse/3` 301 to `#v3`, sitemap on the right address.
-
-## Working with sub-agents (owner's decision)
-- Implementation work is delegated to **Codex CLI workers**: model `gpt-6.1-sol`, reasoning effort **medium**. The lead agent plans, writes the briefs, reviews, tests and commits; workers only implement.
-- Command (Codex is not on PATH here; the app ships it at `%LOCALAPPDATA%\OpenAI\Codex\bin\<hash>\codex.exe`):
-  `codex exec -m gpt-6.1-sol -c model_reasoning_effort="medium" -s workspace-write -C <project> -o <result.md> - < <brief.md>`
-- Every brief is in English (see Language) and says: the goal, the exact files the worker may change (and which are off limits), the checks to pass (`npm run build`, `npm run verify`, `npm run check`, `npm test`), and to end with a short summary.
-- Workers running at the same time never share files. Warn them that parallel builds can collide in `dist/` and to retry.
-- Before committing a worker's change: read the whole diff, rerun all checks, and test in the browser at ~375px and desktop, light and dark (workers can't open the browser). Fix what they missed; say in the commit message that a worker did it and what was changed in review.
-- Text and data: workers only propose (report + dry-run script). Nothing in `data/` changes without the owner's approval.
-- **If you are a worker:** stay inside the files your brief allows, don't commit, don't touch `data/` or `_original/`, and report anything you could not verify.
 
 ## Keeping track of progress
 - Read `PROGRESS.md` at the start of a session to see where things stand.
